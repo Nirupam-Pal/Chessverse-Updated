@@ -1,6 +1,12 @@
 import { ChevronUp, MapPin, Phone, Mail, Facebook, Instagram } from 'lucide-react'
 
-const links = {
+interface FooterLink {
+  label: string;
+  href: string;
+  external?: boolean; // The '?' means this is optional
+}
+
+const links: Record<string, FooterLink[]> = {
   Courses: [
     { label: 'Beginner — Pawn Starter', href: '#services' },
     { label: 'Intermediate — Knight Tactician', href: '#services' },
