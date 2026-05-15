@@ -73,7 +73,7 @@ export default function Chatbot() {
         animate={{ scale: 1 }}
         transition={{ delay: 0.5 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-24 z-40 w-14 h-14 rounded-full bg-gradient-to-r from-[#128C7E] to-[#25D366] shadow-lg hover:shadow-xl flex items-center justify-center text-white transition-all duration-300 hover:scale-110"
+        className="fixed bottom-28 right-8 z-40 w-14 h-14 rounded-full bg-gradient-to-r from-[#128C7E] to-[#25D366] shadow-lg hover:shadow-xl flex items-center justify-center text-white transition-all duration-300 hover:scale-110"
         data-testid="chatbot-toggle"
       >
         <MessageCircle className="w-6 h-6" />
@@ -94,7 +94,7 @@ export default function Chatbot() {
             <div className="bg-gradient-to-r from-royal to-sky p-5 flex items-center justify-between">
               <div>
                 <h3 className="font-display font-bold text-ivory text-lg">ChessVerse Bot</h3>
-                <p className="text-xs text-sky/80">Ask us anything about chess classes</p>
+                <p className="text-xs text-white/80">Ask us anything about chess classes</p>
               </div>
               <button
                 onClick={() => setIsOpen(false)}
