@@ -1,8 +1,6 @@
 import { useRef, useState } from 'react'
 import { motion, useInView } from 'framer-motion'
-import { MapPin, Phone, Mail, Clock, Send, Check, Facebook, Instagram, MessageCircle } from 'lucide-react'
-
-const FORMSUBMIT_ENDPOINT = 'https://formsubmit.co/ajax/chessverse07@gmail.com'
+import { MapPin, Phone, Mail, Clock, Facebook, Instagram, MessageCircle } from 'lucide-react'
 
 const contactInfo = [
   {
@@ -34,37 +32,10 @@ export default function Contact() {
   const ref = useRef<HTMLDivElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-80px' })
   const [form, setForm] = useState({ name: '', email: '', phone: '', message: '' })
-  const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!form.name || !form.message) return
-    setStatus('sending')
-    try {
-      const res = await fetch(FORMSUBMIT_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({
-          _subject: `ChessVerse: New enquiry from ${form.name}`,
-          _template: 'table',
-          _captcha: 'false',
-          source: 'Contact Form',
-          name: form.name,
-          email: form.email,
-          phone: form.phone,
-          message: form.message,
-        }),
-      })
-      if (res.ok) {
-        setStatus('sent')
-        setForm({ name: '', email: '', phone: '', message: '' })
-        setTimeout(() => setStatus('idle'), 5000)
-      } else {
-        setStatus('error')
-      }
-    } catch {
-      setStatus('error')
-    }
+  const whatsappFallback = () => {
+    const msg = `Hello ChessVerse,%0A%0AName: ${form.name || '___'}%0AEmail: ${form.email || '___'}%0APhone: ${form.phone || '___'}%0A%0AMessage:%0A${form.message || '___'}`
+    window.open(`https://wa.me/917629037237?text=${msg}`, '_blank')
   }
 
   return (
@@ -98,18 +69,7 @@ export default function Contact() {
             transition={{ duration: 0.7, delay: 0.15 }}
           >
             <div className="liquid-glass rounded-3xl p-6 sm:p-8">
-              {status === 'sent' ? (
-                <div className="text-center py-12" data-testid="contact-success">
-                  <div className="w-16 h-16 rounded-full bg-sky/15 ring-1 ring-sky/40 flex items-center justify-center mx-auto mb-4">
-                    <Check className="w-8 h-8 text-sky" />
-                  </div>
-                  <h3 className="font-display font-bold text-2xl text-ivory mb-2">
-                    Message Sent!
-                  </h3>
-                  <p className="text-ghost">We will get back to you shortly.</p>
-                </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-5" data-testid="contact-form">
+              <div className="space-y-5" data-testid="contact-form">
                   <div>
                     <label className="block text-xs uppercase tracking-widest text-ghost mb-2">
                       Your Name *
@@ -167,27 +127,16 @@ export default function Contact() {
                     />
                   </div>
 
-                  {status === 'error' && (
-                    <p className="text-sm text-red-300 bg-red-500/10 border border-red-500/30 rounded-lg p-3" data-testid="contact-error">
-                      Something went wrong. Please try WhatsApp or email us directly at{' '}
-                      <a href="mailto:chessverse07@gmail.com" className="underline">
-                        chessverse07@gmail.com
-                      </a>
-                      .
-                    </p>
-                  )}
-
-                  <button
-                    type="submit"
+              <button
+                    type="button"
                     data-testid="contact-submit"
-                    disabled={status === 'sending'}
-                    className="w-full btn-primary justify-center disabled:opacity-60 disabled:cursor-not-allowed"
+                    onClick={whatsappFallback}
+                    className="w-full btn-primary justify-center flex items-center gap-2"
                   >
-                    <Send className="w-4 h-4" />
-                    {status === 'sending' ? 'Sending...' : 'Send Message'}
+                    <MessageCircle className="w-4 h-4" />
+                    Send via WhatsApp
                   </button>
-                </form>
-              )}
+              </div>
             </div>
           </motion.div>
 
