@@ -1,8 +1,6 @@
 import { useRef, useState } from 'react'
 import { motion, useInView } from 'framer-motion'
-import { Check, Calendar, GraduationCap, MessageCircle } from 'lucide-react'
-
-const FORMSUBMIT_ENDPOINT = 'https://formsubmit.co/ajax/chessverse07@gmail.com'
+import { Calendar, GraduationCap, MessageCircle } from 'lucide-react'
 
 const levels = ['Beginner', 'Intermediate', 'Advanced']
 const modes = ['Online', 'Offline (Agartala)']
@@ -18,49 +16,7 @@ export default function Booking() {
     mode: 'Online',
     preferred_time: '',
   })
-  const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
-
   const update = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }))
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!form.name || !form.phone) return
-    setStatus('sending')
-    try {
-      const res = await fetch(FORMSUBMIT_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({
-          _subject: `ChessVerse: New Free Demo Request from ${form.name}`,
-          _template: 'table',
-          _captcha: 'false',
-          source: 'Booking Form',
-          name: form.name,
-          phone: form.phone,
-          email: form.email,
-          level: form.level,
-          mode: form.mode,
-          preferred_time: form.preferred_time,
-        }),
-      })
-      if (res.ok) {
-        setStatus('sent')
-        setForm({
-          name: '',
-          phone: '',
-          email: '',
-          level: 'Beginner',
-          mode: 'Online',
-          preferred_time: '',
-        })
-        setTimeout(() => setStatus('idle'), 5000)
-      } else {
-        setStatus('error')
-      }
-    } catch {
-      setStatus('error')
-    }
-  }
 
   const whatsappFallback = () => {
     const msg = `Hello ChessVerse, I want to book a free demo.%0A%0AName: ${form.name || '___'}%0APhone: ${form.phone || '___'}%0ALevel: ${form.level}%0AMode: ${form.mode}%0APreferred Time: ${form.preferred_time || '___'}`
@@ -98,155 +54,126 @@ export default function Booking() {
           transition={{ duration: 0.6, delay: 0.15 }}
           className="liquid-glass rounded-3xl p-6 sm:p-8 lg:p-10 relative"
         >
-          {status === 'sent' ? (
-            <div className="text-center py-12" data-testid="booking-success">
-              <div className="w-16 h-16 rounded-full bg-sky/15 ring-1 ring-sky/40 flex items-center justify-center mx-auto mb-5">
-                <Check className="w-8 h-8 text-sky" />
+          <div className="space-y-6" data-testid="booking-form">
+            <div className="grid sm:grid-cols-2 gap-5">
+              <div>
+                <label className="block text-xs uppercase tracking-widest text-ghost mb-2">
+                  Full Name *
+                </label>
+                <input
+                  data-testid="booking-input-name"
+                  required
+                  type="text"
+                  value={form.name}
+                  onChange={(e) => update('name', e.target.value)}
+                  placeholder="John Doe / Parent name"
+                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-sky/15 text-ivory text-sm placeholder:text-ghost/50 focus:border-sky focus:outline-none transition-colors"
+                />
               </div>
-              <h3 className="font-display font-bold text-2xl text-ivory mb-2">
-                Request Received!
-              </h3>
-              <p className="text-ghost max-w-md mx-auto">
-                Thank you for choosing ChessVerse. Our team will contact you on the number you
-                provided within 24 hours to schedule your free demo.
-              </p>
+              <div>
+                <label className="block text-xs uppercase tracking-widest text-ghost mb-2">
+                  Phone *
+                </label>
+                <input
+                  data-testid="booking-input-phone"
+                  required
+                  type="tel"
+                  value={form.phone}
+                  onChange={(e) => update('phone', e.target.value)}
+                  placeholder="+91 9xxxx xxxxx"
+                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-sky/15 text-ivory text-sm placeholder:text-ghost/50 focus:border-sky focus:outline-none transition-colors"
+                />
+              </div>
+              <div>
+                <label className="block text-xs uppercase tracking-widest text-ghost mb-2">
+                  Email (optional)
+                </label>
+                <input
+                  data-testid="booking-input-email"
+                  type="email"
+                  value={form.email}
+                  onChange={(e) => update('email', e.target.value)}
+                  placeholder="you@example.com"
+                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-sky/15 text-ivory text-sm placeholder:text-ghost/50 focus:border-sky focus:outline-none transition-colors"
+                />
+              </div>
+              <div>
+                <label className="block text-xs uppercase tracking-widest text-ghost mb-2">
+                  Preferred time
+                </label>
+                <input
+                  data-testid="booking-input-time"
+                  type="text"
+                  value={form.preferred_time}
+                  onChange={(e) => update('preferred_time', e.target.value)}
+                  placeholder="e.g. Weekday 6 PM"
+                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-sky/15 text-ivory text-sm placeholder:text-ghost/50 focus:border-sky focus:outline-none transition-colors"
+                />
+              </div>
             </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-6" data-testid="booking-form">
-              <div className="grid sm:grid-cols-2 gap-5">
-                <div>
-                  <label className="block text-xs uppercase tracking-widest text-ghost mb-2">
-                    Full Name *
-                  </label>
-                  <input
-                    data-testid="booking-input-name"
-                    required
-                    type="text"
-                    value={form.name}
-                    onChange={(e) => update('name', e.target.value)}
-                    placeholder="John Doe / Parent name"
-                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-sky/15 text-ivory text-sm placeholder:text-ghost/50 focus:border-sky focus:outline-none transition-colors"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs uppercase tracking-widest text-ghost mb-2">
-                    Phone *
-                  </label>
-                  <input
-                    data-testid="booking-input-phone"
-                    required
-                    type="tel"
-                    value={form.phone}
-                    onChange={(e) => update('phone', e.target.value)}
-                    placeholder="+91 9xxxx xxxxx"
-                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-sky/15 text-ivory text-sm placeholder:text-ghost/50 focus:border-sky focus:outline-none transition-colors"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs uppercase tracking-widest text-ghost mb-2">
-                    Email (optional)
-                  </label>
-                  <input
-                    data-testid="booking-input-email"
-                    type="email"
-                    value={form.email}
-                    onChange={(e) => update('email', e.target.value)}
-                    placeholder="you@example.com"
-                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-sky/15 text-ivory text-sm placeholder:text-ghost/50 focus:border-sky focus:outline-none transition-colors"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs uppercase tracking-widest text-ghost mb-2">
-                    Preferred time
-                  </label>
-                  <input
-                    data-testid="booking-input-time"
-                    type="text"
-                    value={form.preferred_time}
-                    onChange={(e) => update('preferred_time', e.target.value)}
-                    placeholder="e.g. Weekday 6 PM"
-                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-sky/15 text-ivory text-sm placeholder:text-ghost/50 focus:border-sky focus:outline-none transition-colors"
-                  />
-                </div>
+
+            <div>
+              <label className="flex items-center gap-2 text-xs uppercase tracking-widest text-ghost mb-3">
+                <GraduationCap className="w-4 h-4 text-sky" /> Skill Level
+              </label>
+              <div className="grid sm:grid-cols-3 gap-3">
+                {levels.map((lvl) => (
+                  <button
+                    key={lvl}
+                    type="button"
+                    data-testid={`booking-level-${lvl.toLowerCase()}`}
+                    onClick={() => update('level', lvl)}
+                    className={`px-4 py-3 rounded-xl border text-sm font-medium transition-all duration-300 ${
+                      form.level === lvl
+                        ? 'border-sky bg-sky/10 text-ivory shadow-glow'
+                        : 'border-sky/15 bg-white/5 text-ghost hover:border-sky/30'
+                    }`}
+                  >
+                    {lvl}
+                  </button>
+                ))}
               </div>
+            </div>
 
-              <div>
-                <label className="flex items-center gap-2 text-xs uppercase tracking-widest text-ghost mb-3">
-                  <GraduationCap className="w-4 h-4 text-sky" /> Skill Level
-                </label>
-                <div className="grid sm:grid-cols-3 gap-3">
-                  {levels.map((lvl) => (
-                    <button
-                      key={lvl}
-                      type="button"
-                      data-testid={`booking-level-${lvl.toLowerCase()}`}
-                      onClick={() => update('level', lvl)}
-                      className={`px-4 py-3 rounded-xl border text-sm font-medium transition-all duration-300 ${
-                        form.level === lvl
-                          ? 'border-sky bg-sky/10 text-ivory shadow-glow'
-                          : 'border-sky/15 bg-white/5 text-ghost hover:border-sky/30'
-                      }`}
-                    >
-                      {lvl}
-                    </button>
-                  ))}
-                </div>
+            <div>
+              <label className="text-xs uppercase tracking-widest text-ghost mb-3 block">
+                Mode of Class
+              </label>
+              <div className="grid sm:grid-cols-2 gap-3">
+                {modes.map((m) => (
+                  <button
+                    key={m}
+                    type="button"
+                    data-testid={`booking-mode-${m.split(' ')[0].toLowerCase()}`}
+                    onClick={() => update('mode', m)}
+                    className={`px-4 py-3 rounded-xl border text-sm font-medium transition-all duration-300 ${
+                      form.mode === m
+                        ? 'border-sky bg-sky/10 text-ivory shadow-glow'
+                        : 'border-sky/15 bg-white/5 text-ghost hover:border-sky/30'
+                    }`}
+                  >
+                    {m}
+                  </button>
+                ))}
               </div>
+            </div>
 
-              <div>
-                <label className="text-xs uppercase tracking-widest text-ghost mb-3 block">
-                  Mode of Class
-                </label>
-                <div className="grid sm:grid-cols-2 gap-3">
-                  {modes.map((m) => (
-                    <button
-                      key={m}
-                      type="button"
-                      data-testid={`booking-mode-${m.split(' ')[0].toLowerCase()}`}
-                      onClick={() => update('mode', m)}
-                      className={`px-4 py-3 rounded-xl border text-sm font-medium transition-all duration-300 ${
-                        form.mode === m
-                          ? 'border-sky bg-sky/10 text-ivory shadow-glow'
-                          : 'border-sky/15 bg-white/5 text-ghost hover:border-sky/30'
-                      }`}
-                    >
-                      {m}
-                    </button>
-                  ))}
-                </div>
-              </div>
+            <div className="pt-2">
+              <button
+                type="button"
+                data-testid="booking-whatsapp"
+                onClick={whatsappFallback}
+                className="w-full btn-primary flex justify-center items-center gap-2"
+              >
+                <MessageCircle className="w-4 h-4" />
+                Send via WhatsApp
+              </button>
+            </div>
 
-              {status === 'error' && (
-                <p className="text-sm text-red-300 bg-red-500/10 border border-red-500/30 rounded-lg p-3" data-testid="booking-error">
-                  Something went wrong. Please use WhatsApp below or call us directly.
-                </p>
-              )}
-
-              <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                <button
-                  type="submit"
-                  data-testid="booking-submit"
-                  disabled={status === 'sending'}
-                  className="btn-primary flex-1 justify-center disabled:opacity-60 disabled:cursor-not-allowed"
-                >
-                  {status === 'sending' ? 'Sending...' : 'Book Free Demo'}
-                </button>
-                <button
-                  type="button"
-                  data-testid="booking-whatsapp"
-                  onClick={whatsappFallback}
-                  className="btn-ghost justify-center"
-                >
-                  <MessageCircle className="w-4 h-4" />
-                  Send via WhatsApp
-                </button>
-              </div>
-
-              <p className="text-center text-xs text-ghost pt-2">
-                By submitting, you agree to be contacted by ChessVerse about a free trial class.
-              </p>
-            </form>
-          )}
+            <p className="text-center text-xs text-ghost pt-2">
+              By submitting, you agree to be contacted by ChessVerse about a free trial class.
+            </p>
+          </div>
         </motion.div>
       </div>
     </section>
