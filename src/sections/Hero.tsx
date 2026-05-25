@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/purity */
-import { useRef, Suspense } from 'react'
+import { useRef, useState, useEffect, Suspense } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { Float, Environment, ContactShadows } from '@react-three/drei'
 import * as THREE from 'three'
@@ -120,6 +120,7 @@ function ChessPiece({
 
 function FloatingParticles() {
   const particlesRef = useRef<THREE.Points>(null)
+  const [isLightMode, setIsLightMode] = useState(false)
   const count = 220
   const positions = new Float32Array(count * 3)
 
@@ -129,18 +130,40 @@ function FloatingParticles() {
     positions[i * 3 + 2] = (Math.random() - 0.5) * 22
   }
 
+  useEffect(() => {
+    const updateTheme = () => {
+      setIsLightMode(document.documentElement.classList.contains('light'))
+    }
+
+    updateTheme()
+
+    const observer = new MutationObserver(() => updateTheme())
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+
+    return () => observer.disconnect()
+  }, [])
+
   useFrame((state) => {
     if (particlesRef.current) {
       particlesRef.current.rotation.y = state.clock.elapsedTime * 0.02
     }
   })
 
+  const particleColor = isLightMode ? '#1A2338' : '#8ECAE6'
+  const particleOpacity = isLightMode ? 0.45 : 0.55
+
   return (
     <points ref={particlesRef}>
       <bufferGeometry>
         <bufferAttribute attach="attributes-position" count={count} array={positions} itemSize={3} args={[positions, 3]} />
       </bufferGeometry>
-      <pointsMaterial size={0.045} color="#8ECAE6" transparent opacity={0.55} blending={THREE.AdditiveBlending} />
+      <pointsMaterial
+        size={0.045}
+        color={particleColor}
+        transparent
+        opacity={particleOpacity}
+        blending={THREE.AdditiveBlending}
+      />
     </points>
   )
 }
@@ -279,7 +302,7 @@ export default function Hero() {
               <span className="text-ivory">Rule the board.</span>
             </h1>
 
-            <p className="text-base sm:text-lg lg:text-xl text-black max-w-xl leading-relaxed">
+            <p className="text-base sm:text-lg lg:text-xl text-black dark:text-slate-300 max-w-xl leading-relaxed">
               From your very first move to your first rated tournament — learn from coaches
               who have shaped Tripura&apos;s best chess players. Online and in-person classes
               from our Agartala academy.
@@ -313,15 +336,15 @@ export default function Hero() {
             <div className="grid grid-cols-3 gap-4 sm:gap-8 max-w-md">
               <div data-testid="hero-stat-students">
                 <p className="font-display font-bold text-2xl sm:text-3xl text-ivory">1500+</p>
-                <p className="text-[11px] sm:text-xs text-gray-800 mt-1 leading-snug">Students Trained</p>
+                <p className="text-[11px] sm:text-xs text-gray-800 dark:text-slate-400 mt-1 leading-snug">Students Trained</p>
               </div>
               <div data-testid="hero-stat-years" className="border-x border-sky/15 px-4">
                 <p className="font-display font-bold text-2xl sm:text-3xl text-ivory">12+</p>
-                <p className="text-[11px] sm:text-xs text-gray-800 mt-1 leading-snug">Years Coaching</p>
+                <p className="text-[11px] sm:text-xs text-gray-800 dark:text-slate-400 mt-1 leading-snug">Years Coaching</p>
               </div>
               <div data-testid="hero-stat-trophies">
                 <p className="font-display font-bold text-2xl sm:text-3xl text-ivory">50+</p>
-                <p className="text-[11px] sm:text-xs text-gray-800 mt-1 leading-snug">Tournament Wins</p>
+                <p className="text-[11px] sm:text-xs text-gray-800 dark:text-slate-400 mt-1 leading-snug">Tournament Wins</p>
               </div>
             </div>
           </div>
@@ -351,7 +374,7 @@ export default function Hero() {
 
       {/* Scroll Indicator */}
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2">
-        <span className="text-[10px] text-gray-600 uppercase tracking-[0.3em]">Scroll</span>
+        <span className="text-[10px] text-gray-600 dark:text-slate-400 uppercase tracking-[0.3em]">Scroll</span>
         <div className="w-5 h-8 rounded-full border-2 border-blue-400 flex justify-center pt-1">
           <div className="w-1 h-2 rounded-full bg-blue-700 animate-bounce" />
         </div>

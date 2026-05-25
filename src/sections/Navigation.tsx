@@ -59,10 +59,10 @@ export default function Navigation() {
             </div>
             <div className="flex flex-col leading-none">
               <span className="font-display font-bold text-lg sm:text-xl text-ivory tracking-tight group-hover:text-sky transition-colors">
-                ChessVerse
+                Chessverse
               </span>
               <span className="hidden sm:block text-[10px] tracking-[0.22em] uppercase text-ghost mt-1">
-                Chess Institute • Tripura
+                Chess Institute
               </span>
             </div>
           </button>

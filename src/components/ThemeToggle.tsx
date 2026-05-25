@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import { useEffect, useState } from 'react'
 import { Moon, Sun } from 'lucide-react'
 
@@ -46,12 +47,20 @@ export default function ThemeToggle() {
       className="relative inline-flex h-11 w-20 items-center rounded-full border border-sky/20 bg-sky/10 p-1 text-sky shadow-sm transition-all duration-300 hover:border-sky/40 focus:outline-none focus:ring-2 focus:ring-sky/40"
     >
       <span
-        className={`absolute left-1 top-1 h-9 w-9 rounded-full bg-white shadow-md transition-transform duration-300 ease-out ${
-          theme === 'light' ? 'translate-x-[42px]' : 'translate-x-0'
+        className={`absolute left-1 top-1/2 h-9 w-9 -translate-y-1/2 rounded-full bg-white shadow-md transition-transform duration-300 ease-out ${
+          theme === 'dark' ? 'translate-x-[40px]' : 'translate-x-[-5px]'
         }`}
       />
-      <Sun className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-sky" />
-      <Moon className="absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 text-sky" />
+      <Sun
+        className={`absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 transition-colors duration-300 ${
+          theme === 'light' ? 'text-sky' : 'text-slate-400'
+        }`}
+      />
+      <Moon
+        className={`absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 transition-colors duration-300 ${
+          theme === 'dark' ? 'text-sky' : 'text-slate-600'
+        }`}
+      />
     </button>
   )
 }
