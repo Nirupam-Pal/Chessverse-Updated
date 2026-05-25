@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Menu, X } from 'lucide-react'
+import ThemeToggle from '@/components/ThemeToggle'
 
 const navLinks = [
   { label: 'About', href: '#about' },
@@ -83,6 +84,7 @@ export default function Navigation() {
 
           {/* CTA */}
           <div className="hidden lg:flex items-center gap-3">
+            <ThemeToggle />
             <button
               data-testid="nav-cta-demo"
               onClick={() => scrollTo('#booking')}
@@ -110,17 +112,20 @@ export default function Navigation() {
           mobileOpen ? 'max-h-[600px] opacity-100' : 'max-h-0 opacity-0'
         }`}
       >
-        <div className="px-4 py-6 flex flex-col gap-1">
-          {navLinks.map((link) => (
-            <button
-              key={link.href}
-              data-testid={`nav-mobile-link-${link.label.toLowerCase()}`}
-              onClick={() => scrollTo(link.href)}
-              className="text-left text-base font-medium text-ghost hover:text-ivory transition-colors py-3 border-b border-sky/10 last:border-0"
-            >
-              {link.label}
-            </button>
-          ))}
+        <div className="px-4 py-6 flex flex-col gap-4">
+          <ThemeToggle />
+          <div className="flex flex-col gap-1">
+            {navLinks.map((link) => (
+              <button
+                key={link.href}
+                data-testid={`nav-mobile-link-${link.label.toLowerCase()}`}
+                onClick={() => scrollTo(link.href)}
+                className="text-left text-base font-medium text-ghost hover:text-ivory transition-colors py-3 border-b border-sky/10 last:border-0"
+              >
+                {link.label}
+              </button>
+            ))}
+          </div>
           <button
             data-testid="nav-mobile-cta"
             onClick={() => scrollTo('#booking')}

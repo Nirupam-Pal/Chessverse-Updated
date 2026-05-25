@@ -14,7 +14,7 @@ import WhatsAppButton from '../components/WhatsAppButton'
 
 export default function Home() {
   return (
-    <main className="relative bg-void min-h-screen">
+    <main className="relative min-h-screen bg-background transition-colors duration-500">
       <Navigation />
       <Hero />
       <StatsTicker />

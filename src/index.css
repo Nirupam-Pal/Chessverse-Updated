@@ -35,6 +35,110 @@
   }
 }
 
+.light {
+  --background: 212 34% 96%;
+  --foreground: 218 18% 14%;
+  --card: 217 40% 98%;
+  --card-foreground: 218 18% 14%;
+  --popover: 216 45% 98%;
+  --popover-foreground: 218 18% 14%;
+  --primary: 212 73% 55%;
+  --primary-foreground: 220 15% 18%;
+  --secondary: 216 35% 96%;
+  --secondary-foreground: 218 18% 14%;
+  --muted: 214 45% 90%;
+  --muted-foreground: 215 18% 46%;
+  --accent: 45 65% 53%;
+  --accent-foreground: 218 18% 14%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 10%;
+  --border: 217 20% 88%;
+  --input: 217 16% 92%;
+  --ring: 212 73% 55%;
+  --sidebar-background: 217 40% 98%;
+  --sidebar-foreground: 218 18% 14%;
+  --sidebar-primary: 212 73% 55%;
+  --sidebar-primary-foreground: 218 18% 14%;
+  --sidebar-accent: 216 35% 96%;
+  --sidebar-accent-foreground: 218 18% 14%;
+  --sidebar-border: 217 20% 88%;
+  --sidebar-ring: 212 73% 55%;
+}
+
+.light body {
+  background-image:
+    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(58, 141, 222, 0.12), transparent 60%),
+    radial-gradient(ellipse 50% 50% at 90% 30%, rgba(31, 79, 174, 0.08), transparent 60%);
+}
+
+.light [class*="bg-void"] {
+  background-color: #f8fafc !important;
+}
+
+.light [class*="bg-twilight"] {
+  background-color: rgba(239, 244, 251, 0.98) !important;
+}
+
+.light [class*="bg-midnight"] {
+  background-color: rgba(219, 233, 247, 0.92) !important;
+}
+
+.light [class*="bg-royal"] {
+  background-color: rgba(219, 232, 251, 0.82) !important;
+}
+
+.light [class*="bg-white"] {
+  background-color: rgba(255, 255, 255, 0.96) !important;
+}
+
+.light [class*="bg-sky"] {
+  background-color: rgba(56, 139, 222, 0.14) !important;
+}
+
+.light [class*="text-ivory"] {
+  color: #0f172a !important;
+}
+
+.light [class*="text-ghost"] {
+  color: #475569 !important;
+}
+
+.light [class*="text-sky"] {
+  color: #1d4ed8 !important;
+}
+
+.light [class*="border-sky"] {
+  border-color: rgba(56, 139, 222, 0.2) !important;
+}
+
+.light [class*="border-gold"] {
+  border-color: rgba(212, 175, 55, 0.22) !important;
+}
+
+.light .btn-ghost {
+  background: rgba(15, 23, 42, 0.04);
+  border-color: rgba(15, 23, 42, 0.12);
+  color: #0f172a;
+}
+
+.light .btn-ghost:hover {
+  background: rgba(56, 139, 222, 0.1);
+  border-color: rgba(56, 139, 222, 0.22);
+}
+
+.light .liquid-glass {
+  background: rgba(255, 255, 255, 0.74);
+  border-color: rgba(148, 163, 184, 0.22);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 18px 45px rgba(15, 23, 42, 0.08);
+}
+
+.light .liquid-glass-light {
+  background: rgba(255, 255, 255, 0.92);
+  border-color: rgba(148, 163, 184, 0.16);
+}
+
 @layer base {
   * {
     @apply border-border;
@@ -43,12 +147,13 @@
     scroll-behavior: smooth;
   }
   body {
-    @apply bg-void text-ivory font-body antialiased;
+    @apply bg-background text-foreground font-body antialiased;
     font-family: 'Manrope', system-ui, sans-serif;
     background-image:
       radial-gradient(ellipse 80% 60% at 50% -10%, rgba(58, 141, 222, 0.15), transparent 60%),
       radial-gradient(ellipse 50% 50% at 90% 30%, rgba(31, 79, 174, 0.10), transparent 60%);
     background-attachment: fixed;
+    transition: background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease;
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Fraunces', 'Playfair Display', serif;
