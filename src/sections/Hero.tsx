@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/purity */
 import { useRef, Suspense } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { Float, Environment, ContactShadows } from '@react-three/drei'
@@ -227,7 +228,7 @@ export default function Hero() {
   }
 
   return (
-    <section className="relative w-full min-h-screen overflow-hidden bg-void">
+    <section className="relative w-full min-h-screen overflow-hidden bg-void light:bg-white/95">
       {/* 3D Canvas */}
       <div className="absolute inset-0 z-0">
         <Canvas
@@ -243,8 +244,16 @@ export default function Hero() {
       </div>
 
       {/* Gradient Overlay */}
-      <div className="absolute inset-0 z-10 bg-gradient-to-b from-void/60 via-transparent to-void pointer-events-none" />
-      <div className="absolute inset-0 z-10 bg-gradient-to-r from-void/85 via-void/30 to-void/60 pointer-events-none" />
+
+      <div className="absolute inset-0 z-10 bg-gradient-to-b from-void/40 via-transparent to-void/20 pointer-events-none
+  light:from-[#0B1E3A]/30 light:via-transparent light:to-[#0B1E3A]/20" />
+
+      {/* <div className="absolute inset-0 z-10 bg-gradient-to-r from-void/60 via-void/20 to-void/35 pointer-events-none
+  light:from-[#071629]/55 light:via-[#071629]/20 light:to-transparent" /> */}
+
+      <div className="absolute inset-x-0 top-12 h-72 opacity-90 blur-3xl pointer-events-none z-10
+  bg-gradient-to-r from-sky/25 via-transparent to-gold/25
+  light:from-sky/30 light:via-transparent light:to-gold/30" />
 
       {/* Hero Content */}
       <div className="relative z-20 flex flex-col justify-center min-h-screen max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-[72px]">
@@ -270,7 +279,7 @@ export default function Hero() {
               <span className="text-ivory">Rule the board.</span>
             </h1>
 
-            <p className="text-base sm:text-lg lg:text-xl text-ghost max-w-xl leading-relaxed">
+            <p className="text-base sm:text-lg lg:text-xl text-black max-w-xl leading-relaxed">
               From your very first move to your first rated tournament — learn from coaches
               who have shaped Tripura&apos;s best chess players. Online and in-person classes
               from our Agartala academy.
@@ -301,18 +310,18 @@ export default function Hero() {
             </div>
 
             {/* Mini Stats */}
-            <div className="grid grid-cols-3 gap-4 sm:gap-8 pt-6 max-w-md">
+            <div className="grid grid-cols-3 gap-4 sm:gap-8 max-w-md">
               <div data-testid="hero-stat-students">
                 <p className="font-display font-bold text-2xl sm:text-3xl text-ivory">1500+</p>
-                <p className="text-[11px] sm:text-xs text-ghost mt-1 leading-snug">Students Trained</p>
+                <p className="text-[11px] sm:text-xs text-gray-800 mt-1 leading-snug">Students Trained</p>
               </div>
               <div data-testid="hero-stat-years" className="border-x border-sky/15 px-4">
                 <p className="font-display font-bold text-2xl sm:text-3xl text-ivory">12+</p>
-                <p className="text-[11px] sm:text-xs text-ghost mt-1 leading-snug">Years Coaching</p>
+                <p className="text-[11px] sm:text-xs text-gray-800 mt-1 leading-snug">Years Coaching</p>
               </div>
               <div data-testid="hero-stat-trophies">
                 <p className="font-display font-bold text-2xl sm:text-3xl text-ivory">50+</p>
-                <p className="text-[11px] sm:text-xs text-ghost mt-1 leading-snug">Tournament Wins</p>
+                <p className="text-[11px] sm:text-xs text-gray-800 mt-1 leading-snug">Tournament Wins</p>
               </div>
             </div>
           </div>
@@ -342,9 +351,9 @@ export default function Hero() {
 
       {/* Scroll Indicator */}
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2">
-        <span className="text-[10px] text-ghost uppercase tracking-[0.3em]">Scroll</span>
-        <div className="w-5 h-8 rounded-full border-2 border-sky/35 flex justify-center pt-1">
-          <div className="w-1 h-2 rounded-full bg-sky animate-bounce" />
+        <span className="text-[10px] text-gray-600 uppercase tracking-[0.3em]">Scroll</span>
+        <div className="w-5 h-8 rounded-full border-2 border-blue-400 flex justify-center pt-1">
+          <div className="w-1 h-2 rounded-full bg-blue-700 animate-bounce" />
         </div>
       </div>
     </section>

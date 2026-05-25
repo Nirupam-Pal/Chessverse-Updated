@@ -38,7 +38,7 @@ export default function Navigation() {
       data-testid="main-nav"
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled
-          ? 'bg-twilight/85 backdrop-blur-xl border-b border-sky/15 shadow-lg shadow-void/30'
+          ? 'bg-twilight/85 backdrop-blur-xl border-b border-sky/15 shadow-lg shadow-void/30 light:bg-white/95 light:border-slate-200'
           : 'bg-transparent'
       }`}
     >
@@ -108,7 +108,7 @@ export default function Navigation() {
 
       {/* Mobile Menu */}
       <div
-        className={`lg:hidden absolute top-[72px] left-0 right-0 bg-twilight/95 backdrop-blur-xl border-b border-sky/15 transition-all duration-300 overflow-hidden ${
+          className={`lg:hidden absolute top-[72px] left-0 right-0 bg-twilight/95 backdrop-blur-xl border-b border-sky/15 transition-all duration-300 overflow-hidden light:bg-white/95 light:border-slate-200 ${
           mobileOpen ? 'max-h-[600px] opacity-100' : 'max-h-0 opacity-0'
         }`}
       >

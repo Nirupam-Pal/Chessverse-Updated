@@ -11,9 +11,13 @@ export default defineConfig({
     host: '0.0.0.0',
     port: 3000,
     allowedHosts: true,
+    // Use local websocket HMR by default so changes reload automatically
+    // The previous config forced WSS/clientPort 443 which can prevent HMR
+    // from connecting on a typical local (http) dev server.
     hmr: {
-      clientPort: 443,
-      protocol: 'wss',
+      protocol: 'ws',
+      host: 'localhost',
+      clientPort: 3000,
     },
   },
   preview: {
