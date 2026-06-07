@@ -125,7 +125,7 @@ export default function Booking() {
                     onClick={() => update('level', lvl)}
                     className={`px-4 py-3 rounded-xl border text-sm font-medium transition-all duration-300 ${
                       form.level === lvl
-                        ? 'border-sky bg-sky/10 text-ivory shadow-glow'
+                        ? 'border-blue-300 bg-sky/10 text-ivory shadow-md'
                         : 'border-sky/15 bg-white/5 text-ghost hover:border-sky/30'
                     }`}
                   >
@@ -148,7 +148,7 @@ export default function Booking() {
                     onClick={() => update('mode', m)}
                     className={`px-4 py-3 rounded-xl border text-sm font-medium transition-all duration-300 ${
                       form.mode === m
-                        ? 'border-sky bg-sky/10 text-ivory shadow-glow'
+                        ? 'border-blue-300 bg-sky/10 text-ivory shadow-md'
                         : 'border-sky/15 bg-white/5 text-ghost hover:border-sky/30'
                     }`}
                   >
@@ -170,7 +170,7 @@ export default function Booking() {
               </button>
             </div>
 
-            <p className="text-center text-xs text-ghost pt-2">
+            <p className="text-center text-sm text-ghost pt-2">
               By submitting, you agree to be contacted by ChessVerse about a free trial class.
             </p>
           </div>

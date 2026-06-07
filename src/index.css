@@ -99,6 +99,10 @@
   color: #0f172a !important;
 }
 
+.light .gallery-title {
+  color: #F2F5FA !important;
+}
+
 .light [class*="text-ghost"] {
   color: #475569 !important;
 }
@@ -243,14 +247,14 @@
   }
   .pill-tag {
     @apply inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-[0.18em];
-    background: rgba(58, 141, 222, 0.10);
-    color: #8ECAE6;
-    border: 1px solid rgba(58, 141, 222, 0.25);
+    background: rgba(119, 175, 231, 0.1);
+    color: #1993cb;
+    border: 1px solid rgba(6, 92, 178, 0.25);
   }
   .pill-tag-gold {
     @apply inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-[0.18em];
-    background: rgba(212, 175, 55, 0.10);
-    color: #E9C75A;
+    background: rgba(229, 193, 76, 0.1);
+    color: #e6b61a;
     border: 1px solid rgba(212, 175, 55, 0.30);
   }
 }

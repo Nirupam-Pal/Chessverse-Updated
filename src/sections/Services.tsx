@@ -68,11 +68,11 @@ function ServiceCard({ service, index }: { service: typeof services[0]; index: n
           featured ? 'border-gold/40' : ''
         }`}
       >
-        {featured && (
-          <span className="absolute top-5 right-5 pill-tag-gold !py-1 !px-3 !text-[10px]">
+        {/* {featured && (
+          <span className="absolute top-2 right-1 pill-tag-gold !py-1 !px-3 !text-[10px]">
             Most Popular
           </span>
-        )}
+        )} */}
 
         {/* Level + age */}
         <div className="flex items-start justify-between mb-6">
@@ -114,8 +114,7 @@ function ServiceCard({ service, index }: { service: typeof services[0]; index: n
                   service.accent === 'gold' ? 'bg-gold' : 'bg-sky'
                 }`}
               />
-              {f}
-            </li>
+              {f}            </li>
           ))}
         </ul>
 

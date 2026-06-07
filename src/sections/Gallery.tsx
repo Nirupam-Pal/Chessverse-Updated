@@ -67,7 +67,7 @@ export default function Gallery() {
           className="text-center mb-14 md:mb-16"
         >
           <span className="pill-tag mb-5" data-testid="gallery-tag">
-            <ZoomIn className="w-3.5 h-3.5" />
+            {/* <ZoomIn className="w-3.5 h-3.5" /> */}
             Inside ChessVerse
           </span>
           <h2 className="font-display font-bold text-4xl sm:text-5xl lg:text-6xl text-ivory mb-5 leading-tight">
@@ -102,10 +102,10 @@ export default function Gallery() {
               <div className="absolute inset-0 bg-gradient-to-br from-royal/0 via-royal/0 to-royal/0 group-hover:from-royal/40 group-hover:to-sky/20 transition-all duration-500" />
 
               <div className="absolute inset-0 flex flex-col justify-end p-3 sm:p-5 text-left">
-                <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.18em] text-sky mb-1">
+                <span className="text-[10px] sm:text-xs  font-semibold uppercase tracking-[0.18em] text-blue-600 mb-1">
                   {item.tag}
                 </span>
-                <span className="font-display font-semibold text-base sm:text-xl text-ivory">
+                <span className="font-display font-semibold text-base sm:text-xl text-ivory gallery-title">
                   {item.title}
                 </span>
               </div>
@@ -135,7 +135,7 @@ export default function Gallery() {
             <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between gap-4">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-widest text-sky">{active.tag}</p>
-                <p className="font-display font-semibold text-ivory text-xl">{active.title}</p>
+                <p className="font-display font-semibold text-ivory text-xl gallery-title">{active.title}</p>
               </div>
               <button
                 onClick={(e) => {

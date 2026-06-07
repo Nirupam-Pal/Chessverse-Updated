@@ -1,33 +1,6 @@
 import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
-import { ShieldCheck, Sparkles, Target, Heart } from 'lucide-react'
 
-const pillars = [
-  {
-    icon: ShieldCheck,
-    title: 'Disciplined Curriculum',
-    description:
-      'A structured FIDE-aligned syllabus from absolute beginner up to tournament level — built and refined over 12+ years.',
-  },
-  {
-    icon: Target,
-    title: 'Tournament Focused',
-    description:
-      'Weekly rated practice rounds, openings repertoire training and personalised game analysis to sharpen real play.',
-  },
-  {
-    icon: Sparkles,
-    title: 'Joyful Learning',
-    description:
-      'Puzzles, mini-games, themed contests — we keep young minds engaged while building deep chess intuition.',
-  },
-  {
-    icon: Heart,
-    title: 'Parent Partnership',
-    description:
-      'Monthly progress reviews and 1:1 mentoring so families always know what is next on the journey.',
-  },
-]
 
 export default function About() {
   const ref = useRef<HTMLDivElement>(null)
@@ -100,7 +73,57 @@ export default function About() {
               </p>
             </div>
 
-            <div className="grid sm:grid-cols-2 gap-4">
+            <div className="grid gap-4 lg:grid-cols-[0.95fr_1.05fr]">
+              <div className="relative rounded-[32px] border border-white/10 bg-white/10 p-6 sm:p-8 shadow-[0_24px_70px_-30px_rgba(59,130,246,0.45)] backdrop-blur-xl dark:border-slate-700 dark:bg-slate-950/70">
+                <div className="absolute -top-8 right-8 h-24 w-24 rounded-full bg-sky/20 blur-3xl" />
+                <span className="relative inline-flex rounded-full bg-sky/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-sky">
+                  Why Chess?
+                </span>
+                <h3 className="mt-5 font-display text-3xl font-bold text-slate-950 dark:text-ivory leading-tight">
+                  The game that sharpens minds, builds character and unlocks new moves.
+                </h3>
+                <p className="mt-4 text-sm leading-relaxed text-slate-600 dark:text-slate-300 max-w-xl">
+                  Chess is the training ground for focus, patience and bold decisions. Every board becomes a lab for learning how to think ahead.
+                </p>
+                <ul className="mt-6 space-y-3">
+                  {[
+                    'Practice sharp thinking under pressure.',
+                    'Turn setbacks into smarter next moves.',
+                    'Build confidence through every win and lesson.',
+                  ].map((item) => (
+                    <li key={item} className="flex items-start gap-3">
+                      <span className="mt-1 inline-flex h-2.5 w-2.5 rounded-full bg-sky" />
+                      <span className="text-sm text-slate-600 dark:text-slate-300">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="relative rounded-[32px] border border-white/10 bg-white/10 p-6 sm:p-8 shadow-[0_24px_70px_-30px_rgba(252,211,77,0.3)] backdrop-blur-xl dark:border-slate-700 dark:bg-slate-950/80">
+                <div className="absolute -bottom-8 left-8 h-24 w-24 rounded-full bg-gold/20 blur-3xl" />
+                <span className="relative inline-flex rounded-full bg-gold/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-gold">
+                  Why Chessverse?
+                </span>
+                <h3 className="mt-5 font-display text-3xl font-bold text-ivory leading-tight">
+                  A bold academy where every learner is seen, trained and celebrated.
+                </h3>
+                <p className="mt-4 text-sm leading-relaxed text-slate-300 max-w-xl">
+                  We pair expert coaching with a warm community, tournament momentum and progress plans that keep students excited about every next move.
+                </p>
+                <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                  <div className="rounded-3xl border border-white/10 bg-white/5 p-4 text-sm text-slate-400 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-300">
+                    <p className="uppercase tracking-[0.18em] text-xs text-ghost mb-2">Proven path</p>
+                    <p className="font-semibold text-ivory">12+ years of coaching excellence.</p>
+                  </div>
+                  <div className="rounded-3xl border border-white/10 bg-white/5 p-4 text-sm text-slate-400 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-300">
+                    <p className="uppercase tracking-[0.18em] text-xs text-ghost mb-2">Built for growth</p>
+                    <p className="font-semibold text-ivory">Community, contests and progress tracking.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* <div className="grid sm:grid-cols-2 gap-4">
               {pillars.map((p, i) => (
                 <motion.div
                   key={p.title}
@@ -119,7 +142,7 @@ export default function About() {
                   <p className="text-ghost text-xs leading-relaxed">{p.description}</p>
                 </motion.div>
               ))}
-            </div>
+            </div> */}
 
             <div className="flex flex-wrap gap-3 pt-2">
               <a
