@@ -85,7 +85,7 @@ export const EXPERTS: Expert[] = [
 // ─────────────────────────────────────────────
  
 const T = {
-  bg: "#0a0a0f",
+  bg: "#060b1a",
   bgCard: "#111118",
   bgCardHover: "#18181f",
   border: "rgba(255,255,255,0.07)",
