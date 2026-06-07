@@ -13,6 +13,7 @@ import Booking from '../sections/Booking'
 import Contact from '../sections/Contact'
 import Footer from '../sections/Footer'
 import WhatsAppButton from '../components/WhatsAppButton'
+import ExpertTestimonials from '@/sections/Expertstestimonial'
 
 export default function Home() {
   return (
@@ -27,6 +28,7 @@ export default function Home() {
       <StarPerformer />
       <Coaches />
       <Gallery />
+      <ExpertTestimonials />
       <Testimonials />
       <Booking />
       <Contact />
