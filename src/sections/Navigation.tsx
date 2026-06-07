@@ -6,6 +6,7 @@ const navLinks = [
   { label: 'About', href: '#about' },
   { label: 'Courses', href: '#services' },
   { label: 'Achievements', href: '#achievements' },
+  { label: 'Star Performer', href: '#star-performer' },
   { label: 'Coaches', href: '#coaches' },
   { label: 'Gallery', href: '#gallery' },
   { label: 'Testimonials', href: '#testimonials' },

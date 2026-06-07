@@ -4,6 +4,7 @@ import StatsTicker from '../sections/StatsTicker'
 import About from '../sections/About'
 import Services from '../sections/Services'
 import Achievements from '../sections/Achievements'
+import StarPerformer from '../sections/StarPerformer'
 import Coaches from '../sections/Coaches'
 import Gallery from '../sections/Gallery'
 import Testimonials from '../sections/Testimonials'
@@ -21,6 +22,7 @@ export default function Home() {
       <About />
       <Services />
       <Achievements />
+      <StarPerformer />
       <Coaches />
       <Gallery />
       <Testimonials />
