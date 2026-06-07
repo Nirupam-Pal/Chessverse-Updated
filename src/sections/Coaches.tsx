@@ -4,10 +4,10 @@ import { Award, Star, Trophy, Users } from 'lucide-react'
 
 const coaches = [
   {
-    name: 'Coach Arijit Debbarma',
+    name: 'Coach Pratik Debnath',
     title: 'Founder & Head Coach',
     rating: 'FIDE Trainer',
-    image: '/images/coach-arijit.jpg',
+    image: '/images/coach-pratik.jpg',
     specialization: 'Opening Theory & Strategy',
     achievements: [
       'Tripura State Champion',

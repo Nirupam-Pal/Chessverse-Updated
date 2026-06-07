@@ -3,6 +3,7 @@ import Hero from '../sections/Hero'
 import StatsTicker from '../sections/StatsTicker'
 import About from '../sections/About'
 import Services from '../sections/Services'
+import Founder from '../sections/Founder'
 import Achievements from '../sections/Achievements'
 import StarPerformer from '../sections/StarPerformer'
 import Coaches from '../sections/Coaches'
@@ -20,6 +21,7 @@ export default function Home() {
       <Hero />
       <StatsTicker />
       <About />
+      <Founder />
       <Services />
       <Achievements />
       <StarPerformer />
