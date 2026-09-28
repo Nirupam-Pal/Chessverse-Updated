@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import { motion, useInView } from 'framer-motion'
+import { EASE_OUT } from '@/lib/motion'
 import { GraduationCap, ChevronRight, Video, MapPin, Crown, Trophy } from 'lucide-react'
 
 const services = [
@@ -51,7 +52,7 @@ function ServiceCard({ service, index }: { service: typeof services[0]; index: n
       data-testid={`service-card-${service.level.toLowerCase()}`}
       initial={{ opacity: 0, y: 60 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.6, delay: index * 0.15 }}
+      transition={{ duration: 0.6, delay: index * 0.15, ease: EASE_OUT }}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       className={`relative group rounded-3xl overflow-hidden transition-all duration-500 ${
@@ -160,7 +161,7 @@ export default function Services() {
           ref={headerRef}
           initial={{ opacity: 0, y: 40 }}
           animate={isHeaderInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.6, ease: EASE_OUT }}
           className="text-center mb-14 md:mb-20"
         >
           <span className="pill-tag mb-5" data-testid="services-tag">

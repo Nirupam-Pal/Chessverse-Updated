@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { MessageCircle, X, ChevronRight } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { EASE_OUT } from '@/lib/motion'
 
 interface FAQ {
   id: string
@@ -86,7 +87,7 @@ export default function Chatbot() {
             initial={{ opacity: 0, scale: 0.8, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: 20 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.3, ease: EASE_OUT }}
             className="fixed bottom-24 right-24 z-50 w-96 max-h-[600px] rounded-2xl bg-gradient-to-b from-void to-twilight border border-sky/20 shadow-2xl flex flex-col overflow-hidden"
             data-testid="chatbot-box"
           >
@@ -124,7 +125,7 @@ export default function Chatbot() {
                       <p className="text-sm text-ivory font-medium flex-1">{faq.question}</p>
                       <motion.div
                         animate={{ rotate: expandedFAQ === faq.id ? 90 : 0 }}
-                        transition={{ duration: 0.2 }}
+                        transition={{ duration: 0.2, ease: EASE_OUT }}
                       >
                         <ChevronRight className="w-4 h-4 text-sky shrink-0 mt-1" />
                       </motion.div>
@@ -138,7 +139,7 @@ export default function Chatbot() {
                         initial={{ opacity: 0, height: 0, marginTop: 0 }}
                         animate={{ opacity: 1, height: 'auto', marginTop: 8 }}
                         exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                        transition={{ duration: 0.3 }}
+                        transition={{ duration: 0.3, ease: EASE_OUT }}
                         className="overflow-hidden"
                       >
                         <div

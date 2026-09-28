@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
+import { EASE_OUT } from '@/lib/motion'
 import { Award, Star, Trophy, Users } from 'lucide-react'
 
 const coaches = [
@@ -75,7 +76,7 @@ function CoachCard({ coach, index }: { coach: typeof coaches[0]; index: number }
       data-testid={`coach-card-${index}`}
       initial={{ opacity: 0, y: 50 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.6, delay: index * 0.12 }}
+      transition={{ duration: 0.6, delay: index * 0.12, ease: EASE_OUT }}
       className="group relative"
     >
       {coach.featured && (
@@ -177,7 +178,7 @@ export default function Coaches() {
           ref={headerRef}
           initial={{ opacity: 0, y: 40 }}
           animate={isHeaderInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.6, ease: EASE_OUT }}
           className="text-center mb-14 md:mb-20"
         >
           <span className="pill-tag mb-5" data-testid="coaches-tag">

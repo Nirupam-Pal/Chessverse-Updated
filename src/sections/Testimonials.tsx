@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
+import { EASE_OUT } from '@/lib/motion'
 import { Star, Quote, TrendingUp } from 'lucide-react'
 
 const testimonials = [
@@ -58,7 +59,7 @@ export default function Testimonials() {
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.6, ease: EASE_OUT }}
           className="text-center mb-14 md:mb-20"
         >
           <span className="pill-tag mb-5" data-testid="testimonials-tag">
@@ -79,7 +80,7 @@ export default function Testimonials() {
               data-testid={`testimonial-card-${index}`}
               initial={{ opacity: 0, y: 40 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: index * 0.12 }}
+              transition={{ duration: 0.6, delay: index * 0.12, ease: EASE_OUT }}
               className="group relative"
             >
               <div className="liquid-glass rounded-3xl p-6 h-full flex flex-col glow-border transition-all duration-500 group-hover:border-sky/45 group-hover:-translate-y-1">

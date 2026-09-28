@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import { motion, useInView } from 'framer-motion'
+import { EASE_OUT } from '@/lib/motion'
 import { ZoomIn } from 'lucide-react'
 
 type GalleryItem = {
@@ -63,7 +64,7 @@ export default function Gallery() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.6, ease: EASE_OUT }}
           className="text-center mb-14 md:mb-16"
         >
           <span className="pill-tag mb-5" data-testid="gallery-tag">
@@ -86,7 +87,7 @@ export default function Gallery() {
               onClick={() => setActive(item)}
               initial={{ opacity: 0, scale: 0.92 }}
               animate={isInView ? { opacity: 1, scale: 1 } : {}}
-              transition={{ duration: 0.5, delay: i * 0.07 }}
+              transition={{ duration: 0.5, delay: i * 0.07, ease: EASE_OUT }}
               className={`group relative overflow-hidden rounded-2xl glow-border bg-midnight/60 ${
                 item.span ?? ''
               }`}

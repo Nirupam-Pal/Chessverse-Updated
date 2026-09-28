@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
+import { EASE_OUT } from '@/lib/motion'
 import { Globe, HeartHandshake, Sparkles, Quote } from 'lucide-react'
 
 export default function Founder() {
@@ -18,7 +19,7 @@ export default function Founder() {
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.75 }}
+            transition={{ duration: 0.75, ease: EASE_OUT }}
             className="space-y-8"
           >
             <div className="max-w-2xl">
@@ -37,7 +38,7 @@ export default function Founder() {
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={isInView ? { opacity: 1, x: 0 } : {}}
-                transition={{ duration: 0.65, delay: 0.1 }}
+                transition={{ duration: 0.65, delay: 0.1, ease: EASE_OUT }}
                 className="rounded-[28px] border border-white/10 bg-white/5 p-6 shadow-[0_30px_80px_-48px_rgba(255,255,255,0.2)] backdrop-blur-xl"
               >
                 <div className="inline-flex items-center gap-3 mb-4 text-sky">
@@ -51,7 +52,7 @@ export default function Founder() {
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={isInView ? { opacity: 1, x: 0 } : {}}
-                transition={{ duration: 0.65, delay: 0.2 }}
+                transition={{ duration: 0.65, delay: 0.2, ease: EASE_OUT }}
                 className="rounded-[28px] border border-white/10 bg-white/5 p-6 shadow-[0_30px_80px_-48px_rgba(252,211,77,0.28)] backdrop-blur-xl"
               >
                 <div className="inline-flex items-center gap-3 mb-4 text-gold">
@@ -67,7 +68,7 @@ export default function Founder() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.65, delay: 0.3 }}
+              transition={{ duration: 0.65, delay: 0.3, ease: EASE_OUT }}
               className="rounded-[32px] border border-white/10 bg-void/50 p-8 shadow-2xl backdrop-blur-xl"
             >
               <div className="flex items-start gap-5 sm:items-center sm:gap-6">
@@ -98,7 +99,7 @@ export default function Founder() {
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.75, delay: 0.15 }}
+            transition={{ duration: 0.75, delay: 0.15, ease: EASE_OUT }}
             className="relative"
           >
             <div className="relative rounded-[32px] overflow-hidden shadow-2xl border border-white/10 bg-white/5 backdrop-blur-xl">

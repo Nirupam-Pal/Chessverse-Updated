@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
+import { EASE_OUT } from '@/lib/motion'
 
 
 export default function About() {
@@ -17,7 +18,7 @@ export default function About() {
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.7 }}
+            transition={{ duration: 0.7, ease: EASE_OUT }}
             className="relative"
           >
             <div className="relative rounded-[28px] overflow-hidden aspect-[4/5] shadow-2xl">
@@ -56,7 +57,7 @@ export default function About() {
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.7, delay: 0.15 }}
+            transition={{ duration: 0.7, delay: 0.15, ease: EASE_OUT }}
             className="space-y-8"
           >
             <div>
@@ -130,7 +131,7 @@ export default function About() {
                   data-testid={`about-pillar-${i}`}
                   initial={{ opacity: 0, y: 20 }}
                   animate={isInView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 0.5, delay: 0.3 + i * 0.1 }}
+                  transition={{ duration: 0.5, delay: 0.3 + i * 0.1, ease: EASE_OUT }}
                   className="liquid-glass glow-border rounded-2xl p-5 hover:-translate-y-1 transition-transform duration-300"
                 >
                   <div className="w-10 h-10 rounded-xl bg-sky/10 ring-1 ring-sky/25 flex items-center justify-center mb-3">

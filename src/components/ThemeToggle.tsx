@@ -3,7 +3,9 @@ import { useEffect, useState } from 'react'
 import { Moon, Sun } from 'lucide-react'
 
 type ThemeMode = 'dark' | 'light'
-const STORAGE_KEY = 'chessverse-theme'
+// v2: the old key was written on every visit (including OS-detected light mode),
+// so it can't tell a real choice apart; only explicit toggles are stored now
+const STORAGE_KEY = 'chessverse-theme-v2'
 
 const getPreferredTheme = (): ThemeMode => {
   if (typeof window === 'undefined') {
@@ -15,13 +17,14 @@ const getPreferredTheme = (): ThemeMode => {
     return storedTheme
   }
 
-  return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'
+  // dark is the default; light only when the visitor has chosen it via the toggle
+  return 'dark'
 }
 
-const applyTheme = (theme: ThemeMode) => {
+const applyTheme = (theme: ThemeMode, persist = false) => {
   document.documentElement.classList.remove('light', 'dark')
   document.documentElement.classList.add(theme)
-  localStorage.setItem(STORAGE_KEY, theme)
+  if (persist) localStorage.setItem(STORAGE_KEY, theme)
 }
 
 export default function ThemeToggle() {
@@ -36,7 +39,7 @@ export default function ThemeToggle() {
   const toggleTheme = () => {
     const nextTheme = theme === 'dark' ? 'light' : 'dark'
     setTheme(nextTheme)
-    applyTheme(nextTheme)
+    applyTheme(nextTheme, true)
   }
 
   return (

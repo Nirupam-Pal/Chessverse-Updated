@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import { motion, useInView } from 'framer-motion'
+import { EASE_OUT } from '@/lib/motion'
 import { Calendar, GraduationCap, MessageCircle } from 'lucide-react'
 
 const levels = ['Beginner', 'Intermediate', 'Advanced']
@@ -32,7 +33,7 @@ export default function Booking() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.6, ease: EASE_OUT }}
           className="text-center mb-12 md:mb-14"
         >
           <span className="pill-tag-gold mb-5" data-testid="booking-tag">
@@ -51,7 +52,7 @@ export default function Booking() {
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.15 }}
+          transition={{ duration: 0.6, delay: 0.15, ease: EASE_OUT }}
           className="liquid-glass rounded-3xl p-6 sm:p-8 lg:p-10 relative"
         >
           <div className="space-y-6" data-testid="booking-form">

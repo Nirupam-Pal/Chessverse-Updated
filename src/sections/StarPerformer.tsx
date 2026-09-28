@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
+import { EASE_OUT } from '@/lib/motion'
 import { ChevronLeft, ChevronRight, Crown, Star, Trophy, TrendingUp, Medal, Sparkles } from 'lucide-react'
 
 const starPerformers = [
@@ -88,7 +89,7 @@ export default function StarPerformer() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.6, ease: EASE_OUT }}
           className="text-center mb-14 md:mb-20"
         >
           <span className="pill-tag-gold mb-5" data-testid="star-performer-tag">
@@ -107,7 +108,7 @@ export default function StarPerformer() {
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7, delay: 0.15 }}
+          transition={{ duration: 0.7, delay: 0.15, ease: EASE_OUT }}
           className="relative"
         >
           <div className="absolute -inset-px rounded-[32px] bg-gradient-to-br from-gold/35 via-sky/20 to-royal/25 blur-md opacity-60 pointer-events-none" />
@@ -140,7 +141,7 @@ export default function StarPerformer() {
                     initial={{ opacity: 0, scale: 1.05 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.98 }}
-                    transition={{ duration: 0.45 }}
+                    transition={{ duration: 0.45, ease: EASE_OUT }}
                     className="absolute inset-0 w-full h-full object-cover"
                     loading="lazy"
                   />
@@ -173,7 +174,7 @@ export default function StarPerformer() {
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -16 }}
-                    transition={{ duration: 0.35 }}
+                    transition={{ duration: 0.35, ease: EASE_OUT }}
                   >
                     <div className="flex items-center gap-1 mb-4">
                       {Array.from({ length: 5 }).map((_, i) => (
@@ -233,7 +234,7 @@ export default function StarPerformer() {
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.35 }}
+          transition={{ duration: 0.6, delay: 0.35, ease: EASE_OUT }}
           className="mt-8 flex flex-col items-center gap-4"
         >
           <div className="flex items-center gap-3 overflow-x-auto px-1 py-1 scrollbar-hide">

@@ -7,6 +7,8 @@ import { inspectAttr } from 'kimi-plugin-inspect-react'
 export default defineConfig({
   base: './',
   plugins: [inspectAttr(), react()],
+  // 3D models imported from src (e.g. the hero knight, inlined via `?inline`)
+  assetsInclude: ['**/*.glb'],
   server: {
     host: '0.0.0.0',
     port: 3000,

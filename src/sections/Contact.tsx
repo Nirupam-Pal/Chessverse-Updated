@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import { motion, useInView } from 'framer-motion'
+import { EASE_OUT } from '@/lib/motion'
 import { MapPin, Phone, Mail, Clock, Facebook, Instagram, MessageCircle } from 'lucide-react'
 
 const contactInfo = [
@@ -47,7 +48,7 @@ export default function Contact() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.6, ease: EASE_OUT }}
           className="text-center mb-14 md:mb-16"
         >
           <span className="pill-tag mb-5" data-testid="contact-tag">
@@ -66,7 +67,7 @@ export default function Contact() {
           <motion.div
             initial={{ opacity: 0, x: -40 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.7, delay: 0.15 }}
+            transition={{ duration: 0.7, delay: 0.15, ease: EASE_OUT }}
           >
             <div className="liquid-glass rounded-3xl p-6 sm:p-8">
               <div className="space-y-5" data-testid="contact-form">
@@ -144,7 +145,7 @@ export default function Contact() {
           <motion.div
             initial={{ opacity: 0, x: 40 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.7, delay: 0.2 }}
+            transition={{ duration: 0.7, delay: 0.2, ease: EASE_OUT }}
             className="space-y-6"
           >
             <div className="grid sm:grid-cols-2 gap-4">

@@ -65,7 +65,7 @@
   --sidebar-ring: 212 73% 55%;
 }
 
-.light body {
+.light body::before {
   background-image:
     radial-gradient(ellipse 80% 60% at 50% -10%, rgba(58, 141, 222, 0.12), transparent 60%),
     radial-gradient(ellipse 50% 50% at 90% 30%, rgba(31, 79, 174, 0.08), transparent 60%);
@@ -153,11 +153,19 @@
   body {
     @apply bg-background text-foreground font-body antialiased;
     font-family: 'Manrope', system-ui, sans-serif;
+    transition: background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease;
+  }
+  /* Decorative glow pinned to the viewport. A fixed, composited layer instead of
+     `background-attachment: fixed`, which forces a full repaint on every scroll frame. */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
     background-image:
       radial-gradient(ellipse 80% 60% at 50% -10%, rgba(58, 141, 222, 0.15), transparent 60%),
       radial-gradient(ellipse 50% 50% at 90% 30%, rgba(31, 79, 174, 0.10), transparent 60%);
-    background-attachment: fixed;
-    transition: background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease;
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Fraunces', 'Playfair Display', serif;

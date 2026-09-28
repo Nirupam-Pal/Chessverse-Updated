@@ -6,6 +6,7 @@ import {
   useTransform,
   type MotionValue,
 } from 'framer-motion'
+import { EASE_OUT } from '@/lib/motion'
 import { Trophy, Medal, Award, Crown, Users, GraduationCap } from 'lucide-react'
 
 const stats = [
@@ -168,7 +169,7 @@ export default function Achievements() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.6, ease: EASE_OUT }}
           className="text-center mb-14 md:mb-20"
         >
           <span className="pill-tag-gold mb-5" data-testid="achievements-tag">
@@ -191,7 +192,7 @@ export default function Achievements() {
               data-testid={`achievement-stat-${i}`}
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
+              transition={{ duration: 0.5, delay: i * 0.1, ease: EASE_OUT }}
               className="liquid-glass glow-border rounded-2xl p-5 sm:p-6 text-center hover:-translate-y-1 transition-transform duration-300"
             >
               <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-sky/10 ring-1 ring-sky/25 mb-3">

@@ -5,6 +5,7 @@ import {
   useTransform,
   MotionValue,
 } from "framer-motion";
+import { EASE_OUT } from '@/lib/motion'
 
 // ─────────────────────────────────────────────
 // THEME DETECTION HOOK
@@ -424,7 +425,7 @@ const CardInner: React.FC<CardInnerProps> = ({ expert, index, theme: T, isDark }
               ? `0 0 0 3px ${T.goldRingHover}`
               : `0 0 0 2px ${T.goldRing}`,
           }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.3, ease: EASE_OUT }}
           style={{
             flexShrink: 0, width: avatarSize, height: avatarSize,
             borderRadius: "50%", overflow: "hidden",

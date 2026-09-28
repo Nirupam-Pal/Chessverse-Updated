@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState, Suspense, type ReactNode, type RefObject } from 'react'
+import { useEffect, useMemo, useRef, useState, Suspense, type ReactNode, type RefObject } from 'react'
 import { Canvas, useFrame, useThree, type ThreeElements } from '@react-three/fiber'
-import { Environment, Lightformer, MeshReflectorMaterial, Sparkles } from '@react-three/drei'
+import { Environment, Lightformer, MeshReflectorMaterial, PerformanceMonitor, Preload, Sparkles, useGLTF } from '@react-three/drei'
 import {
   animate,
   motion,
@@ -26,6 +26,8 @@ import {
   Users,
 } from 'lucide-react'
 import * as THREE from 'three'
+import knightGlbUrl from '@/assets/models/knight.glb?inline'
+import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js'
 
 /* ------------------------------------------------------------------ */
 /*  Helpers                                                            */
@@ -50,6 +52,9 @@ type PointerRef = RefObject<{ x: number; y: number }>
 
 const easeOut = (p: number) => 1 - Math.pow(1 - p, 3)
 
+// fixed navbar is 72px tall; keep the 3D knight at least this far from the top edge
+const NAV_SAFE_PX = 96
+
 /* ------------------------------------------------------------------ */
 /*  Geometry                                                           */
 /* ------------------------------------------------------------------ */
@@ -58,105 +63,94 @@ type Profile = [number, number][]
 
 function lathe(profile: Profile, smooth = true) {
   const raw = profile.map(([x, y]) => new THREE.Vector2(x, y))
-  const pts = smooth ? new THREE.SplineCurve(raw).getPoints(96) : raw
-  const geo = new THREE.LatheGeometry(pts, 64)
+  const pts = smooth ? new THREE.SplineCurve(raw).getPoints(160) : raw
+  const geo = new THREE.LatheGeometry(pts, 96)
   geo.computeVertexNormals()
   return geo
 }
 
+// Staunton foot: flat pad, double bead, cove, then flowing into the stem
 const BASE: Profile = [
-  [0, 0], [0.5, 0], [0.5, 0.07], [0.42, 0.12], [0.44, 0.18], [0.32, 0.26],
+  [0, 0], [0.5, 0], [0.515, 0.025], [0.5, 0.06], [0.45, 0.085], [0.455, 0.12],
+  [0.43, 0.15], [0.38, 0.175], [0.33, 0.22], [0.3, 0.27],
 ]
 
 const KING_GEO = lathe([
-  ...BASE, [0.24, 0.45], [0.19, 0.95], [0.18, 1.12], [0.3, 1.18], [0.3, 1.24],
-  [0.19, 1.28], [0.23, 1.42], [0.31, 1.6], [0.29, 1.68], [0.12, 1.74], [0, 1.75],
+  ...BASE, [0.24, 0.42], [0.2, 0.7], [0.18, 0.98], [0.2, 1.08], [0.3, 1.14], [0.32, 1.18],
+  [0.3, 1.22], [0.2, 1.26], [0.19, 1.3], [0.24, 1.42], [0.3, 1.56], [0.32, 1.64],
+  [0.26, 1.69], [0.14, 1.73], [0, 1.74],
 ])
 
 const QUEEN_GEO = lathe([
-  ...BASE, [0.23, 0.45], [0.17, 0.95], [0.16, 1.08], [0.28, 1.14], [0.28, 1.2],
-  [0.18, 1.24], [0.22, 1.38], [0.32, 1.56], [0.28, 1.6], [0.12, 1.58], [0, 1.58],
+  ...BASE, [0.23, 0.42], [0.19, 0.7], [0.16, 0.96], [0.18, 1.04], [0.28, 1.1], [0.3, 1.14],
+  [0.28, 1.18], [0.18, 1.22], [0.17, 1.26], [0.22, 1.38], [0.31, 1.54], [0.33, 1.58],
+  [0.24, 1.6], [0.1, 1.6], [0, 1.6],
 ])
 
 const BISHOP_GEO = lathe([
-  ...BASE, [0.2, 0.5], [0.15, 0.78], [0.26, 0.84], [0.26, 0.88], [0.15, 0.92],
-  [0.21, 1.02], [0.24, 1.16], [0.17, 1.32], [0.07, 1.4], [0, 1.41],
+  ...BASE, [0.21, 0.42], [0.16, 0.68], [0.17, 0.76], [0.26, 0.81], [0.27, 0.85],
+  [0.25, 0.88], [0.15, 0.91], [0.14, 0.95], [0.2, 1.03], [0.235, 1.14], [0.22, 1.26],
+  [0.16, 1.36], [0.07, 1.42], [0, 1.43],
 ])
 
 const PAWN_GEO = lathe([
-  ...BASE, [0.2, 0.4], [0.15, 0.56], [0.26, 0.6], [0.26, 0.64], [0.1, 0.68], [0, 0.68],
+  ...BASE, [0.21, 0.38], [0.15, 0.52], [0.16, 0.56], [0.26, 0.6], [0.27, 0.63],
+  [0.24, 0.66], [0.12, 0.68], [0, 0.68],
 ])
 
-const ROOK_GEO = lathe(
-  [
-    [0, 0], [0.5, 0], [0.5, 0.08], [0.42, 0.13], [0.44, 0.19], [0.32, 0.27],
-    [0.27, 0.45], [0.26, 0.86], [0.34, 0.94], [0.36, 1.08], [0, 1.08],
-  ],
-  false,
-)
+const ROOK_GEO = lathe([
+  ...BASE, [0.28, 0.42], [0.26, 0.7], [0.27, 0.84], [0.32, 0.9], [0.35, 0.95],
+  [0.36, 1.08], [0.3, 1.08], [0, 1.08],
+])
 
-const KNIGHT_BASE_GEO = lathe([...BASE, [0.3, 0.32], [0.3, 0.36], [0, 0.36]])
+// top recess of the rook, in the contrasting tone
+const ROOK_TOP_GEO = new THREE.CylinderGeometry(0.24, 0.24, 0.02, 64)
 
-const KNIGHT_HEAD_GEO = (() => {
-  const s = new THREE.Shape()
-  s.moveTo(-0.3, 0)
-  s.lineTo(0.34, 0)
-  s.quadraticCurveTo(0.26, 0.3, 0.36, 0.55)
-  s.quadraticCurveTo(0.46, 0.85, 0.3, 1.12)
-  s.lineTo(0.14, 1.3) // ear tip
-  s.lineTo(0.04, 1.16)
-  s.quadraticCurveTo(-0.14, 1.14, -0.3, 0.98) // forehead
-  s.quadraticCurveTo(-0.44, 0.84, -0.44, 0.76) // muzzle
-  s.quadraticCurveTo(-0.42, 0.66, -0.3, 0.68) // mouth
-  s.quadraticCurveTo(-0.14, 0.7, -0.08, 0.6) // jaw
-  s.quadraticCurveTo(-0.28, 0.4, -0.3, 0)
-  const geo = new THREE.ExtrudeGeometry(s, {
-    depth: 0.4,
-    bevelEnabled: true,
-    bevelThickness: 0.07,
-    bevelSize: 0.05,
-    bevelSegments: 8,
-    curveSegments: 48,
-  })
-  geo.translate(0, 0, -0.2)
-  geo.computeVertexNormals()
-  return geo
-})()
+const CROSS_V_GEO = new RoundedBoxGeometry(0.08, 0.3, 0.08, 4, 0.03)
+const CROSS_H_GEO = new RoundedBoxGeometry(0.22, 0.08, 0.08, 4, 0.03)
+const MERLON_GEO = new RoundedBoxGeometry(0.13, 0.14, 0.12, 4, 0.025)
 
 /* ------------------------------------------------------------------ */
 /*  Materials                                                          */
 /* ------------------------------------------------------------------ */
 
+// polished porcelain
 const IVORY_MAT = new THREE.MeshPhysicalMaterial({
   color: '#F2F5FA',
-  roughness: 0.16,
-  metalness: 0.08,
+  roughness: 0.24,
+  metalness: 0.02,
   clearcoat: 1,
   clearcoatRoughness: 0.06,
-  sheen: 0.4,
+  sheen: 0.35,
+  sheenRoughness: 0.5,
   sheenColor: new THREE.Color('#8ECAE6'),
+  specularIntensity: 0.7,
 })
 
+// deep lacquer
 const NAVY_MAT = new THREE.MeshPhysicalMaterial({
   color: '#0E2A52',
-  roughness: 0.2,
-  metalness: 0.6,
+  roughness: 0.3,
+  metalness: 0.3,
   clearcoat: 1,
-  clearcoatRoughness: 0.1,
+  clearcoatRoughness: 0.04,
   emissive: new THREE.Color('#1F4FAE'),
-  emissiveIntensity: 0.15,
+  emissiveIntensity: 0.1,
 })
 
-const GOLD_MAT = new THREE.MeshStandardMaterial({
+const GOLD_MAT = new THREE.MeshPhysicalMaterial({
   color: '#D4AF37',
   metalness: 1,
-  roughness: 0.2,
+  roughness: 0.16,
+  clearcoat: 0.6,
+  clearcoatRoughness: 0.1,
   emissive: new THREE.Color('#8A6A12'),
-  emissiveIntensity: 0.4,
+  emissiveIntensity: 0.3,
 })
 
 type Side = 'white' | 'black'
 const matFor = (side: Side) => (side === 'white' ? IVORY_MAT : NAVY_MAT)
+const accentFor = (side: Side) => (side === 'white' ? NAVY_MAT : IVORY_MAT)
 
 /* ------------------------------------------------------------------ */
 /*  Pieces                                                             */
@@ -165,60 +159,96 @@ const matFor = (side: Side) => (side === 'white' ? IVORY_MAT : NAVY_MAT)
 type PieceKind = 'king' | 'queen' | 'bishop' | 'rook' | 'pawn'
 type PieceProps = { side: Side } & ThreeElements['group']
 
+/** Thin gold ring hugging a collar of a turned piece. */
+function Band({ y, r, tube = 0.016 }: { y: number; r: number; tube?: number }) {
+  return (
+    <mesh position={[0, y, 0]} rotation={[Math.PI / 2, 0, 0]} material={GOLD_MAT}>
+      <torusGeometry args={[r, tube, 12, 96]} />
+    </mesh>
+  )
+}
+
 function Piece({ kind, side, ...props }: PieceProps & { kind: PieceKind }) {
   const mat = matFor(side)
   return (
     <group {...props}>
+      {/* every piece shares the gold-trimmed foot */}
+      <Band y={0.1} r={0.452} tube={0.014} />
+
       {kind === 'king' && (
         <>
           <mesh geometry={KING_GEO} material={mat} />
-          <mesh position={[0, 1.93, 0]} material={GOLD_MAT}>
-            <boxGeometry args={[0.09, 0.34, 0.09]} />
-          </mesh>
-          <mesh position={[0, 1.96, 0]} material={GOLD_MAT}>
-            <boxGeometry args={[0.26, 0.09, 0.09]} />
+          <Band y={1.18} r={0.32} />
+          <mesh position={[0, 1.88, 0]} geometry={CROSS_V_GEO} material={GOLD_MAT} />
+          <mesh position={[0, 1.92, 0]} geometry={CROSS_H_GEO} material={GOLD_MAT} />
+          <mesh position={[0, 1.75, 0]} material={GOLD_MAT}>
+            <sphereGeometry args={[0.07, 32, 32]} />
           </mesh>
         </>
       )}
+
       {kind === 'queen' && (
         <>
           <mesh geometry={QUEEN_GEO} material={mat} />
-          <mesh position={[0, 1.7, 0]} material={GOLD_MAT}>
-            <sphereGeometry args={[0.09, 24, 24]} />
+          <Band y={1.14} r={0.3} />
+          <Band y={1.57} r={0.325} tube={0.02} />
+          {Array.from({ length: 10 }, (_, i) => {
+            const a = (i / 10) * Math.PI * 2
+            return (
+              <mesh key={i} position={[Math.cos(a) * 0.3, 1.63, Math.sin(a) * 0.3]} material={GOLD_MAT}>
+                <sphereGeometry args={[0.038, 20, 20]} />
+              </mesh>
+            )
+          })}
+          <mesh position={[0, 1.66, 0]} material={mat}>
+            <sphereGeometry args={[0.12, 32, 32]} />
+          </mesh>
+          <mesh position={[0, 1.8, 0]} material={GOLD_MAT}>
+            <sphereGeometry args={[0.06, 32, 32]} />
           </mesh>
         </>
       )}
+
       {kind === 'bishop' && (
         <>
           <mesh geometry={BISHOP_GEO} material={mat} />
+          <Band y={0.85} r={0.27} />
+          {/* the mitre's diagonal cut, picked out in gold */}
+          <mesh position={[0, 1.2, 0]} rotation={[Math.PI / 2 - 0.55, 0, 0]} material={GOLD_MAT}>
+            <torusGeometry args={[0.215, 0.014, 12, 96]} />
+          </mesh>
           <mesh position={[0, 1.47, 0]} material={GOLD_MAT}>
-            <sphereGeometry args={[0.07, 20, 20]} />
+            <sphereGeometry args={[0.065, 32, 32]} />
           </mesh>
         </>
       )}
+
       {kind === 'rook' && (
         <>
           <mesh geometry={ROOK_GEO} material={mat} />
+          <Band y={0.93} r={0.335} />
+          <mesh position={[0, 1.085, 0]} geometry={ROOK_TOP_GEO} material={accentFor(side)} />
           {Array.from({ length: 6 }, (_, i) => {
             const a = (i / 6) * Math.PI * 2
             return (
               <mesh
                 key={i}
-                position={[Math.cos(a) * 0.29, 1.15, Math.sin(a) * 0.29]}
+                position={[Math.cos(a) * 0.3, 1.15, Math.sin(a) * 0.3]}
                 rotation={[0, -a, 0]}
+                geometry={MERLON_GEO}
                 material={mat}
-              >
-                <boxGeometry args={[0.12, 0.14, 0.16]} />
-              </mesh>
+              />
             )
           })}
         </>
       )}
+
       {kind === 'pawn' && (
         <>
           <mesh geometry={PAWN_GEO} material={mat} />
-          <mesh position={[0, 0.84, 0]} material={mat}>
-            <sphereGeometry args={[0.21, 32, 32]} />
+          <Band y={0.62} r={0.268} />
+          <mesh position={[0, 0.86, 0]} material={mat}>
+            <sphereGeometry args={[0.21, 48, 48]} />
           </mesh>
         </>
       )}
@@ -226,21 +256,59 @@ function Piece({ kind, side, ...props }: PieceProps & { kind: PieceKind }) {
   )
 }
 
+/* ---- Hero knight: glTF model ---------------------------------------- */
+/* "Stylized red knight chess piece" by noamkremerpro — CC BY 4.0
+   https://sketchfab.com/3d-models/stylized-red-knight-chess-piece-736b3794702644b89fc3ed3c3c42109a
+   (credited on the page; see the hero's footer credit) */
+
+// Inlined into the bundle as a data URL (~100 KB): the model arrives with the page's JS,
+// so there's no separate request to stall or fail on a slow connection.
+const KNIGHT_URL = knightGlbUrl
+useGLTF.preload(KNIGHT_URL, false)
+
+// model height (≈1.84) × the scale it's rendered at in the scene — used to keep its top in frame
+const KNIGHT_SCALE = 2
+const KNIGHT_TOP = 1.84 * KNIGHT_SCALE
+
+// satin porcelain — matches the reference photo rather than the file's grey
+const KNIGHT_MAT = new THREE.MeshPhysicalMaterial({
+  color: '#EDF0F5',
+  roughness: 0.38,
+  metalness: 0.03,
+  clearcoat: 0.6,
+  clearcoatRoughness: 0.2,
+  sheen: 0.2,
+  sheenRoughness: 0.6,
+  sheenColor: new THREE.Color('#8ECAE6'),
+  side: THREE.DoubleSide, // the source mesh is authored double-sided
+})
+
+// The model is centred on its middle, Z-up, nose toward −Y. Normalise it to the
+// convention the scene expects: Y-up, base at y = 0, nose toward −x, ~1.84 tall.
+function useKnightGeometry() {
+  const gltf = useGLTF(KNIGHT_URL, false)
+  return useMemo(() => {
+    let source: THREE.BufferGeometry | undefined
+    gltf.scene.traverse((o) => {
+      if (!source && (o as THREE.Mesh).isMesh) source = (o as THREE.Mesh).geometry
+    })
+    if (!source) throw new Error('knight.glb contains no mesh')
+    const geo = source.clone()
+    geo.rotateX(-Math.PI / 2) // Z-up → Y-up (same as the file's root node matrix)
+    geo.rotateY(-Math.PI / 2) // nose from +z → −x
+    geo.computeBoundingBox()
+    const box = geo.boundingBox!
+    geo.translate(-(box.min.x + box.max.x) / 2, -box.min.y, -(box.min.z + box.max.z) / 2)
+    geo.computeBoundingBox()
+    return geo
+  }, [gltf])
+}
+
 function HeroKnight(props: ThreeElements['group']) {
+  const geometry = useKnightGeometry()
   return (
     <group {...props}>
-      <mesh geometry={KNIGHT_BASE_GEO} material={IVORY_MAT} castShadow />
-      <mesh position={[0, 0.3, 0]} rotation={[0, 0, 0]} material={GOLD_MAT}>
-        <torusGeometry args={[0.305, 0.02, 12, 64]} />
-      </mesh>
-      <mesh geometry={KNIGHT_HEAD_GEO} position={[0, 0.3, 0]} material={IVORY_MAT} castShadow />
-      {/* eyes */}
-      <mesh position={[-0.16, 1.22, 0.26]} material={GOLD_MAT}>
-        <sphereGeometry args={[0.035, 16, 16]} />
-      </mesh>
-      <mesh position={[-0.16, 1.22, -0.26]} material={GOLD_MAT}>
-        <sphereGeometry args={[0.035, 16, 16]} />
-      </mesh>
+      <mesh geometry={geometry} material={KNIGHT_MAT} castShadow />
     </group>
   )
 }
@@ -326,25 +394,45 @@ function Scene({
   pointer,
   isLight,
   reduced,
+  onReady,
 }: {
   scroll: MotionValue<number>
   pointer: PointerRef
   isLight: boolean
   reduced: boolean
+  onReady: () => void
 }) {
-  const { viewport } = useThree()
+  const { viewport, size } = useThree()
   const wide = viewport.aspect > 1
   const fit = Math.min(1, viewport.width / (wide ? 11 : 6.4))
   const rig = useRef<THREE.Group>(null)
   const knight = useRef<THREE.Group>(null)
   const progress = useRef(0)
+  const lift = useRef(0) // ≤ 0: how far the rig is lowered to keep the knight clear of the navbar
+  const top = useMemo(() => new THREE.Vector3(), [])
+  // The intro is timed from the moment the scene is actually ready (shaders compiled, knight
+  // loaded, frames flowing) — not from canvas creation — so a slow first frame can't make it jump.
+  const readyAt = useRef<number | null>(null)
+  const smoothFrames = useRef(0)
   const bg = isLight ? '#F8FAFC' : '#060B1A'
 
-  useFrame(({ clock, camera }, dt) => {
+  useFrame(({ clock, camera }, rawDt) => {
     const t = clock.elapsedTime
+    // clamp the step so a dropped frame eases through instead of snapping
+    const dt = Math.min(rawDt, 1 / 30)
+
+    if (readyAt.current === null) {
+      const knightLoaded = (knight.current?.children.length ?? 0) > 0
+      smoothFrames.current = knightLoaded && rawDt < 1 / 25 ? smoothFrames.current + 1 : 0
+      if (smoothFrames.current >= 3) {
+        readyAt.current = t
+        onReady()
+      }
+    }
+
     progress.current = THREE.MathUtils.damp(progress.current, scroll.get(), 5, dt)
     const p = progress.current
-    const intro = easeOut(Math.min(t / 2, 1))
+    const intro = readyAt.current === null ? 0 : easeOut(Math.min((t - readyAt.current) / 1.8, 1))
     const chapter2 = THREE.MathUtils.smoothstep(p, 0.15, 0.42)
     const chapter3 = THREE.MathUtils.smoothstep(p, 0.52, 0.76)
     const { x: px, y: py } = reduced ? { x: 0, y: 0 } : (pointer.current ?? { x: 0, y: 0 })
@@ -353,8 +441,8 @@ function Scene({
       // desktop: knight glides right for chapter 02, then sweeps across to the left for 03
       // mobile: it rises above the panels and stays there
       rig.current.position.x = wide ? (chapter2 - 2 * chapter3) * 2.6 * fit : 0
-      rig.current.position.y = (wide ? 0 : chapter2 * 1.45) - (1 - intro) * 1.2
-      rig.current.scale.setScalar(fit * (0.8 + intro * 0.2) * (1 - chapter2 * (wide ? 0.08 : 0.35)))
+      rig.current.position.y = (wide ? 0 : chapter2 * 1.45) - (1 - intro) * 1.2 + lift.current
+      rig.current.scale.setScalar(fit * (0.8 + intro * 0.2) * (1 - chapter2 * (wide ? 0.08 : 0.45)))
     }
     if (knight.current) {
       const idle = reduced ? 0 : Math.sin(t * 0.35) * 0.3
@@ -369,6 +457,21 @@ function Scene({
     }
     camera.position.set(px * 0.25, 1.1 + p * 0.4, 8.2 - p * 1.1)
     camera.lookAt(0, 0.1, 0)
+
+    // Navbar guard: project the knight's top to the screen; if it would rise above the
+    // navbar (+ margin) — the camera dollies in as you scroll — lower the rig just enough.
+    if (knight.current) {
+      camera.updateMatrixWorld()
+      knight.current.updateWorldMatrix(true, false)
+      top.set(0, KNIGHT_TOP, 0)
+      knight.current.localToWorld(top)
+      const dist = camera.position.distanceTo(top)
+      top.project(camera)
+      const limit = 1 - (2 * NAV_SAFE_PX) / size.height
+      const worldPerNdc = dist * Math.tan(THREE.MathUtils.degToRad((camera as THREE.PerspectiveCamera).fov / 2))
+      const desired = Math.min(0, lift.current + (limit - top.y) * worldPerNdc)
+      lift.current = THREE.MathUtils.damp(lift.current, desired, 12, dt)
+    }
   })
 
   return (
@@ -392,7 +495,9 @@ function Scene({
         <PedestalGlow />
 
         <group ref={knight}>
-          <HeroKnight scale={1.8} />
+          <Suspense fallback={null}>
+            <HeroKnight scale={KNIGHT_SCALE} />
+          </Suspense>
         </group>
 
         <OrbitRing progress={progress} reduced={reduced} />
@@ -403,7 +508,7 @@ function Scene({
         <planeGeometry args={[60, 60]} />
         <MeshReflectorMaterial
           blur={[300, 80]}
-          resolution={512}
+          resolution={256}
           mixBlur={1}
           mixStrength={isLight ? 0.6 : 1.6}
           roughness={1}
@@ -442,23 +547,24 @@ function Scene({
 const EASE = [0.16, 1, 0.3, 1] as const
 
 function CountUp({ to, prefix = '', suffix = '', start }: { to: number; prefix?: string; suffix?: string; start: boolean }) {
-  const [value, setValue] = useState(0)
+  const ref = useRef<HTMLSpanElement>(null)
 
   useEffect(() => {
     if (!start) return
+    // update the text node directly each frame instead of re-rendering React
     const controls = animate(0, to, {
       duration: 1.8,
       ease: EASE,
-      onUpdate: (v) => setValue(Math.round(v)),
+      onUpdate: (v) => {
+        if (ref.current) ref.current.textContent = `${prefix}${Math.round(v)}${suffix}`
+      },
     })
     return () => controls.stop()
-  }, [start, to])
+  }, [start, to, prefix, suffix])
 
   return (
-    <span className="tabular-nums">
-      {prefix}
-      {value}
-      {suffix}
+    <span ref={ref} className="tabular-nums">
+      {prefix}0{suffix}
     </span>
   )
 }
@@ -485,6 +591,9 @@ function MagneticButton({
       data-testid={testId}
       onClick={onClick}
       style={{ x: sx, y: sy }}
+      whileHover={{ scale: 1.03 }}
+      whileTap={{ scale: 0.97 }}
+      transition={{ type: 'spring', stiffness: 400, damping: 25 }}
       onPointerMove={(e) => {
         const r = e.currentTarget.getBoundingClientRect()
         x.set((e.clientX - r.left - r.width / 2) * 0.3)
@@ -494,7 +603,8 @@ function MagneticButton({
         x.set(0)
         y.set(0)
       }}
-      className={className}
+      // .btn-* use transition-all; restrict it so CSS doesn't tween framer's per-frame transforms
+      className={`${className} transition-[box-shadow,background-color,border-color,color]`}
     >
       {children}
     </motion.button>
@@ -506,7 +616,7 @@ const rise: Variants = {
   show: (i: number = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.9, ease: EASE, delay: 0.7 + i * 0.1 },
+    transition: { duration: 0.9, ease: EASE, delay: 0.25 + i * 0.1 },
   }),
 }
 
@@ -604,6 +714,17 @@ export default function Hero2() {
   const reduced = useReducedMotion() ?? false
   const inView = useInView(trackRef, { margin: '100px' })
 
+  // Entrance waits for the 3D scene (shaders compiled, knight loaded, frames flowing) so the
+  // text and the knight animate together on a free main thread. Fallback for slow devices.
+  const [ready, setReady] = useState(false)
+  useEffect(() => {
+    const id = window.setTimeout(() => setReady(true), 2500)
+    return () => window.clearTimeout(id)
+  }, [])
+
+  // render resolution adapts to the device: drops when frames struggle, recovers when they don't
+  const [dpr, setDpr] = useState(() => Math.min(window.devicePixelRatio || 1, 1.5))
+
   // the section is 340vh tall; its inner frame is pinned while this runs 0 → 1
   //   01 hero  0 – 0.2  ·  02 why  0.22 – 0.58  ·  03 numbers  0.6 – 1
   const { scrollYProgress: rawProgress } = useScroll({ target: trackRef, offset: ['start start', 'end end'] })
@@ -623,11 +744,13 @@ export default function Hero2() {
   const panelOpacity = useTransform(scrollYProgress, [0.22, 0.36, 0.5, 0.58], [0, 1, 1, 0])
   const panelY = useTransform(scrollYProgress, [0.22, 0.4, 0.5, 0.58], [60, 0, 0, -50])
   const panelEvents = useTransform(scrollYProgress, (v) => (v > 0.3 && v < 0.54 ? 'auto' : 'none'))
+  const panelVisibility = useTransform(panelOpacity, (o) => (o < 0.01 ? 'hidden' : 'visible'))
 
   // chapter 03
   const numbersOpacity = useTransform(scrollYProgress, [0.6, 0.7], [0, 1])
   const numbersY = useTransform(scrollYProgress, [0.6, 0.74], [50, 0])
   const numbersEvents = useTransform(scrollYProgress, (v) => (v > 0.64 ? 'auto' : 'none'))
+  const numbersVisibility = useTransform(numbersOpacity, (o) => (o < 0.01 ? 'hidden' : 'visible'))
   const [statsStarted, setStatsStarted] = useState(false)
   useMotionValueEvent(scrollYProgress, 'change', (v) => {
     if (v > 0.64 && !statsStarted) setStatsStarted(true)
@@ -676,8 +799,8 @@ export default function Hero2() {
           <motion.div style={{ x: thinkX }} className="absolute left-3 sm:left-8 top-[17%] sm:top-[16%]">
             <motion.span
               initial={{ x: -120, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ duration: 1.4, ease: EASE, delay: 0.2 }}
+              animate={ready ? { x: 0, opacity: 1 } : undefined}
+              transition={{ duration: 1.4, ease: EASE, delay: 0.05 }}
               className="block text-[23vw] sm:text-[16vw] lg:text-[12vw] text-ivory/90"
             >
               THINK
@@ -695,8 +818,8 @@ export default function Hero2() {
           <motion.div style={{ x: aheadX }} className="absolute right-3 sm:right-8 top-[44%] sm:top-[40%]">
             <motion.span
               initial={{ x: 120, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ duration: 1.4, ease: EASE, delay: 0.35 }}
+              animate={ready ? { x: 0, opacity: 1 } : undefined}
+              transition={{ duration: 1.4, ease: EASE, delay: 0.15 }}
               className="block text-[23vw] sm:text-[16vw] lg:text-[12vw] italic"
               style={outline}
             >
@@ -709,21 +832,35 @@ export default function Hero2() {
         <motion.div
           className="absolute inset-0 z-10 pointer-events-none"
           initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1.2, delay: 0.1 }}
+          animate={{ opacity: ready ? 1 : 0 }}
+          transition={{ duration: 1.2, ease: EASE }}
           style={{
             maskImage: 'linear-gradient(to bottom, transparent 0%, #000 12%, #000 100%)',
             WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, #000 12%, #000 100%)',
           }}
         >
           <Canvas
-            dpr={[1, 1.75]}
+            dpr={dpr}
             frameloop={inView ? 'always' : 'never'}
             camera={{ position: [0, 1.1, 8.2], fov: 35, near: 0.1, far: 60 }}
             gl={{ antialias: true, powerPreference: 'high-performance' }}
           >
+            <PerformanceMonitor
+              flipflops={3}
+              onDecline={() => setDpr(1)}
+              onIncline={() => setDpr(Math.min(window.devicePixelRatio || 1, 1.5))}
+              onFallback={() => setDpr(1)}
+            />
             <Suspense fallback={null}>
-              <Scene scroll={scrollYProgress} pointer={pointer} isLight={isLight} reduced={reduced} />
+              <Scene
+                scroll={scrollYProgress}
+                pointer={pointer}
+                isLight={isLight}
+                reduced={reduced}
+                onReady={() => setReady(true)}
+              />
+              {/* compile every material up front instead of hitching on first sight */}
+              <Preload all />
             </Suspense>
           </Canvas>
         </motion.div>
@@ -731,7 +868,7 @@ export default function Hero2() {
         {/* cursor glow over the scene */}
         <motion.div
           aria-hidden
-          className="absolute left-0 top-0 z-10 w-[560px] h-[560px] -ml-[280px] -mt-[280px] rounded-full pointer-events-none hidden md:block mix-blend-screen"
+          className="absolute left-0 top-0 z-10 w-[560px] h-[560px] -ml-[280px] -mt-[280px] rounded-full pointer-events-none hidden md:block"
           style={{
             x: glowX,
             y: glowY,
@@ -745,7 +882,7 @@ export default function Hero2() {
           className="absolute inset-x-0 bottom-0 z-20"
         >
           <div className="max-w-7xl mx-auto px-5 sm:px-8 pb-8 sm:pb-10 grid gap-6 lg:grid-cols-[1fr_auto_1fr] lg:items-end">
-            <motion.div variants={rise} initial="hidden" animate="show" custom={0} className="text-center lg:text-left">
+            <motion.div variants={rise} initial="hidden" animate={ready ? 'show' : 'hidden'} custom={0} className="text-center lg:text-left">
               <p className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.25em] text-gold">
                 <span className="h-px w-6 bg-gold" /> Tripura&apos;s Premier Chess Institute
               </p>
@@ -757,7 +894,7 @@ export default function Hero2() {
             <motion.div
               variants={rise}
               initial="hidden"
-              animate="show"
+              animate={ready ? 'show' : 'hidden'}
               custom={1}
               className="flex flex-wrap items-center justify-center gap-3"
             >
@@ -775,7 +912,7 @@ export default function Hero2() {
             <motion.div
               variants={rise}
               initial="hidden"
-              animate="show"
+              animate={ready ? 'show' : 'hidden'}
               custom={2}
               className="hidden lg:flex justify-end items-center gap-3"
             >
@@ -798,7 +935,7 @@ export default function Hero2() {
         {/* ---------- chapter 02 : feature panel ---------- */}
         <div className="absolute inset-x-0 bottom-0 lg:bottom-auto lg:top-1/2 lg:-translate-y-1/2 z-20 pointer-events-none">
           <motion.div
-            style={{ opacity: panelOpacity, y: panelY, pointerEvents: panelEvents }}
+            style={{ opacity: panelOpacity, y: panelY, pointerEvents: panelEvents, visibility: panelVisibility }}
             className="max-w-7xl mx-auto px-5 sm:px-8 pb-8 lg:pb-0"
           >
             <div className="max-w-md mx-auto lg:mx-0 text-center lg:text-left">
@@ -837,7 +974,7 @@ export default function Hero2() {
         {/* ---------- chapter 03 : by the numbers ---------- */}
         <div className="absolute inset-x-0 bottom-0 lg:bottom-auto lg:top-1/2 lg:-translate-y-1/2 z-20 pointer-events-none">
           <motion.div
-            style={{ opacity: numbersOpacity, y: numbersY, pointerEvents: numbersEvents }}
+            style={{ opacity: numbersOpacity, y: numbersY, pointerEvents: numbersEvents, visibility: numbersVisibility }}
             className="max-w-7xl mx-auto px-5 sm:px-8 pb-6 lg:pb-0"
           >
             <div className="max-w-xl mx-auto lg:mx-0 lg:ml-auto lg:mr-16">
@@ -866,6 +1003,16 @@ export default function Hero2() {
             </div>
           </motion.div>
         </div>
+
+        {/* CC BY 4.0 attribution for the knight model */}
+        <a
+          href="https://sketchfab.com/3d-models/stylized-red-knight-chess-piece-736b3794702644b89fc3ed3c3c42109a"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="absolute left-3 sm:left-5 bottom-1.5 z-20 text-[9px] sm:text-[10px] tracking-wide text-ghost/50 hover:text-ghost transition-colors"
+        >
+          Knight model by noamkremerpro · CC BY 4.0
+        </a>
 
         {/* ---------- chapter rail ---------- */}
         <div className="hidden md:flex absolute right-6 lg:right-8 top-1/2 -translate-y-1/2 z-20 flex-col items-center gap-4">
