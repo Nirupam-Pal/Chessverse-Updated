@@ -146,7 +146,7 @@ export default function StarPerformer() {
                     loading="lazy"
                   />
                 </AnimatePresence>
-                <div className="absolute inset-0 bg-gradient-to-t from-void via-void/50 to-transparent lg:bg-gradient-to-r lg:from-transparent lg:via-void/20 lg:to-void/90" />
+                <div className="absolute inset-0 bg-gradient-to-t from-void via-void/50 to-transparent lg:bg-gradient-to-r lg:from-transparent lg:via-void/20 lg:to-void/90 light:hidden" />
 
                 {/* Floating crown badge */}
                 <div className="absolute top-5 left-5 pill-tag-gold !py-2 !px-4 shadow-glow-gold light:!bg-white/90 light:backdrop-blur-md">

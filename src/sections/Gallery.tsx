@@ -99,21 +99,21 @@ export default function Gallery() {
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
               />
               {/* dark gradient + hover overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-void/90 via-void/30 to-transparent light:from-void light:via-void/60" />
+              <div className="absolute inset-0 bg-gradient-to-t from-void/90 via-void/30 to-transparent light:from-[#0B1733]/85 light:via-[#0B1733]/25" />
               <div className="absolute inset-0 bg-gradient-to-br from-royal/0 via-royal/0 to-royal/0 group-hover:from-royal/40 group-hover:to-sky/20 transition-all duration-500" />
 
               <div className="absolute inset-0 flex flex-col justify-end p-3 sm:p-5 text-left">
-                <span className="text-[10px] sm:text-xs  font-semibold uppercase tracking-[0.18em] text-sky dark:text-azure mb-1">
+                <span className="text-[10px] sm:text-xs  font-semibold uppercase tracking-[0.18em] text-azure light:text-[#C7D7FE] mb-1">
                   {item.tag}
                 </span>
-                <span className="font-display font-semibold text-base sm:text-xl text-ivory gallery-title">
+                <span className="font-display font-semibold text-base sm:text-xl text-ivory light:text-white gallery-title">
                   {item.title}
                 </span>
               </div>
 
               {/* hover zoom icon */}
-              <div className="absolute top-3 right-3 w-9 h-9 rounded-full bg-ivory/10 backdrop-blur-md ring-1 ring-ivory/20 flex items-center justify-center opacity-0 group-hover:opacity-100 translate-y-1 group-hover:translate-y-0 transition-all duration-300">
-                <ZoomIn className="w-4 h-4 text-ivory" />
+              <div className="absolute top-3 right-3 w-9 h-9 rounded-full bg-ivory/10 light:bg-white/20 backdrop-blur-md ring-1 ring-ivory/20 light:ring-white/40 flex items-center justify-center opacity-0 group-hover:opacity-100 translate-y-1 group-hover:translate-y-0 transition-all duration-300">
+                <ZoomIn className="w-4 h-4 text-ivory light:text-white" />
               </div>
             </motion.button>
           ))}
@@ -125,7 +125,7 @@ export default function Gallery() {
         <div
           data-testid="gallery-lightbox"
           onClick={() => setActive(null)}
-          className="fixed inset-0 z-[70] bg-void/85 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in"
+          className="fixed inset-0 z-[70] bg-void/85 light:bg-[#060B1A]/85 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in"
         >
           <div className="relative max-w-4xl w-full">
             <img
@@ -133,17 +133,19 @@ export default function Gallery() {
               alt={active.title}
               className="w-full max-h-[85vh] object-contain rounded-2xl shadow-2xl"
             />
+            {/* ink scrim so the caption reads on bright photos */}
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 rounded-b-2xl bg-gradient-to-t from-[#060B1A]/85 to-transparent" />
             <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between gap-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-widest text-sky">{active.tag}</p>
-                <p className="font-display font-semibold text-ivory text-xl gallery-title">{active.title}</p>
+                <p className="text-xs font-semibold uppercase tracking-widest text-sky light:text-[#C7D7FE]">{active.tag}</p>
+                <p className="font-display font-semibold text-ivory light:text-white text-xl gallery-title">{active.title}</p>
               </div>
               <button
                 onClick={(e) => {
                   e.stopPropagation()
                   setActive(null)
                 }}
-                className="px-4 py-2 rounded-full bg-ivory/10 text-ivory text-sm font-medium hover:bg-ivory/20 transition-colors"
+                className="px-4 py-2 rounded-full bg-ivory/10 text-ivory light:bg-white/15 light:text-white text-sm font-medium hover:bg-ivory/20 light:hover:bg-white/25 transition-colors"
               >
                 Close
               </button>

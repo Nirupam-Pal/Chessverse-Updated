@@ -95,7 +95,7 @@ function CoachCard({ coach, index }: { coach: typeof coaches[0]; index: number }
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
             loading="lazy"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-twilight via-twilight/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-twilight via-twilight/40 to-transparent light:hidden" />
           <div
             className={`absolute top-4 right-4 px-3 py-1 rounded-full backdrop-blur-sm ${
               coach.featured ? 'bg-gold/20 light:bg-white/90 ring-1 ring-gold/40' : 'bg-sky/20 light:bg-white/90 ring-1 ring-sky/35'

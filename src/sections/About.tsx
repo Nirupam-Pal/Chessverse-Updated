@@ -27,7 +27,7 @@ export default function About() {
                 alt="ChessVerse classroom"
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-void via-void/30 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-void via-void/30 to-transparent light:hidden" />
 
               {/* Logo medallion */}
               <div className="absolute top-5 left-5 px-3.5 py-2 rounded-full liquid-glass flex items-center gap-2">

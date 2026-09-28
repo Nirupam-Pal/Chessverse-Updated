@@ -108,8 +108,8 @@ export default function Founder() {
                 alt="Founder portrait"
                 className="h-full w-full min-h-[420px] object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-void via-void/10 to-transparent" />
-              <div className="absolute left-5 bottom-5 rounded-3xl border border-white/10 bg-void/70 p-4 backdrop-blur-md">
+              <div className="absolute inset-0 bg-gradient-to-t from-void via-void/10 to-transparent light:hidden" />
+              <div className="absolute left-5 bottom-5 rounded-3xl border border-white/10 bg-void/70 p-4 backdrop-blur-md light:bg-white/85 light:border-white/60 light:shadow-[0_12px_32px_-12px_rgba(11,23,51,0.35)]">
                 <p className="text-ghost text-xs uppercase tracking-[0.24em] mb-2">Our promise</p>
                 <p className="font-display font-semibold text-ivory">
                   Personal coaching, trusted support, lasting confidence.
