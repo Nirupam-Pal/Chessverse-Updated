@@ -52,7 +52,7 @@ type PointerRef = RefObject<{ x: number; y: number }>
 
 const easeOut = (p: number) => 1 - Math.pow(1 - p, 3)
 
-// fixed navbar is 80px tall at the top of the page (a 60px capsule once scrolled);
+// fixed navbar is 80px tall at the top of the page (a 68px capsule, 12px from the top, once scrolled);
 // keep the 3D knight at least this far from the top edge
 const NAV_SAFE_PX = 96
 

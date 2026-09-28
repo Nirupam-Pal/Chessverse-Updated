@@ -186,7 +186,7 @@ export default function Navigation() {
           <div
             className={`relative flex items-center justify-between transition-all ${MORPH} ${
               scrolled
-                ? 'h-[60px] rounded-full pl-2 pr-2 bg-twilight/70 backdrop-blur-xl backdrop-saturate-150 border border-sky/15 light:border-slate-200/90 shadow-[0_12px_40px_-12px_rgba(0,0,0,0.55)] light:shadow-[0_14px_40px_-16px_rgba(11,23,51,0.28)]'
+                ? 'h-[68px] rounded-full pl-5 pr-4 bg-twilight/70 backdrop-blur-xl backdrop-saturate-150 border border-sky/15 light:border-slate-200/90 shadow-[0_12px_40px_-12px_rgba(0,0,0,0.55)] light:shadow-[0_14px_40px_-16px_rgba(11,23,51,0.28)]'
                 : 'h-[80px] rounded-none px-4 sm:px-6 lg:px-8 bg-transparent border border-transparent'
             }`}
           >
