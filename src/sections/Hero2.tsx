@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState, Suspense, type ReactNode, type RefObject } from 'react'
 import { Canvas, useFrame, useThree, type ThreeElements } from '@react-three/fiber'
-import { Environment, Lightformer, MeshReflectorMaterial, PerformanceMonitor, Preload, Sparkles, useGLTF } from '@react-three/drei'
+import { ContactShadows, Environment, Lightformer, MeshReflectorMaterial, PerformanceMonitor, Preload, Sparkles, useGLTF } from '@react-three/drei'
 import {
   animate,
   motion,
@@ -52,7 +52,8 @@ type PointerRef = RefObject<{ x: number; y: number }>
 
 const easeOut = (p: number) => 1 - Math.pow(1 - p, 3)
 
-// fixed navbar is 72px tall; keep the 3D knight at least this far from the top edge
+// fixed navbar is 80px tall at the top of the page (a 60px capsule once scrolled);
+// keep the 3D knight at least this far from the top edge
 const NAV_SAFE_PX = 96
 
 /* ------------------------------------------------------------------ */
@@ -414,7 +415,17 @@ function Scene({
   // loaded, frames flowing) — not from canvas creation — so a slow first frame can't make it jump.
   const readyAt = useRef<number | null>(null)
   const smoothFrames = useRef(0)
-  const bg = isLight ? '#F8FAFC' : '#060B1A'
+  const bg = isLight ? '#FAF8F3' : '#060B1A'
+
+  // Light mode: a white knight and ivory pieces disappear against porcelain, so re-tone the shared
+  // materials — navy-lacquer knight, pearl (not white) ivory pieces.
+  useEffect(() => {
+    KNIGHT_MAT.color.set(isLight ? '#16264D' : '#EDF0F5')
+    KNIGHT_MAT.roughness = isLight ? 0.3 : 0.38
+    KNIGHT_MAT.clearcoat = isLight ? 1 : 0.6
+    KNIGHT_MAT.sheenColor.set(isLight ? '#D4AF37' : '#8ECAE6')
+    IVORY_MAT.color.set(isLight ? '#E4DED0' : '#F2F5FA')
+  }, [isLight])
 
   useFrame(({ clock, camera }, rawDt) => {
     const t = clock.elapsedTime
@@ -478,7 +489,7 @@ function Scene({
     <>
       <fog attach="fog" args={[bg, 9, 22]} />
 
-      <ambientLight intensity={isLight ? 0.8 : 0.3} color="#8ECAE6" />
+      <ambientLight intensity={isLight ? 0.9 : 0.3} color={isLight ? '#FFFFFF' : '#8ECAE6'} />
       <spotLight position={[0, 9, 3]} angle={0.42} penumbra={0.9} intensity={isLight ? 60 : 110} color="#F2F5FA" />
       <spotLight position={[-7, 3, -4]} angle={0.7} penumbra={1} intensity={70} color="#3A8DDE" />
       <spotLight position={[7, 3, -3]} angle={0.7} penumbra={1} intensity={50} color="#D4AF37" />
@@ -487,7 +498,7 @@ function Scene({
         {/* pedestal */}
         <mesh position={[0, -1.39, 0]}>
           <cylinderGeometry args={[1.35, 1.5, 0.26, 96]} />
-          <meshStandardMaterial color={isLight ? '#DCE6F3' : '#0A1836'} metalness={0.6} roughness={0.25} />
+          <meshStandardMaterial color={isLight ? '#E6DFD0' : '#0A1836'} metalness={isLight ? 0.2 : 0.6} roughness={isLight ? 0.35 : 0.25} />
         </mesh>
         <mesh position={[0, -1.26, 0]} rotation={[Math.PI / 2, 0, 0]} material={GOLD_MAT}>
           <torusGeometry args={[1.35, 0.025, 12, 128]} />
@@ -503,23 +514,34 @@ function Scene({
         <OrbitRing progress={progress} reduced={reduced} />
       </group>
 
-      {/* mirror floor fading into the fog */}
+      {/* floor fading into the fog — dark: blurred mirror; light: matte porcelain.
+          The reflector blends a reflection pass rendered over a transparent-black backdrop,
+          which greys out a light floor at any strength, so light mode doesn't use it. */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.53, 0]}>
         <planeGeometry args={[60, 60]} />
-        <MeshReflectorMaterial
-          blur={[300, 80]}
-          resolution={256}
-          mixBlur={1}
-          mixStrength={isLight ? 0.6 : 1.6}
-          roughness={1}
-          depthScale={1.1}
-          minDepthThreshold={0.4}
-          maxDepthThreshold={1.4}
-          color={isLight ? '#E8EEF7' : '#050A18'}
-          metalness={0.6}
-          mirror={0.6}
-        />
+        {isLight ? (
+          // toneMapped off: ACES would darken it, leaving a seam against the identical CSS page colour
+          <meshBasicMaterial color={bg} toneMapped={false} />
+        ) : (
+          <MeshReflectorMaterial
+            blur={[300, 80]}
+            resolution={256}
+            mixBlur={1}
+            mixStrength={1.6}
+            roughness={1}
+            depthScale={1.1}
+            minDepthThreshold={0.4}
+            maxDepthThreshold={1.4}
+            color="#050A18"
+            metalness={0.6}
+            mirror={0.6}
+          />
+        )}
       </mesh>
+      {/* light mode grounds the pieces with soft contact shadows instead of a reflection */}
+      {isLight && (
+        <ContactShadows position={[0, -1.52, 0]} scale={14} blur={2.6} far={4} opacity={0.35} color="#0B1733" resolution={512} />
+      )}
 
       <Sparkles
         count={80}
@@ -528,10 +550,18 @@ function Scene({
         size={2.4}
         speed={reduced ? 0 : 0.3}
         opacity={isLight ? 0.5 : 0.8}
-        color={isLight ? '#1F4FAE' : '#8ECAE6'}
+        color={isLight ? '#8C6A12' : '#8ECAE6'}
       />
 
-      <Environment resolution={256} frames={1}>
+      {/* keyed on theme: the env map renders once (frames=1), so rebuild it when the theme flips */}
+      <Environment key={isLight ? 'light' : 'dark'} resolution={256} frames={1}>
+        {/* light: a bright studio wrap so metals reflect porcelain, not black */}
+        {isLight && (
+          <>
+            <Lightformer form="rect" intensity={1.4} position={[0, 0, 10]} scale={[40, 20, 1]} color="#FFFFFF" />
+            <Lightformer form="rect" intensity={1} position={[0, 0, -10]} rotation-y={Math.PI} scale={[40, 20, 1]} color="#F6F1E6" />
+          </>
+        )}
         <Lightformer form="rect" intensity={3} position={[0, 6, -6]} scale={[14, 3, 1]} color="#8ECAE6" />
         <Lightformer form="rect" intensity={3} position={[-6, 2, 2]} rotation-y={Math.PI / 2} scale={[10, 2, 1]} color="#F2F5FA" />
         <Lightformer form="ring" intensity={3} position={[6, 3, 2]} rotation-y={-Math.PI / 2} scale={3} color="#D4AF37" />
@@ -783,7 +813,7 @@ export default function Hero2() {
   }
 
   const outline = {
-    WebkitTextStroke: isLight ? '2.5px rgba(29,78,216,0.8)' : '2.5px rgba(142,202,230,0.85)',
+    WebkitTextStroke: isLight ? '2.5px rgba(30,64,175,0.85)' : '2.5px rgba(142,202,230,0.85)',
     color: 'transparent',
   }
 
@@ -947,7 +977,7 @@ export default function Hero2() {
               <ul className="mt-6 sm:mt-8 space-y-2.5 sm:space-y-3 text-left">
                 {features.map((f) => (
                   <li key={f.title} className="liquid-glass rounded-2xl px-4 py-3 flex items-center gap-4">
-                    <span className="grid place-items-center shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br from-[#3A8DDE] to-[#1F4FAE] shadow-glow">
+                    <span className="grid place-items-center shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br from-sky to-royal shadow-glow">
                       <f.icon className="w-5 h-5 text-white" />
                     </span>
                     <div>
@@ -1009,7 +1039,7 @@ export default function Hero2() {
           href="https://sketchfab.com/3d-models/stylized-red-knight-chess-piece-736b3794702644b89fc3ed3c3c42109a"
           target="_blank"
           rel="noopener noreferrer"
-          className="absolute left-3 sm:left-5 bottom-1.5 z-20 text-[9px] sm:text-[10px] tracking-wide text-ghost/50 hover:text-ghost transition-colors"
+          className="absolute left-3 sm:left-5 bottom-1.5 z-20 text-[9px] sm:text-[10px] tracking-wide text-ghost hover:text-ivory transition-colors"
         >
           Knight model by noamkremerpro · CC BY 4.0
         </a>
@@ -1021,10 +1051,10 @@ export default function Hero2() {
             <motion.span style={{ opacity: ch2 }} className="absolute inset-0 grid place-items-center text-sky">02</motion.span>
             <motion.span style={{ opacity: ch3 }} className="absolute inset-0 grid place-items-center text-gold">03</motion.span>
           </div>
-          <div className="relative h-32 w-px bg-[rgba(142,202,230,0.2)] overflow-hidden">
+          <div className="relative h-32 w-px bg-sky/20 overflow-hidden">
             <motion.div
               style={{ scaleY: railScale }}
-              className="absolute inset-0 origin-top bg-gradient-to-b from-[#8ECAE6] to-[#D4AF37]"
+              className="absolute inset-0 origin-top bg-gradient-to-b from-azure to-gold"
             />
           </div>
           <span className="text-[10px] uppercase tracking-[0.3em] text-ghost [writing-mode:vertical-rl]">Scroll</span>

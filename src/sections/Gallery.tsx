@@ -99,11 +99,11 @@ export default function Gallery() {
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
               />
               {/* dark gradient + hover overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-void/90 via-void/30 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-void/90 via-void/30 to-transparent light:from-void light:via-void/60" />
               <div className="absolute inset-0 bg-gradient-to-br from-royal/0 via-royal/0 to-royal/0 group-hover:from-royal/40 group-hover:to-sky/20 transition-all duration-500" />
 
               <div className="absolute inset-0 flex flex-col justify-end p-3 sm:p-5 text-left">
-                <span className="text-[10px] sm:text-xs  font-semibold uppercase tracking-[0.18em] text-blue-600 mb-1">
+                <span className="text-[10px] sm:text-xs  font-semibold uppercase tracking-[0.18em] text-sky dark:text-azure mb-1">
                   {item.tag}
                 </span>
                 <span className="font-display font-semibold text-base sm:text-xl text-ivory gallery-title">

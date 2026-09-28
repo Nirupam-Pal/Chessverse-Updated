@@ -41,7 +41,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-1">
             <div className="flex items-center gap-3 mb-5">
-              <div className="w-12 h-12 rounded-xl overflow-hidden bg-ivory ring-1 ring-sky/30 shadow-md shadow-royal/30">
+              <div className="w-12 h-12 rounded-xl overflow-hidden bg-ivory light:bg-white ring-1 ring-sky/30 shadow-md shadow-royal/30">
                 <img
                   src="/images/chessverse-logo.jpg"
                   alt="ChessVerse"

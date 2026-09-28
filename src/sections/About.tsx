@@ -108,15 +108,15 @@ export default function About() {
                 <h3 className="mt-5 font-display text-3xl font-bold text-ivory leading-tight">
                   A bold academy where every learner is seen, trained and celebrated.
                 </h3>
-                <p className="mt-4 text-sm leading-relaxed text-slate-300 max-w-xl">
+                <p className="mt-4 text-sm leading-relaxed text-slate-600 dark:text-slate-300 max-w-xl">
                   We pair expert coaching with a warm community, tournament momentum and progress plans that keep students excited about every next move.
                 </p>
                 <div className="mt-6 grid gap-3 sm:grid-cols-2">
-                  <div className="rounded-3xl border border-white/10 bg-white/5 p-4 text-sm text-slate-400 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-300">
+                  <div className="rounded-3xl border border-white/10 bg-white/5 p-4 text-sm text-slate-600 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-300">
                     <p className="uppercase tracking-[0.18em] text-xs text-ghost mb-2">Proven path</p>
                     <p className="font-semibold text-ivory">12+ years of coaching excellence.</p>
                   </div>
-                  <div className="rounded-3xl border border-white/10 bg-white/5 p-4 text-sm text-slate-400 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-300">
+                  <div className="rounded-3xl border border-white/10 bg-white/5 p-4 text-sm text-slate-600 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-300">
                     <p className="uppercase tracking-[0.18em] text-xs text-ghost mb-2">Built for growth</p>
                     <p className="font-semibold text-ivory">Community, contests and progress tracking.</p>
                   </div>

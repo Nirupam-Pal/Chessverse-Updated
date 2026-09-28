@@ -88,18 +88,18 @@ export default function Chatbot() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: 20 }}
             transition={{ duration: 0.3, ease: EASE_OUT }}
-            className="fixed bottom-24 right-24 z-50 w-96 max-h-[600px] rounded-2xl bg-gradient-to-b from-void to-twilight border border-sky/20 shadow-2xl flex flex-col overflow-hidden"
+            className="fixed bottom-24 left-4 right-4 sm:left-auto sm:right-24 z-50 sm:w-96 max-h-[min(600px,calc(100svh-8rem))] rounded-2xl bg-gradient-to-b from-void to-twilight border border-sky/20 shadow-2xl flex flex-col overflow-hidden"
             data-testid="chatbot-box"
           >
             {/* Header */}
             <div className="bg-gradient-to-r from-royal to-sky p-5 flex items-center justify-between">
               <div>
-                <h3 className="font-display font-bold text-ivory text-lg">ChessVerse Bot</h3>
+                <h3 className="font-display font-bold text-white text-lg">ChessVerse Bot</h3>
                 <p className="text-xs text-white/80">Ask us anything about chess classes</p>
               </div>
               <button
                 onClick={() => setIsOpen(false)}
-                className="text-ivory hover:bg-white/10 p-1 rounded-lg transition-colors"
+                className="text-white hover:bg-white/10 p-1 rounded-lg transition-colors"
                 data-testid="chatbot-close"
               >
                 <X className="w-5 h-5" />
@@ -164,7 +164,7 @@ export default function Chatbot() {
                 href="https://wa.me/917629037237?text=Hello%2C%20I%20want%20to%20know%20more%20about%20your%20chess%20classes."
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-[#128C7E] to-[#25D366] hover:shadow-lg text-ivory text-sm font-medium transition-all duration-300"
+                className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-[#128C7E] to-[#25D366] hover:shadow-lg text-white text-sm font-medium transition-all duration-300"
                 data-testid="chatbot-whatsapp"
               >
                 <MessageCircle className="w-4 h-4" />

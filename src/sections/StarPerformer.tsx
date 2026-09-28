@@ -149,14 +149,14 @@ export default function StarPerformer() {
                 <div className="absolute inset-0 bg-gradient-to-t from-void via-void/50 to-transparent lg:bg-gradient-to-r lg:from-transparent lg:via-void/20 lg:to-void/90" />
 
                 {/* Floating crown badge */}
-                <div className="absolute top-5 left-5 pill-tag-gold !py-2 !px-4 shadow-glow-gold">
+                <div className="absolute top-5 left-5 pill-tag-gold !py-2 !px-4 shadow-glow-gold light:!bg-white/90 light:backdrop-blur-md">
                   <Crown className="w-4 h-4" />
                   {performer.period}
                 </div>
 
                 {/* Rating chip */}
                 <div className="absolute bottom-5 left-5 right-5 lg:right-auto flex flex-wrap gap-2">
-                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-void/70 backdrop-blur-md ring-1 ring-gold/40">
+                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-void/70 light:bg-white/90 backdrop-blur-md ring-1 ring-gold/40">
                     <TrendingUp className="w-4 h-4 text-gold" />
                     <span className="font-display font-bold text-ivory text-sm">{performer.rating}</span>
                   </div>

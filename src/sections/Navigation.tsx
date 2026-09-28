@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
-import { Menu, X } from 'lucide-react'
+import { AnimatePresence, motion, useMotionValueEvent, useScroll, useSpring, type Variants } from 'framer-motion'
+import { ArrowRight, ChevronDown, Menu, X } from 'lucide-react'
 import ThemeToggle from '@/components/ThemeToggle'
+import { EASE_OUT } from '@/lib/motion'
 
 const navLinks = [
   { label: 'About', href: '#about' },
@@ -12,130 +14,410 @@ const navLinks = [
   { label: 'Testimonials', href: '#testimonials' },
   { label: 'Contact', href: '#contact' },
 ]
+const SECTION_IDS = navLinks.map((l) => l.href.slice(1))
 
-export default function Navigation() {
-  const [scrolled, setScrolled] = useState(false)
-  const [mobileOpen, setMobileOpen] = useState(false)
-  const navRef = useRef<HTMLElement>(null)
+// Desktop bar shows the essentials; the rest live under "More" so the capsule stays airy.
+// (The mobile menu lists every link.)
+const MORE_LABELS = ['Star Performer', 'Gallery', 'Testimonials']
+const moreLinks = navLinks.filter((l) => MORE_LABELS.includes(l.label))
+const primaryBefore = navLinks.filter((l) => ['About', 'Courses', 'Achievements', 'Coaches'].includes(l.label))
+const primaryAfter = navLinks.filter((l) => l.label === 'Contact')
+const MORE_BLURBS: Record<string, string> = {
+  'Star Performer': 'Our student in the spotlight',
+  Gallery: 'Life inside the academy',
+  Testimonials: 'Stories from parents & students',
+}
+
+// shared easing for the capsule morph (CSS side of EASE_OUT)
+const MORPH = 'duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]'
+const PILL_SPRING = { type: 'spring', stiffness: 380, damping: 32 } as const
+
+/** Scroll-spy: the section currently crossing the middle of the viewport. */
+function useActiveSection(ids: string[]) {
+  const [active, setActive] = useState<string | null>(null)
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40)
-    onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
+    const inBand = new Map<string, boolean>()
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => inBand.set(e.target.id, e.isIntersecting))
+        setActive(ids.find((id) => inBand.get(id)) ?? null)
+      },
+      // a thin band just above the middle of the screen
+      { rootMargin: '-45% 0px -50% 0px' },
+    )
+    ids.forEach((id) => {
+      const el = document.getElementById(id)
+      if (el) observer.observe(el)
+    })
+    return () => observer.disconnect()
+  }, [ids])
+
+  return active
+}
+
+type NavItem = (typeof navLinks)[number]
+
+function NavLink({
+  link,
+  active,
+  hovered,
+  onHover,
+  onGo,
+}: {
+  link: NavItem
+  active: string | null
+  hovered: string | null
+  onHover: (id: string) => void
+  onGo: (href: string) => void
+}) {
+  const id = link.href.slice(1)
+  const isActive = active === id
+  return (
+    <button
+      data-testid={`nav-link-${link.label.toLowerCase()}`}
+      onClick={() => onGo(link.href)}
+      onMouseEnter={() => onHover(id)}
+      aria-current={isActive ? 'true' : undefined}
+      className={`relative px-3.5 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors duration-300 ${
+        isActive ? 'text-ivory' : 'text-ghost hover:text-ivory'
+      }`}
+    >
+      {hovered === id && (
+        <motion.span layoutId="nav-hover" className="absolute inset-0 rounded-full bg-sky/10" transition={PILL_SPRING} />
+      )}
+      {isActive && (
+        <motion.span
+          layoutId="nav-active"
+          className="absolute left-3.5 right-3.5 -bottom-0.5 h-[2px] rounded-full bg-gradient-to-r from-sky via-azure to-gold"
+          transition={PILL_SPRING}
+        />
+      )}
+      <span className="relative">{link.label}</span>
+    </button>
+  )
+}
+
+const menuList: Variants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.045, delayChildren: 0.08 } },
+}
+const menuItem: Variants = {
+  hidden: { opacity: 0, y: 14 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: EASE_OUT } },
+}
+
+export default function Navigation() {
+  const { scrollY, scrollYProgress } = useScroll()
+  const progress = useSpring(scrollYProgress, { stiffness: 220, damping: 32, restDelta: 0.001 })
+
+  const [scrolled, setScrolled] = useState(false)
+  const [hidden, setHidden] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
+  const [hovered, setHovered] = useState<string | null>(null)
+  const [moreOpen, setMoreOpen] = useState(false)
+  const active = useActiveSection(SECTION_IDS)
+  const moreActive = moreLinks.some((l) => l.href.slice(1) === active)
+
+  // Morph into the capsule once scrolled; tuck away while reading down, return on scroll up.
+  // Distances are measured from where the scroll direction last flipped, so smooth (Lenis)
+  // scrolling — a few px per frame — still triggers reliably without flicker.
+  const direction = useRef<1 | -1>(1)
+  const turnY = useRef(0)
+  useMotionValueEvent(scrollY, 'change', (y) => {
+    const prev = scrollY.getPrevious() ?? 0
+    const dir = y > prev ? 1 : y < prev ? -1 : direction.current
+    if (dir !== direction.current) {
+      direction.current = dir
+      turnY.current = prev
+    }
+    setScrolled(y > 40)
+    if (y < 240) setHidden(false)
+    else if (dir === 1 && y - turnY.current > 80) setHidden(true)
+    else if (dir === -1 && turnY.current - y > 24) setHidden(false)
+  })
+
+  useEffect(() => {
+    if (!mobileOpen && !moreOpen) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return
+      setMobileOpen(false)
+      setMoreOpen(false)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [mobileOpen, moreOpen])
 
   const scrollTo = (href: string) => {
     setMobileOpen(false)
-    const el = document.querySelector(href)
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' })
-    }
+    setMoreOpen(false)
+    document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' })
   }
 
+  const isHidden = hidden && !mobileOpen
+
   return (
-    <nav
-      ref={navRef}
-      data-testid="main-nav"
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled
-          ? 'bg-twilight/85 backdrop-blur-xl border-b border-sky/15 shadow-lg shadow-void/30 light:bg-white/95 light:border-slate-200'
-          : 'bg-transparent'
-      }`}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-[72px]">
-          {/* Logo */}
-          <button
-            data-testid="nav-logo"
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="flex items-center gap-3 group"
+    <>
+      {/* dim + blur the page behind the open mobile menu */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            key="nav-backdrop"
+            className="fixed inset-0 z-40 bg-void/40 backdrop-blur-sm xl:hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            onClick={() => setMobileOpen(false)}
+          />
+        )}
+      </AnimatePresence>
+
+      <motion.nav
+        data-testid="main-nav"
+        className="fixed inset-x-0 top-0 z-50 pointer-events-none"
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: isHidden ? '-130%' : 0, opacity: 1 }}
+        transition={{ duration: 0.55, ease: EASE_OUT }}
+      >
+        {/* outer: width + margin morph (full-width bar → centred capsule) */}
+        <div className={`mx-auto pointer-events-auto transition-all ${MORPH} ${scrolled ? 'max-w-6xl px-3 pt-3' : 'max-w-7xl px-0 pt-0'}`}>
+          {/* inner: the bar / capsule itself */}
+          <div
+            className={`relative flex items-center justify-between transition-all ${MORPH} ${
+              scrolled
+                ? 'h-[60px] rounded-full pl-2 pr-2 bg-twilight/70 backdrop-blur-xl backdrop-saturate-150 border border-sky/15 light:border-slate-200/90 shadow-[0_12px_40px_-12px_rgba(0,0,0,0.55)] light:shadow-[0_14px_40px_-16px_rgba(11,23,51,0.28)]'
+                : 'h-[80px] rounded-none px-4 sm:px-6 lg:px-8 bg-transparent border border-transparent'
+            }`}
           >
-            <div className="relative w-11 h-11 rounded-xl overflow-hidden bg-ivory ring-1 ring-sky/30 shadow-md shadow-royal/30 transition-transform duration-300 group-hover:scale-105">
-              <img
-                src="/images/chessverse-logo.jpg"
-                alt="ChessVerse"
-                className="absolute inset-0 w-full h-full object-cover"
+            {/* Logo */}
+            <button
+              data-testid="nav-logo"
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              className="flex items-center gap-3 group shrink-0"
+              aria-label="ChessVerse — back to top"
+            >
+              <div
+                className={`relative rounded-xl overflow-hidden bg-ivory light:bg-white ring-1 ring-sky/30 shadow-md shadow-royal/30 transition-all ${MORPH} group-hover:scale-105 group-hover:rotate-[-4deg] ${
+                  scrolled ? 'w-10 h-10 rounded-full' : 'w-11 h-11'
+                }`}
+              >
+                <img src="/images/chessverse-logo.jpg" alt="ChessVerse" className="absolute inset-0 w-full h-full object-cover" />
+              </div>
+              <div className="flex flex-col leading-none text-left">
+                <span className="font-display font-bold text-lg sm:text-xl text-ivory tracking-tight group-hover:text-sky transition-colors">
+                  Chessverse
+                </span>
+                {/* subtitle folds away in the capsule */}
+                <span
+                  className={`hidden sm:block overflow-hidden text-[10px] tracking-[0.22em] uppercase text-ghost transition-all ${MORPH} ${
+                    scrolled ? 'max-h-0 opacity-0 mt-0' : 'max-h-4 opacity-100 mt-1'
+                  }`}
+                >
+                  Chess Institute
+                </span>
+              </div>
+            </button>
+
+            {/* Desktop links — hover pill + active underline both glide between links */}
+            <div className="hidden xl:flex items-center gap-1" onMouseLeave={() => setHovered(null)}>
+              {primaryBefore.map((link) => (
+                <NavLink key={link.href} link={link} active={active} hovered={hovered} onHover={setHovered} onGo={scrollTo} />
+              ))}
+
+              {/* "More" — secondary sections in a compact dropdown */}
+              <div
+                className="relative"
+                onMouseEnter={() => {
+                  setHovered('more')
+                  setMoreOpen(true)
+                }}
+                onMouseLeave={() => setMoreOpen(false)}
+              >
+                <button
+                  type="button"
+                  aria-haspopup="menu"
+                  aria-expanded={moreOpen}
+                  onClick={() => setMoreOpen((o) => !o)}
+                  className={`relative flex items-center gap-1 px-3.5 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors duration-300 ${
+                    moreActive ? 'text-ivory' : 'text-ghost hover:text-ivory'
+                  }`}
+                >
+                  {hovered === 'more' && (
+                    <motion.span layoutId="nav-hover" className="absolute inset-0 rounded-full bg-sky/10" transition={PILL_SPRING} />
+                  )}
+                  {moreActive && (
+                    <motion.span
+                      layoutId="nav-active"
+                      className="absolute left-3.5 right-3.5 -bottom-0.5 h-[2px] rounded-full bg-gradient-to-r from-sky via-azure to-gold"
+                      transition={PILL_SPRING}
+                    />
+                  )}
+                  <span className="relative">More</span>
+                  <ChevronDown className={`relative w-3.5 h-3.5 transition-transform duration-300 ${moreOpen ? 'rotate-180' : ''}`} />
+                </button>
+
+                <AnimatePresence>
+                  {moreOpen && (
+                    // outer div positions (and bridges the hover gap); inner card animates
+                    <div className="absolute left-1/2 top-full -translate-x-1/2 pt-3 w-60">
+                      <motion.div
+                        role="menu"
+                        initial={{ opacity: 0, y: 8, scale: 0.97 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 6, scale: 0.98 }}
+                        transition={{ duration: 0.22, ease: EASE_OUT }}
+                        className="origin-top rounded-2xl bg-twilight light:bg-white border border-sky/15 light:border-slate-200 shadow-2xl shadow-void/40 light:shadow-[0_20px_50px_-20px_rgba(11,23,51,0.3)] p-1.5"
+                      >
+                        {moreLinks.map((link) => {
+                          const isActive = active === link.href.slice(1)
+                          return (
+                            <button
+                              key={link.href}
+                              role="menuitem"
+                              data-testid={`nav-link-${link.label.toLowerCase()}`}
+                              onClick={() => scrollTo(link.href)}
+                              className="group w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-left hover:bg-sky/10 transition-colors"
+                            >
+                              <span
+                                className={`h-1.5 w-1.5 rounded-full shrink-0 transition-colors ${
+                                  isActive ? 'bg-gold' : 'bg-sky/30 group-hover:bg-sky'
+                                }`}
+                              />
+                              <span className="min-w-0">
+                                <span className={`block text-sm font-medium ${isActive ? 'text-ivory' : 'text-ivory/90'}`}>{link.label}</span>
+                                <span className="block text-xs text-ghost">{MORE_BLURBS[link.label]}</span>
+                              </span>
+                            </button>
+                          )
+                        })}
+                      </motion.div>
+                    </div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {primaryAfter.map((link) => (
+                <NavLink key={link.href} link={link} active={active} hovered={hovered} onHover={setHovered} onGo={scrollTo} />
+              ))}
+            </div>
+
+            {/* Right cluster */}
+            <div className="flex items-center gap-2 shrink-0">
+              <div className="hidden lg:block">
+                <ThemeToggle size="sm" />
+              </div>
+              <button
+                data-testid="nav-cta-demo"
+                onClick={() => scrollTo('#booking')}
+                className={`group relative hidden sm:inline-flex shrink-0 whitespace-nowrap btn-primary overflow-hidden text-sm transition-all ${MORPH} ${
+                  scrolled
+                    ? '!py-2 !px-4 !shadow-[0_8px_20px_-10px_rgba(31,79,174,0.75)] hover:!scale-100'
+                    : '!py-2.5 !px-5'
+                }`}
+              >
+                {/* periodic sheen */}
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute inset-y-0 -left-1/2 w-1/3 bg-gradient-to-r from-transparent via-white/35 to-transparent animate-[nav-sheen_4.5s_ease-in-out_infinite] motion-reduce:hidden"
+                />
+                <span className="relative">Book Free Demo</span>
+                <ArrowRight className="relative w-4 h-4 shrink-0 transition-transform duration-300 group-hover:translate-x-0.5" />
+              </button>
+
+              {/* Mobile / tablet toggle */}
+              <button
+                data-testid="nav-mobile-toggle"
+                onClick={() => setMobileOpen((o) => !o)}
+                aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+                aria-expanded={mobileOpen}
+                className="xl:hidden relative grid place-items-center w-10 h-10 rounded-full text-ivory border border-sky/20 bg-sky/5 hover:bg-sky/10 transition-colors"
+              >
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.span
+                    key={mobileOpen ? 'close' : 'open'}
+                    initial={{ rotate: -90, opacity: 0, scale: 0.6 }}
+                    animate={{ rotate: 0, opacity: 1, scale: 1 }}
+                    exit={{ rotate: 90, opacity: 0, scale: 0.6 }}
+                    transition={{ duration: 0.2 }}
+                    className="grid place-items-center"
+                  >
+                    {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+                  </motion.span>
+                </AnimatePresence>
+              </button>
+            </div>
+
+            {/* reading-progress line along the bottom of the capsule */}
+            <div
+              aria-hidden
+              className={`absolute left-8 right-8 -bottom-px h-[2px] overflow-hidden rounded-full transition-opacity duration-500 ${
+                scrolled ? 'opacity-100' : 'opacity-0'
+              }`}
+            >
+              <motion.div
+                style={{ scaleX: progress }}
+                className="h-full origin-left bg-gradient-to-r from-sky via-azure to-gold"
               />
             </div>
-            <div className="flex flex-col leading-none">
-              <span className="font-display font-bold text-lg sm:text-xl text-ivory tracking-tight group-hover:text-sky transition-colors">
-                Chessverse
-              </span>
-              <span className="hidden sm:block text-[10px] tracking-[0.22em] uppercase text-ghost mt-1">
-                Chess Institute
-              </span>
-            </div>
-          </button>
+          </div>
 
-          {/* Desktop Nav */}
-          <div className="hidden lg:flex items-center gap-7">
-            {navLinks.map((link) => (
-              <button
-                key={link.href}
-                data-testid={`nav-link-${link.label.toLowerCase()}`}
-                onClick={() => scrollTo(link.href)}
-                className="text-sm font-medium text-ghost hover:text-ivory transition-colors relative group"
+          {/* Mobile menu — a floating card, kept outside the blurred capsule (nested backdrop-filters misrender) */}
+          <AnimatePresence>
+            {mobileOpen && (
+              <motion.div
+                key="nav-mobile-menu"
+                initial={{ opacity: 0, y: -12, scale: 0.97 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -8, scale: 0.98 }}
+                transition={{ duration: 0.35, ease: EASE_OUT }}
+                className={`xl:hidden origin-top mt-2 rounded-3xl bg-twilight light:bg-white border border-sky/15 light:border-slate-200 shadow-2xl shadow-void/30 overflow-y-auto max-h-[calc(100svh-6rem)] ${
+                  scrolled ? '' : 'mx-3'
+                }`}
               >
-                {link.label}
-                <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-gradient-to-r from-sky to-azure group-hover:w-full transition-all duration-300" />
-              </button>
-            ))}
-          </div>
-
-          {/* CTA */}
-          <div className="hidden lg:flex items-center gap-3">
-            <ThemeToggle />
-            <button
-              data-testid="nav-cta-demo"
-              onClick={() => scrollTo('#booking')}
-              className="btn-primary py-2.5 px-5 text-sm"
-            >
-              Book Free Demo
-            </button>
-          </div>
-
-          {/* Mobile Toggle */}
-          <button
-            data-testid="nav-mobile-toggle"
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="lg:hidden p-2 text-ivory"
-            aria-label="Toggle menu"
-          >
-            {mobileOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+                <motion.div variants={menuList} initial="hidden" animate="show" className="p-5 flex flex-col">
+                  <motion.div variants={menuItem} className="lg:hidden mb-3">
+                    <ThemeToggle />
+                  </motion.div>
+                  {navLinks.map((link, i) => {
+                    const isActive = active === link.href.slice(1)
+                    return (
+                      <motion.button
+                        key={link.href}
+                        variants={menuItem}
+                        data-testid={`nav-mobile-link-${link.label.toLowerCase()}`}
+                        onClick={() => scrollTo(link.href)}
+                        className={`group flex items-center justify-between py-3.5 border-b border-sky/10 last:border-0 text-left text-base font-medium transition-colors ${
+                          isActive ? 'text-ivory' : 'text-ghost hover:text-ivory'
+                        }`}
+                      >
+                        <span className="flex items-center gap-3">
+                          <span className="font-display text-xs text-gold tabular-nums w-5">{String(i + 1).padStart(2, '0')}</span>
+                          {link.label}
+                        </span>
+                        <ArrowRight
+                          className={`w-4 h-4 transition-all duration-300 ${
+                            isActive ? 'text-sky opacity-100' : 'opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0'
+                          }`}
+                        />
+                      </motion.button>
+                    )
+                  })}
+                  <motion.button
+                    variants={menuItem}
+                    data-testid="nav-mobile-cta"
+                    onClick={() => scrollTo('#booking')}
+                    className="btn-primary mt-5 justify-center"
+                  >
+                    Book Free Demo
+                    <ArrowRight className="w-4 h-4" />
+                  </motion.button>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
-      </div>
-
-      {/* Mobile Menu */}
-      <div
-          className={`lg:hidden absolute top-[72px] left-0 right-0 bg-twilight/95 backdrop-blur-xl border-b border-sky/15 transition-all duration-300 overflow-hidden light:bg-white/95 light:border-slate-200 ${
-          mobileOpen ? 'max-h-[600px] opacity-100' : 'max-h-0 opacity-0'
-        }`}
-      >
-        <div className="px-4 py-6 flex flex-col gap-4">
-          <ThemeToggle />
-          <div className="flex flex-col gap-1">
-            {navLinks.map((link) => (
-              <button
-                key={link.href}
-                data-testid={`nav-mobile-link-${link.label.toLowerCase()}`}
-                onClick={() => scrollTo(link.href)}
-                className="text-left text-base font-medium text-ghost hover:text-ivory transition-colors py-3 border-b border-sky/10 last:border-0"
-              >
-                {link.label}
-              </button>
-            ))}
-          </div>
-          <button
-            data-testid="nav-mobile-cta"
-            onClick={() => scrollTo('#booking')}
-            className="btn-primary mt-4 justify-center"
-          >
-            Book Free Demo
-          </button>
-        </div>
-      </div>
-    </nav>
+      </motion.nav>
+    </>
   )
 }

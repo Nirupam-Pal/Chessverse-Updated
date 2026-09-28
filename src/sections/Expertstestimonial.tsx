@@ -14,22 +14,21 @@ import { EASE_OUT } from '@/lib/motion'
 // system preference. Re-runs whenever the class changes.
 // ─────────────────────────────────────────────
 
+// useSyncExternalStore re-reads the class after subscribing, so a theme switch that happens
+// before this component mounts (e.g. the toggle restoring a saved choice) can't be missed.
+// Dark is the site default: anything other than an explicit .light is dark.
+function subscribeToThemeClass(onChange: () => void) {
+  const observer = new MutationObserver(onChange);
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+  return () => observer.disconnect();
+}
+
 function useIsDark(): boolean {
-  const [dark, setDark] = React.useState(() => {
-    if (typeof document === "undefined") return true;
-    return document.documentElement.classList.contains("dark");
-  });
-
-  React.useEffect(() => {
-    const root = document.documentElement;
-    const observer = new MutationObserver(() => {
-      setDark(root.classList.contains("dark"));
-    });
-    observer.observe(root, { attributes: true, attributeFilter: ["class"] });
-    return () => observer.disconnect();
-  }, []);
-
-  return dark;
+  return React.useSyncExternalStore(
+    subscribeToThemeClass,
+    () => !document.documentElement.classList.contains("light"),
+    () => true,
+  );
 }
 
 // ─────────────────────────────────────────────
@@ -128,7 +127,7 @@ const DARK: ThemeTokens = {
 
   textPrimary:    "#f0ede8",
   textSecondary:  "rgba(240,237,232,0.62)",
-  textMuted:      "rgba(240,237,232,0.38)",
+  textMuted:      "rgba(240,237,232,0.52)",   // was 0.38 (≈3.2:1) — now ≈4.6:1
   textGold:       "#d4a843",
 
   shadowCard:     "0 1px 4px rgba(0,0,0,.60), 0 8px 32px rgba(0,0,0,.45)",
@@ -150,8 +149,9 @@ const LIGHT: ThemeTokens = {
   // near-white center (#f8f9fb) → cool blue-gray edges (#f1f2f6 / #eff3fc)
   // bg: solid mid-tone for the tall outer scroll wrapper (gradient would stretch)
   // bgInner: the visible gradient, applied only to the sticky 100vh panel
-  bg:      "#f3f4f8",
-  bgInner: "linear-gradient(135deg, #f1f2f6 0%, #f8f9fb 45%, #eff3fc 100%)",
+  // porcelain & ink — matches the site-wide light palette (--c-void #FAF8F3)
+  bg:      "#faf8f3",
+  bgInner: "linear-gradient(135deg, #f5f1e8 0%, #faf8f3 45%, #f3efe6 100%)",
 
   // Cards use white + backdrop-blur (mirrors bg-white/5 backdrop-blur-xl in Founder)
   bgCard:         "rgba(255,255,255,0.75)",
@@ -159,22 +159,22 @@ const LIGHT: ThemeTokens = {
   bgChip:         "rgba(212,168,67,0.10)",
 
   // Borders — equivalent of border-white/10 translated to light surface
-  border:         "rgba(26,26,46,0.08)",
-  borderHover:    "rgba(212,168,67,0.40)",
-  borderChip:     "rgba(212,168,67,0.40)",
-  borderMobile:   "rgba(26,26,46,0.08)",
+  border:         "rgba(11,23,51,0.08)",
+  borderHover:    "rgba(140,106,18,0.40)",
+  borderChip:     "rgba(140,106,18,0.40)",
+  borderMobile:   "rgba(11,23,51,0.08)",
 
-  gold:           "#b8891e",           // darker gold for contrast on white
-  goldLight:      "#d4a843",
-  goldDim:        "rgba(184,137,30,0.12)",
-  goldRing:       "rgba(184,137,30,0.30)",
-  goldRingHover:  "#b8891e",
+  gold:           "#8c6a12",           // antique gold — ≈4.8:1 on porcelain
+  goldLight:      "#b8892b",
+  goldDim:        "rgba(140,106,18,0.12)",
+  goldRing:       "rgba(140,106,18,0.30)",
+  goldRingHover:  "#8c6a12",
 
   // Text — deep navy (same hue as dark bg) for strong light-mode contrast
-  textPrimary:    "#1a1a2e",
-  textSecondary:  "rgba(26,26,46,0.65)",
-  textMuted:      "rgba(26,26,46,0.42)",
-  textGold:       "#b8891e",
+  textPrimary:    "#0b1733",
+  textSecondary:  "rgba(11,23,51,0.7)",
+  textMuted:      "rgba(11,23,51,0.56)",   // was 0.42 (<3:1) — now ≈4.6:1
+  textGold:       "#8c6a12",
 
   // Elevated white-surface shadows (mirrors shadow-[0_30px_80px_-48px_…] in Founder)
   shadowCard:     "0 1px 2px rgba(0,0,0,.04), 0 8px 32px rgba(0,0,0,.08), 0 0 0 1px rgba(26,26,46,.06)",
@@ -183,12 +183,12 @@ const LIGHT: ThemeTokens = {
   // Soft gold + sky glows (mirrors the Founder section's ambient blurs)
   glow: [
     "radial-gradient(ellipse 60% 55% at 10% 50%, rgba(212,168,67,.07) 0%, transparent 60%)",
-    "radial-gradient(ellipse 50% 60% at 90% 20%, rgba(14,165,233,.05) 0%, transparent 55%)",
+    "radial-gradient(ellipse 50% 60% at 90% 20%, rgba(30,64,175,.05) 0%, transparent 55%)",
     "radial-gradient(ellipse 40% 50% at 50% 100%, rgba(212,168,67,.04) 0%, transparent 60%)",
   ].join(","),
 
-  progressTrack:  "rgba(26,26,46,0.10)",
-  dotInactive:    "rgba(26,26,46,0.15)",
+  progressTrack:  "rgba(11,23,51,0.10)",
+  dotInactive:    "rgba(11,23,51,0.18)",
   kingOpacity:    0.04,
 };
 

@@ -50,17 +50,18 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        // ChessVerse logo-inspired palette
-        void: "#060B1A",        // near-black indigo
-        twilight: "#0B1733",     // deep navy card bg
-        midnight: "#0E2A52",     // navy accent (logo darker blue)
-        royal: "#1F4FAE",        // mid royal blue
-        sky: "#3A8DDE",          // bright blue (logo "VERSE" lighter)
-        azure: "#8ECAE6",        // soft sky highlight
-        gold: "#D4AF37",         // premium gold accent
-        ivory: "#F2F5FA",        // off-white
-        ghost: "#A4B0C7",        // muted body text
-        glass: "rgba(11, 23, 51, 0.5)",
+        // ChessVerse brand palette — theme-aware. Values live in index.css (:root = dark,
+        // .light = porcelain & ink), so every utility, opacity modifier and gradient follows the theme.
+        void: "rgb(var(--c-void) / <alpha-value>)",         // page background
+        twilight: "rgb(var(--c-twilight) / <alpha-value>)", // card surface
+        midnight: "rgb(var(--c-midnight) / <alpha-value>)", // raised / tinted surface
+        royal: "rgb(var(--c-royal) / <alpha-value>)",       // deep brand blue
+        sky: "rgb(var(--c-sky) / <alpha-value>)",           // primary brand blue
+        azure: "rgb(var(--c-azure) / <alpha-value>)",       // highlight blue
+        gold: "rgb(var(--c-gold) / <alpha-value>)",         // gold accent
+        ivory: "rgb(var(--c-ivory) / <alpha-value>)",       // primary text (ivory on dark, ink on light)
+        ghost: "rgb(var(--c-ghost) / <alpha-value>)",       // muted text
+        glass: "rgb(var(--c-twilight) / 0.5)",
       },
       fontFamily: {
         display: ['"Fraunces"', 'serif'],
@@ -141,5 +142,9 @@ export default {
       },
     },
   },
-  plugins: [tailwindcssAnimate],
+  plugins: [
+    tailwindcssAnimate,
+    // `light:` variant — the theme toggle puts `.light` on <html>
+    ({ addVariant }) => addVariant('light', '.light &'),
+  ],
 }

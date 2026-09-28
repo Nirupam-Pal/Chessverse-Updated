@@ -98,7 +98,7 @@ function CoachCard({ coach, index }: { coach: typeof coaches[0]; index: number }
           <div className="absolute inset-0 bg-gradient-to-t from-twilight via-twilight/40 to-transparent" />
           <div
             className={`absolute top-4 right-4 px-3 py-1 rounded-full backdrop-blur-sm ${
-              coach.featured ? 'bg-gold/20 ring-1 ring-gold/40' : 'bg-sky/20 ring-1 ring-sky/35'
+              coach.featured ? 'bg-gold/20 light:bg-white/90 ring-1 ring-gold/40' : 'bg-sky/20 light:bg-white/90 ring-1 ring-sky/35'
             }`}
           >
             <span className={`text-xs font-semibold ${coach.featured ? 'text-gold' : 'text-sky'}`}>
@@ -106,7 +106,7 @@ function CoachCard({ coach, index }: { coach: typeof coaches[0]; index: number }
             </span>
           </div>
           {coach.featured && (
-            <div className="absolute top-4 left-4 pill-tag-gold !py-1 !px-3 !text-[10px]">
+            <div className="absolute top-4 left-4 pill-tag-gold !py-1 !px-3 !text-[10px] light:!bg-white/90 light:backdrop-blur-md">
               Founder
             </div>
           )}
