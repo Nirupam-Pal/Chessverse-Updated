@@ -24,7 +24,7 @@ export default function WhatsAppButton() {
       className={`fixed bottom-5 right-5 sm:bottom-7 sm:right-7 z-[60] flex items-center gap-3 transition-all duration-500 ${
         mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
       }`}
-      aria-label="Chat with ChessVerse on WhatsApp"
+      aria-label="Chat with Chessverse on WhatsApp"
     >
       {/* Tooltip bubble */}
       <span

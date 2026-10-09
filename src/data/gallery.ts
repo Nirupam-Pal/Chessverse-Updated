@@ -26,7 +26,7 @@ export const folders: GalleryFolder[] = [
 ]
 
 /*
- * Placeholder photography. To add real ChessVerse photos: drop files into /public/images/gallery/
+ * Placeholder photography. To add real Chessverse photos: drop files into /public/images/gallery/
  * and add an entry here, e.g. { src: '/images/gallery/state-2024.webp', folder: 'tournaments', ratio: 4 / 3, … }.
  * Prefer WebP exported at ~1600px on the long edge. Unsplash URLs are resized + format-negotiated automatically.
  */

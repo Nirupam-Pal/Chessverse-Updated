@@ -22,7 +22,7 @@ function ChessPiece({
     }
   })
 
-  // ChessVerse brand-aligned piece colors
+  // Chessverse brand-aligned piece colors
   const pieceColor = isWhite ? '#EAF2FB' : '#0B2545'
   const emissiveColor = isWhite ? '#8ECAE6' : '#3A8DDE'
 

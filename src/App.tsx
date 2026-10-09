@@ -9,6 +9,7 @@ import { pageLoaders } from './lib/routes'
 
 const AboutPage = lazy(pageLoaders['/about'])
 const GalleryPage = lazy(pageLoaders['/gallery'])
+const ContactPage = lazy(pageLoaders['/contact'])
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/gallery" element={<GalleryPage />} />
+          <Route path="/contact" element={<ContactPage />} />
           <Route path="*" element={<Home />} />
         </Route>
       </Routes>

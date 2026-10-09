@@ -185,7 +185,7 @@ export default function Coaches() {
             Our Coaches
           </span>
           <h2 className="font-display font-bold text-4xl sm:text-5xl lg:text-6xl text-ivory mb-5 leading-tight">
-            Meet the <span className="text-gradient italic">Minds</span> Behind ChessVerse
+            Meet the <span className="text-gradient italic">Minds</span> Behind Chessverse
           </h2>
           <p className="text-ghost text-lg max-w-2xl mx-auto">
             FIDE-aligned trainers, state players and patient mentors — each

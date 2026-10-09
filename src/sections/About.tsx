@@ -44,7 +44,7 @@ export default function About() {
           >
             <div>
               <span className="pill-tag mb-5" data-testid="about-tag">
-                About ChessVerse
+                About Chessverse
               </span>
               <h2 className="font-display font-bold text-4xl sm:text-5xl lg:text-6xl text-ivory leading-tight mb-5">
                 Where every player learns to <span className="text-gradient italic">think like a king</span>.

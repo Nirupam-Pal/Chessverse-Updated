@@ -9,11 +9,10 @@ import StarPerformer from '../sections/StarPerformer'
 import Gallery from '../sections/Gallery'
 import Testimonials from '../sections/Testimonials'
 import Booking from '../sections/Booking'
-import Contact from '../sections/Contact'
 import ExpertTestimonials from '@/sections/Expertstestimonial'
 
 // Navigation, Footer and the WhatsApp button live in SiteLayout (shared by every page).
-// The Founder section now lives on its own page (/about); Coaches is retired from the site.
+// About (with the founder) and Contact have their own pages (/about, /contact); Coaches is retired.
 export default function Home() {
   return (
     <>
@@ -29,7 +28,6 @@ export default function Home() {
       <ExpertTestimonials />
       <Testimonials />
       <Booking />
-      <Contact />
     </>
   )
 }

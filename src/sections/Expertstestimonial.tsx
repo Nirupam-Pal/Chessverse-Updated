@@ -215,7 +215,7 @@ export const EXPERTS: Expert[] = [
     title: "National Champion & Head Trainer",
     credentials: "FIDE Rated 2487 · 15+ Years Coaching",
     quote:
-      "ChessVerse has revolutionized how we nurture talent in the Northeast. The structured curriculum takes a complete beginner and systematically builds the pattern recognition, calculation depth, and psychological resilience of a tournament player. I've seen students progress from casual hobbyists to rated competitors in under a year.",
+      "Chessverse has revolutionized how we nurture talent in the Northeast. The structured curriculum takes a complete beginner and systematically builds the pattern recognition, calculation depth, and psychological resilience of a tournament player. I've seen students progress from casual hobbyists to rated competitors in under a year.",
     rating: "2487 FIDE",
     fideTitle: "GM",
     imageUrl: "https://i.pravatar.cc/300?img=11",
@@ -226,7 +226,7 @@ export const EXPERTS: Expert[] = [
     title: "Women's International Master",
     credentials: "3× National Women's Champion · FIDE Trainer",
     quote:
-      "What sets ChessVerse apart is not just the chess training — it's the mindset coaching woven through every lesson. Students learn to handle pressure, analyze their mistakes without ego, and play objectively. These are life skills that extend far beyond the 64 squares.",
+      "What sets Chessverse apart is not just the chess training — it's the mindset coaching woven through every lesson. Students learn to handle pressure, analyze their mistakes without ego, and play objectively. These are life skills that extend far beyond the 64 squares.",
     rating: "2310 FIDE",
     fideTitle: "IM",
     imageUrl: "https://i.pravatar.cc/300?img=47",
@@ -237,7 +237,7 @@ export const EXPERTS: Expert[] = [
     title: "FIDE Master & Opening Theorist",
     credentials: "Author of 'Modern Indian Defenses' · Coach since 2010",
     quote:
-      "I recommend ChessVerse without hesitation to any parent looking to give their child a competitive edge. The coaches here don't just teach moves — they teach thinking. The combination of live coaching and structured self-study produces well-rounded players.",
+      "I recommend Chessverse without hesitation to any parent looking to give their child a competitive edge. The coaches here don't just teach moves — they teach thinking. The combination of live coaching and structured self-study produces well-rounded players.",
     rating: "2241 FIDE",
     fideTitle: "FM",
     imageUrl: "https://i.pravatar.cc/300?img=12",
@@ -248,7 +248,7 @@ export const EXPERTS: Expert[] = [
     title: "Chess Psychology Researcher",
     credentials: "PhD in Cognitive Science · NIT Agartala",
     quote:
-      "The cognitive benefits of chess training done right are well-documented — improved working memory, planning ability, and focus. ChessVerse's methodology aligns with the science: deliberate practice with timely feedback and increasing challenge. It's the approach the research actually endorses.",
+      "The cognitive benefits of chess training done right are well-documented — improved working memory, planning ability, and focus. Chessverse's methodology aligns with the science: deliberate practice with timely feedback and increasing challenge. It's the approach the research actually endorses.",
     rating: undefined,
     fideTitle: undefined,
     imageUrl: "https://i.pravatar.cc/300?img=52",
@@ -257,9 +257,9 @@ export const EXPERTS: Expert[] = [
     id: "e5",
     name: "CM Ritu Debnath",
     title: "Candidate Master & Youth Coach",
-    credentials: "State U-20 Champion · ChessVerse Alumni",
+    credentials: "State U-20 Champion · Chessverse Alumni",
     quote:
-      "I joined ChessVerse as a student and came back as a coach because I believe in what this institute does. The personal attention each student receives, the quality of game analysis sessions, and the tournament preparation programme are genuinely world-class for this region.",
+      "I joined Chessverse as a student and came back as a coach because I believe in what this institute does. The personal attention each student receives, the quality of game analysis sessions, and the tournament preparation programme are genuinely world-class for this region.",
     rating: "1987 FIDE",
     fideTitle: "CM",
     imageUrl: "https://i.pravatar.cc/300?img=45",
@@ -607,7 +607,7 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
           color: T.textSecondary, maxWidth: 290,
           fontFamily: FONT_BODY,
         }}>
-          Grandmasters, International Masters, and researchers on why ChessVerse
+          Grandmasters, International Masters, and researchers on why Chessverse
           produces tournament-ready players.
         </p>
       )}

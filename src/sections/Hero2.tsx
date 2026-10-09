@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState, Suspense, type ReactNode, type RefObject } from 'react'
+import { useSiteNav } from '@/lib/routes'
 import { Canvas, useFrame, useThree, type ThreeElements } from '@react-three/fiber'
 import { ContactShadows, Environment, Lightformer, MeshReflectorMaterial, PerformanceMonitor, Preload, Sparkles, useGLTF } from '@react-three/drei'
 import {
@@ -832,6 +833,7 @@ export default function Hero2() {
     return () => window.removeEventListener('pointermove', onMove)
   }, [glowX, glowY])
 
+  const go = useSiteNav() // page links (contact now lives on /contact)
   const scrollTo = (id: string) => {
     const el = document.querySelector(id)
     if (el) el.scrollIntoView({ behavior: 'smooth' })
@@ -1001,7 +1003,7 @@ export default function Hero2() {
             className="max-w-7xl mx-auto px-5 sm:px-8 pb-8 lg:pb-0"
           >
             <div className="max-w-md mx-auto lg:mx-0 text-center lg:text-left">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-sky">Why ChessVerse</p>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-sky">Why Chessverse</p>
               <h2 className="mt-3 font-display font-bold text-3xl sm:text-5xl text-ivory leading-[1.05] tracking-tight">
                 Train like a <span className="text-gradient-gold italic">grandmaster.</span>
               </h2>
@@ -1021,7 +1023,7 @@ export default function Hero2() {
               </ul>
 
               <div className="mt-6 sm:mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-x-5 gap-y-3">
-                <MagneticButton testId="hero2-cta-contact" onClick={() => scrollTo('#contact')} className="btn-primary group">
+                <MagneticButton testId="hero2-cta-contact" onClick={() => go('/contact')} className="btn-primary group">
                   Talk to a coach
                   <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
                 </MagneticButton>

@@ -5,7 +5,7 @@
 /* ==========================================================================
    Theme tokens
    - shadcn tokens (HSL):            --background, --primary, …
-   - ChessVerse brand tokens (RGB):   --c-*  → consumed by tailwind.config.js
+   - Chessverse brand tokens (RGB):   --c-*  → consumed by tailwind.config.js
      (void, twilight, midnight, royal, sky, azure, gold, ivory, ghost)
    Dark is the default (:root). `.light` on <html> swaps in porcelain & ink.
    ========================================================================== */
@@ -181,6 +181,17 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+  }
+  /* background-clip:text only paints inside the element's box, so italic overhangs (the slant of
+     a final "s", "y", "a"…) and deep descenders fall outside it and render as clipped glyphs.
+     Grow the painted box with padding, cancel the inline shift with equal negative margins (layout
+     and spacing stay identical), and `clone` repeats this on every line when a span wraps. */
+  .text-gradient,
+  .text-gradient-gold {
+    padding: 0.06em 0.16em 0.12em 0.08em;
+    margin: -0.06em -0.16em -0.12em -0.08em; /* vertical part only matters for block-level uses */
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
   }
   .btn-primary {
     @apply inline-flex items-center gap-2 px-7 py-3.5 rounded-full font-semibold text-sm tracking-wide transition-all duration-300 hover:scale-[1.03];

@@ -35,33 +35,20 @@ export default function Contact() {
   const [form, setForm] = useState({ name: '', email: '', phone: '', message: '' })
 
   const whatsappFallback = () => {
-    const msg = `Hello ChessVerse,%0A%0AName: ${form.name || '___'}%0AEmail: ${form.email || '___'}%0APhone: ${form.phone || '___'}%0A%0AMessage:%0A${form.message || '___'}`
+    const msg = `Hello Chessverse,%0A%0AName: ${form.name || '___'}%0AEmail: ${form.email || '___'}%0APhone: ${form.phone || '___'}%0A%0AMessage:%0A${form.message || '___'}`
     window.open(`https://wa.me/917629037237?text=${msg}`, '_blank')
   }
 
   return (
-    <section id="contact" className="relative w-full bg-twilight section-padding overflow-hidden">
+    // Lives on /contact (ContactPage), whose PageHeader carries the section's title.
+    <section
+      id="contact"
+      className="relative w-full overflow-hidden px-4 sm:px-6 lg:px-8 xl:px-12 pt-12 md:pt-16 pb-20 md:pb-28 lg:pb-32"
+    >
       <div className="absolute top-0 left-0 w-[480px] h-[480px] bg-royal/12 rounded-full blur-[150px] pointer-events-none" />
       <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-sky/8 rounded-full blur-[140px] pointer-events-none" />
 
       <div ref={ref} className="relative max-w-7xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, ease: EASE_OUT }}
-          className="text-center mb-14 md:mb-16"
-        >
-          <span className="pill-tag mb-5" data-testid="contact-tag">
-            Get in Touch
-          </span>
-          <h2 className="font-display font-bold text-4xl sm:text-5xl lg:text-6xl text-ivory mb-5 leading-tight">
-            We&apos;d love to <span className="text-gradient italic">hear from you</span>
-          </h2>
-          <p className="text-ghost text-lg max-w-2xl mx-auto">
-            Have questions about classes, fees or batches? Drop us a message — we usually reply within a few hours.
-          </p>
-        </motion.div>
-
         <div className="grid lg:grid-cols-2 gap-10 lg:gap-16">
           {/* Contact Form */}
           <motion.div
@@ -185,7 +172,7 @@ export default function Contact() {
             {/* Map */}
             <div className="relative rounded-2xl overflow-hidden h-[260px] liquid-glass">
               <iframe
-                title="ChessVerse Location"
+                title="Chessverse Location"
                 src="https://www.google.com/maps?q=Ramnagar+4+Agartala+Tripura&output=embed"
                 width="100%"
                 height="100%"

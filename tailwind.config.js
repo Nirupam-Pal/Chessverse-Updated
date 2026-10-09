@@ -50,7 +50,7 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        // ChessVerse brand palette — theme-aware. Values live in index.css (:root = dark,
+        // Chessverse brand palette — theme-aware. Values live in index.css (:root = dark,
         // .light = porcelain & ink), so every utility, opacity modifier and gradient follows the theme.
         void: "rgb(var(--c-void) / <alpha-value>)",         // page background
         twilight: "rgb(var(--c-twilight) / <alpha-value>)", // card surface

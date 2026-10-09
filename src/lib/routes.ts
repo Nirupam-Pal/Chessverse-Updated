@@ -7,6 +7,7 @@ import { scrollToTarget } from '@/lib/scroll'
 export const pageLoaders = {
   '/about': () => import('@/pages/AboutPage'),
   '/gallery': () => import('@/pages/GalleryPage'),
+  '/contact': () => import('@/pages/ContactPage'),
 } as const
 
 /** Warm a page's chunk ahead of the click (call on hover/focus). No-op for home sections. */

@@ -15,7 +15,7 @@ const navLinks = [
   { label: 'Achievements', to: '#achievements' },
   { label: 'Star Performer', to: '#star-performer' },
   { label: 'Testimonials', to: '#testimonials' },
-  { label: 'Contact', to: '#contact' },
+  { label: 'Contact', to: '/contact' },
 ]
 const SECTION_IDS = navLinks.filter((l) => l.to.startsWith('#')).map((l) => l.to.slice(1))
 
@@ -218,14 +218,14 @@ export default function Navigation() {
               data-testid="nav-logo"
               onClick={() => scrollTo('/')}
               className="flex items-center gap-3 group shrink-0"
-              aria-label={pathname === '/' ? 'ChessVerse — back to top' : 'ChessVerse — home'}
+              aria-label={pathname === '/' ? 'Chessverse — back to top' : 'Chessverse — home'}
             >
               <div
                 className={`relative rounded-xl overflow-hidden bg-ivory light:bg-white ring-1 ring-sky/30 shadow-md shadow-royal/30 transition-all ${MORPH} group-hover:scale-105 group-hover:rotate-[-4deg] ${
                   scrolled ? 'w-10 h-10 rounded-full' : 'w-11 h-11'
                 }`}
               >
-                <img src="/images/chessverse-logo.jpg" alt="ChessVerse" className="absolute inset-0 w-full h-full object-cover" />
+                <img src="/images/chessverse-logo.jpg" alt="Chessverse" className="absolute inset-0 w-full h-full object-cover" />
               </div>
               <div className="flex flex-col leading-none text-left">
                 <span className="font-display font-bold text-lg sm:text-xl text-ivory tracking-tight group-hover:text-sky transition-colors">

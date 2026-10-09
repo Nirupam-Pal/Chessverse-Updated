@@ -31,7 +31,7 @@ export default function Founder() {
                 Building confident young minds through chess.
               </h2>
               <p className="text-ghost text-lg leading-relaxed">
-                At ChessVerse, we believe chess is more than a game—it builds discipline, leadership, and a mindset for lifelong success. </p>
+                At Chessverse, we believe chess is more than a game—it builds discipline, leadership, and a mindset for lifelong success. </p>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
@@ -75,7 +75,7 @@ export default function Founder() {
                 <div className="relative flex h-20 w-20 items-center justify-center rounded-full bg-gold/10 ring-1 ring-gold/25">
                   <img
                     src="/images/coach-pratik.jpg"
-                    alt="Founder of ChessVerse"
+                    alt="Founder of Chessverse"
                     width={80}
                     height={80}
                     loading="lazy"
@@ -110,7 +110,7 @@ export default function Founder() {
               {/* 1200px re-encode of founder.jpg (3 MB → 200 KB); width/height reserve the box */}
               <img
                 src="/images/founder-1200.jpg"
-                alt="Pratik Debnath, founder of ChessVerse"
+                alt="Pratik Debnath, founder of Chessverse"
                 width={1200}
                 height={1600}
                 decoding="async"

@@ -10,7 +10,7 @@ const testimonials = [
     image:
       'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&q=80',
     quote:
-      'My daughter joined ChessVerse two years ago. Today she is a district champion. The coaches don\'t just teach moves — they teach patience and focus.',
+      'My daughter joined Chessverse two years ago. Today she is a district champion. The coaches don\'t just teach moves — they teach patience and focus.',
     rating: 5,
     improvement: 'District Champ',
   },
@@ -69,7 +69,7 @@ export default function Testimonials() {
             What Our <span className="text-gradient italic">Families Say</span>
           </h2>
           <p className="text-ghost text-lg max-w-2xl mx-auto">
-            Real stories from students and parents across Tripura who chose ChessVerse as their guide.
+            Real stories from students and parents across Tripura who chose Chessverse as their guide.
           </p>
         </motion.div>
 

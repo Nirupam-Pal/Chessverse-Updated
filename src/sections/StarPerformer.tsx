@@ -13,7 +13,7 @@ const starPerformers = [
     title: 'Tripura State U-14 Gold Medallist',
     rating: 'FIDE 1847',
     quote:
-      'ChessVerse taught me to stay calm under pressure. Winning state gold felt like the natural next step on a journey I started here as a complete beginner.',
+      'Chessverse taught me to stay calm under pressure. Winning state gold felt like the natural next step on a journey I started here as a complete beginner.',
     achievements: [
       'National Schools Championship Qualifier',
       'District Champion — 3 consecutive years',
@@ -22,7 +22,7 @@ const starPerformers = [
     stats: [
       { label: 'FIDE Rating', value: '1847' },
       { label: 'Medals Won', value: '12' },
-      { label: 'Years at ChessVerse', value: '3' },
+      { label: 'Years at Chessverse', value: '3' },
     ],
   },
   {
@@ -43,7 +43,7 @@ const starPerformers = [
     stats: [
       { label: 'FIDE Rating', value: '1520' },
       { label: 'Medals Won', value: '8' },
-      { label: 'Years at ChessVerse', value: '2' },
+      { label: 'Years at Chessverse', value: '2' },
     ],
   },
   {
@@ -64,7 +64,7 @@ const starPerformers = [
     stats: [
       { label: 'FIDE Rating', value: '1962' },
       { label: 'Medals Won', value: '18' },
-      { label: 'Years at ChessVerse', value: '4' },
+      { label: 'Years at Chessverse', value: '4' },
     ],
   },
 ]

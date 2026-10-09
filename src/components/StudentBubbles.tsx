@@ -20,11 +20,11 @@ type Bubble = {
   delay: number
 }
 
-// Placeholder portraits — swap for cut-out photos of real ChessVerse students (square, ~600px).
+// Placeholder portraits — swap for cut-out photos of real Chessverse students (square, ~600px).
 const bubbles: Bubble[] = [
   {
     src: '/images/student2.jpg',
-    alt: 'ChessVerse student',
+    alt: 'Chessverse student',
     left: '36%',
     top: '3%',
     size: '38%',
@@ -39,7 +39,7 @@ const bubbles: Bubble[] = [
   },
   {
     src: '/images/student1.jpg',
-    alt: 'ChessVerse student',
+    alt: 'Chessverse student',
     left: '8%',
     top: '35%',
     size: '33%',
@@ -54,7 +54,7 @@ const bubbles: Bubble[] = [
   },
   {
     src: '/images/student4.jpg',
-    alt: 'ChessVerse student',
+    alt: 'Chessverse student',
     left: '63%',
     top: '42%',
     size: '32%',
@@ -69,7 +69,7 @@ const bubbles: Bubble[] = [
   },
   {
     src: '/images/student3.jpg',
-    alt: 'ChessVerse student',
+    alt: 'Chessverse student',
     left: '32%',
     top: '66%',
     size: '28%',

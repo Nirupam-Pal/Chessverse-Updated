@@ -223,9 +223,9 @@ export default function GalleryPage() {
   return (
     <>
       <PageHeader
-        docTitle="Gallery — ChessVerse Chess Institute"
+        docTitle="Gallery — Chessverse Chess Institute"
         crumb="Gallery"
-        tag="Inside ChessVerse"
+        tag="Inside Chessverse"
         title={
           <>
             Moments from our <span className="text-gradient italic">boards</span>

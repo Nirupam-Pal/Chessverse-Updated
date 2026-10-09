@@ -29,7 +29,7 @@ const milestones = [
     year: '2023',
     title: 'National Qualifiers',
     description:
-      'Seven ChessVerse students qualified for the National Schools Chess Championship — a record from the Northeast.',
+      'Seven Chessverse students qualified for the National Schools Chess Championship — a record from the Northeast.',
     icon: Medal,
     accent: 'sky',
   },

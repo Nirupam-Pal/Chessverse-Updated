@@ -30,7 +30,7 @@ export default function Gallery() {
         >
           <div className="max-w-2xl">
             <span className="pill-tag mb-5" data-testid="gallery-tag">
-              Inside ChessVerse
+              Inside Chessverse
             </span>
             <h2 className="font-display font-bold text-4xl sm:text-5xl lg:text-6xl text-ivory mb-5 leading-tight">
               Moments From Our <span className="text-gradient italic">Boards</span>

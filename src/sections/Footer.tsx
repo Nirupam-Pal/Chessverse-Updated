@@ -23,7 +23,7 @@ const links: Record<string, FooterLink[]> = {
   ],
   Connect: [
     { label: 'Book Free Demo', href: '#booking' },
-    { label: 'Contact Us', href: '#contact' },
+    { label: 'Contact Us', href: '/contact' },
     { label: 'WhatsApp', href: 'https://wa.me/917629037237', external: true },
     { label: 'Testimonials', href: '#testimonials' },
   ],
@@ -46,7 +46,7 @@ export default function Footer() {
               <div className="w-12 h-12 rounded-xl overflow-hidden bg-ivory light:bg-white ring-1 ring-sky/30 shadow-md shadow-royal/30">
                 <img
                   src="/images/chessverse-logo.jpg"
-                  alt="ChessVerse"
+                  alt="Chessverse"
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -126,7 +126,7 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="mt-14 pt-6 border-t border-sky/10 flex flex-col sm:flex-row items-center justify-between gap-5">
           <p className="text-ghost text-xs text-center sm:text-left">
-            &copy; {new Date().getFullYear()} ChessVerse Chess Institute. All rights reserved.
+            &copy; {new Date().getFullYear()} Chessverse Chess Institute. All rights reserved.
           </p>
 
           <div className="flex items-center gap-3">

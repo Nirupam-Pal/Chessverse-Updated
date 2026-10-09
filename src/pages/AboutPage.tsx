@@ -68,12 +68,12 @@ const journey = [
   {
     year: '2013',
     title: 'Where it started',
-    text: 'ChessVerse opens as a single classroom with one goal: serious, structured chess coaching that any child can access.',
+    text: 'Chessverse opens as a single classroom with one goal: serious, structured chess coaching that any child can access.',
   },
   {
     year: '2020',
     title: 'Going online',
-    text: 'Live online classes take the ChessVerse method beyond one classroom, reaching students wherever they are.',
+    text: 'Live online classes take the Chessverse method beyond one classroom, reaching students wherever they are.',
   },
   {
     year: '2022',
@@ -83,7 +83,7 @@ const journey = [
   {
     year: '2023',
     title: 'National qualifiers',
-    text: 'Seven ChessVerse students qualify for the National Schools Chess Championship.',
+    text: 'Seven Chessverse students qualify for the National Schools Chess Championship.',
   },
   {
     year: '2024',
@@ -132,7 +132,7 @@ const habits = [
 
 const faqs = [
   {
-    q: 'When was ChessVerse founded, and by whom?',
+    q: 'When was Chessverse founded, and by whom?',
     a: 'In 2013, by Pratik Debnath, a FIDE Trainer and former State Chess Champion who still leads the coaching as Head Coach.',
   },
   {
@@ -211,7 +211,7 @@ export default function AboutPage() {
 
   useEffect(() => {
     const prev = document.title
-    document.title = 'About Us — The Story of ChessVerse'
+    document.title = 'About Us — The Story of Chessverse'
     return () => {
       document.title = prev
     }
@@ -276,7 +276,7 @@ export default function AboutPage() {
           {/* collage */}
           <Reveal delay={0.1} className="grid grid-cols-2 gap-3 sm:gap-4">
             <figure className="relative col-span-2 overflow-hidden rounded-[28px] glow-border">
-              <LazyImage src="/images/coaching.jpg" alt="A ChessVerse coach and student mid-game" ratio={16 / 9} priority />
+              <LazyImage src="/images/coaching.jpg" alt="A Chessverse coach and student mid-game" ratio={16 / 9} priority />
               <div className="absolute inset-0 bg-gradient-to-t from-[#060B1A]/85 via-transparent to-transparent" />
               <figcaption className="absolute bottom-4 left-4 right-4 sm:bottom-5 sm:left-5">
                 <p className="font-display font-semibold text-white text-lg">Every class is live</p>
@@ -286,7 +286,7 @@ export default function AboutPage() {
             <figure className="relative overflow-hidden rounded-[24px] glow-border">
               <LazyImage
                 src="/images/founder-1200.jpg"
-                alt="Pratik Debnath, founder of ChessVerse"
+                alt="Pratik Debnath, founder of Chessverse"
                 ratio={4 / 5}
                 sizes="(min-width: 1024px) 25vw, 50vw"
                 imgClassName="object-[center_70%]"
@@ -312,7 +312,7 @@ export default function AboutPage() {
       </section>
 
       {/* ---------------- Stats band (CSS marquee: one GPU transform loop) ---------------- */}
-      <section aria-label="ChessVerse in numbers" className="relative w-full overflow-hidden border-y border-gold/20 bg-gradient-to-r from-midnight via-twilight to-midnight py-6">
+      <section aria-label="Chessverse in numbers" className="relative w-full overflow-hidden border-y border-gold/20 bg-gradient-to-r from-midnight via-twilight to-midnight py-6">
         <div className="mask-fade-edges">
           <div className="flex w-max animate-marquee hover:[animation-play-state:paused] motion-reduce:animate-none">
             {[0, 1].map((copy) => (
@@ -359,7 +359,7 @@ export default function AboutPage() {
           </div>
           <Reveal className="mt-12 text-center">
             <p className="font-display text-xl sm:text-2xl text-ivory/90 italic max-w-3xl mx-auto leading-snug">
-              That is the gap ChessVerse was built to close: turning children who play chess into children who
+              That is the gap Chessverse was built to close: turning children who play chess into children who
               learn to think.
             </p>
           </Reveal>
@@ -393,7 +393,7 @@ export default function AboutPage() {
             <div className="relative overflow-hidden rounded-[32px] glow-border">
               <LazyImage
                 src="/images/founder-1200.jpg"
-                alt="Pratik Debnath, founder and head coach of ChessVerse"
+                alt="Pratik Debnath, founder and head coach of Chessverse"
                 ratio={4 / 5}
                 sizes="(min-width: 1024px) 40vw, 100vw"
                 imgClassName="object-[center_70%]"
@@ -417,7 +417,7 @@ export default function AboutPage() {
             <p className="mt-2 text-sm uppercase tracking-[0.22em] text-ghost">Founder & Head Coach</p>
             <div className="mt-7 space-y-4 text-ghost text-lg leading-relaxed">
               <p>
-                A former State Chess Champion and FIDE Trainer, Pratik founded ChessVerse in 2013 with a conviction
+                A former State Chess Champion and FIDE Trainer, Pratik founded Chessverse in 2013 with a conviction
                 that chess is more than a game: it builds discipline, leadership and a mindset for lifelong success.
               </p>
               <p>
@@ -449,7 +449,7 @@ export default function AboutPage() {
                 celebrate every achievement while building champions on and off the board.”
               </blockquote>
               <figcaption className="mt-4 text-sm text-ghost">
-                <span className="text-ivory font-semibold">Pratik Debnath</span> · Founder, ChessVerse
+                <span className="text-ivory font-semibold">Pratik Debnath</span> · Founder, Chessverse
               </figcaption>
             </figure>
           </Reveal>
@@ -521,7 +521,7 @@ export default function AboutPage() {
           <Reveal>
             <span className="pill-tag mb-5">Questions</span>
             <h2 className="font-display font-bold text-4xl sm:text-5xl text-ivory leading-[1.05]">
-              What people ask about <span className="text-gradient italic">ChessVerse</span>.
+              What people ask about <span className="text-gradient italic">Chessverse</span>.
             </h2>
             <p className="mt-5 text-ghost text-lg leading-relaxed max-w-md">
               The short version of who we are, how we teach and what it means for your child.
@@ -555,7 +555,7 @@ export default function AboutPage() {
             The next move is <span className="text-gradient-gold italic">your child’s</span>.
           </h2>
           <p className="relative text-ghost text-lg max-w-xl mx-auto mb-8">
-            One free live class with a ChessVerse coach: a real board, real feedback and an honest assessment of
+            One free live class with a Chessverse coach: a real board, real feedback and an honest assessment of
             where your child is today.
           </p>
           <div className="relative flex flex-wrap justify-center gap-3">

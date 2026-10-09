@@ -20,7 +20,7 @@ export default function Booking() {
   const update = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }))
 
   const whatsappFallback = () => {
-    const msg = `Hello ChessVerse, I want to book a free demo.%0A%0AName: ${form.name || '___'}%0APhone: ${form.phone || '___'}%0ALevel: ${form.level}%0AMode: ${form.mode}%0APreferred Time: ${form.preferred_time || '___'}`
+    const msg = `Hello Chessverse, I want to book a free demo.%0A%0AName: ${form.name || '___'}%0APhone: ${form.phone || '___'}%0ALevel: ${form.level}%0AMode: ${form.mode}%0APreferred Time: ${form.preferred_time || '___'}`
     window.open(`https://wa.me/917629037237?text=${msg}`, '_blank')
   }
 
@@ -172,7 +172,7 @@ export default function Booking() {
             </div>
 
             <p className="text-center text-sm text-ghost pt-2">
-              By submitting, you agree to be contacted by ChessVerse about a free trial class.
+              By submitting, you agree to be contacted by Chessverse about a free trial class.
             </p>
           </div>
         </motion.div>

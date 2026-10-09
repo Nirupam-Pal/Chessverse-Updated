@@ -1,7 +1,7 @@
-# ChessVerse — Product Requirements & Progress
+# Chessverse — Product Requirements & Progress
 
 ## Original Problem Statement
-Update the existing Chess Institute website (ChessVerse — biggest chess institute in Tripura) with a complete modern UI redesign. Use the uploaded logo for color inspiration. Premium, elegant, modern chess-themed design. Add floating WhatsApp button (+91 7629037237), modern hero, animations, smooth scroll, glassmorphism, hover effects. Update Hero/About/Courses/Achievements/Gallery/Testimonials/Contact sections. Pure frontend — no backend; contact form must email chessverse07@gmail.com through a 3rd-party service.
+Update the existing Chess Institute website (Chessverse — biggest chess institute in Tripura) with a complete modern UI redesign. Use the uploaded logo for color inspiration. Premium, elegant, modern chess-themed design. Add floating WhatsApp button (+91 7629037237), modern hero, animations, smooth scroll, glassmorphism, hover effects. Update Hero/About/Courses/Achievements/Gallery/Testimonials/Contact sections. Pure frontend — no backend; contact form must email chessverse07@gmail.com through a 3rd-party service.
 
 ## Brand & Architecture
 - **Stack**: Vite + React 19 + TypeScript + Tailwind CSS + framer-motion + three.js (@react-three/fiber + drei) + lucide-react icons
@@ -72,7 +72,7 @@ On the very first form submission, Formsubmit will send an **activation email** 
 ## Prioritized Backlog (P0 done; future ideas)
 - **P1 — Lead capture polish**: Add a thank-you page redirect (`_next` field on Formsubmit) + autoresponder using `_autoresponse`
 - **P1 — Google reCAPTCHA / hCaptcha**: Currently `_captcha=false` for clean UX; enable later if spam appears
-- **P2 — Real photos**: Replace Unsplash placeholders in Gallery & Coaches with actual ChessVerse photos (just swap URLs in `Gallery.tsx` and `Coaches.tsx`)
+- **P2 — Real photos**: Replace Unsplash placeholders in Gallery & Coaches with actual Chessverse photos (just swap URLs in `Gallery.tsx` and `Coaches.tsx`)
 - **P2 — Blog / Resources** section for chess tips → drives SEO
 - **P2 — Online enrolment + payment** via Razorpay/Stripe (would need backend)
 - **P3 — Multi-language** (Bengali/Kokborok) toggle
@@ -80,5 +80,5 @@ On the very first form submission, Formsubmit will send an **activation email** 
 
 ## Next Tasks
 1. Activate Formsubmit by submitting one test message and clicking the email confirmation
-2. Replace Unsplash gallery/coach photos with real ChessVerse images
+2. Replace Unsplash gallery/coach photos with real Chessverse images
 3. Update social media links (Facebook/Instagram/YouTube currently `#`)
