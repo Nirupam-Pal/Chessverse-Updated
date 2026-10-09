@@ -644,6 +644,24 @@ function MagneticButton({
   )
 }
 
+/** Eyebrow + one-line pitch. Brand-level wording (no region), so it travels as the academy grows. */
+function HeroIntro({ className = '', centered = false }: { className?: string; centered?: boolean }) {
+  return (
+    <div className={className}>
+      <p className="text-[11px] sm:text-xs font-semibold uppercase tracking-[0.25em] text-gold">
+        World-Class Chess Coaching
+      </p>
+      <p
+        className={`hidden sm:block mt-3 text-sm lg:text-lg text-ghost leading-relaxed ${
+          centered ? 'max-w-sm mx-auto' : 'max-w-md'
+        }`}
+      >
+        Master the 64 squares — from your first move to your first rated tournament.
+      </p>
+    </div>
+  )
+}
+
 const rise: Variants = {
   hidden: { opacity: 0, y: 24 },
   show: (i: number = 0) => ({
@@ -831,39 +849,41 @@ export default function Hero2() {
             lg+: left column, with the 3D shifted right so the two never overlap.
             Below lg: stacked above the knight. Front layer (z-15) so the mirror floor can't hide it. */}
         <motion.div
-          aria-hidden
           style={{ opacity: wordsOpacity }}
-          className="absolute inset-0 z-[15] pointer-events-none select-none font-display font-black leading-[0.88] tracking-tighter"
+          className="absolute inset-0 z-[15] pointer-events-none select-none"
         >
-          <div className="absolute left-4 sm:left-8 lg:left-[6vw] top-[13%] sm:top-[12%] lg:top-1/2 lg:-translate-y-[62%]">
-            <motion.div style={{ x: thinkX }}>
-              <motion.span
-                initial={{ x: -120, opacity: 0 }}
-                animate={ready ? { x: 0, opacity: 1 } : undefined}
-                transition={{ duration: 1.4, ease: EASE, delay: 0.05 }}
-                className={`block ${WORD_SIZE} text-ivory/90`}
-              >
-                CRAFTING
+          <div className="absolute left-4 sm:left-8 lg:left-[6vw] top-[13%] sm:top-[12%] lg:top-1/2 lg:-translate-y-[55%]">
+            <h1 aria-label="Crafting minds." className="font-display font-black leading-[0.88] tracking-tighter">
+              <motion.span style={{ x: thinkX }} className="block">
+                <motion.span
+                  initial={{ x: -120, opacity: 0 }}
+                  animate={ready ? { x: 0, opacity: 1 } : undefined}
+                  transition={{ duration: 1.4, ease: EASE, delay: 0.05 }}
+                  className={`block ${WORD_SIZE} text-ivory/90`}
+                >
+                  CRAFTING
+                </motion.span>
               </motion.span>
-            </motion.div>
-            <motion.div style={{ x: aheadX }}>
-              <motion.span
-                initial={{ x: -120, opacity: 0 }}
-                animate={ready ? { x: 0, opacity: 1 } : undefined}
-                transition={{ duration: 1.4, ease: EASE, delay: 0.2 }}
-                className={`block ${WORD_SIZE} italic pr-[0.08em]`}
-                style={outline}
-              >
-                MINDS.
+              <motion.span style={{ x: aheadX }} className="block">
+                <motion.span
+                  initial={{ x: -120, opacity: 0 }}
+                  animate={ready ? { x: 0, opacity: 1 } : undefined}
+                  transition={{ duration: 1.4, ease: EASE, delay: 0.2 }}
+                  className={`block ${WORD_SIZE} italic pr-[0.08em]`}
+                  style={outline}
+                >
+                  MINDS.
+                </motion.span>
               </motion.span>
+            </h1>
+
+            {/* lg+: intro copy sits directly under the headline, sharing its left edge.
+                Below lg the knight sits right under the stack, so this copy lives in the bottom bar. */}
+            <motion.div style={{ x: aheadX }} className="hidden lg:block mt-8 xl:mt-10 max-w-md">
+              <motion.div variants={rise} initial="hidden" animate={ready ? 'show' : 'hidden'} custom={2}>
+                <HeroIntro />
+              </motion.div>
             </motion.div>
-            {/* gold rule ties the stack to the brand accent */}
-            <motion.span
-              initial={{ scaleX: 0 }}
-              animate={ready ? { scaleX: 1 } : undefined}
-              transition={{ duration: 1.2, ease: EASE, delay: 0.5 }}
-              className="mt-4 sm:mt-6 block h-[3px] w-24 sm:w-32 origin-left rounded-full bg-gradient-to-r from-gold to-gold/0"
-            />
           </div>
         </motion.div>
 
@@ -924,14 +944,13 @@ export default function Hero2() {
           style={{ opacity: barOpacity, y: barY, pointerEvents: barEvents }}
           className="absolute inset-x-0 bottom-0 z-20"
         >
-          <div className="max-w-7xl mx-auto px-5 sm:px-8 pb-8 sm:pb-10 grid gap-6 lg:grid-cols-[1fr_auto_1fr] lg:items-end">
-            <motion.div variants={rise} initial="hidden" animate={ready ? 'show' : 'hidden'} custom={0} className="text-center lg:text-left">
-              <p className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.25em] text-gold">
-                <span className="h-px w-6 bg-gold" /> Tripura&apos;s Premier Chess Institute
-              </p>
-              <p className="hidden sm:block mt-3 text-sm lg:text-base text-ghost max-w-sm mx-auto lg:mx-0 leading-relaxed">
-                Master the 64 squares — from your first move to your first rated tournament.
-              </p>
+          {/* lg+: full-width with the headline's 6vw inset, so the eyebrow and copy line up with
+              the left edge of "CRAFTING / MINDS." at every desktop width */}
+          <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:max-w-none lg:px-[6vw] pb-8 sm:pb-10 grid gap-6 lg:grid-cols-[1fr_auto_1fr] lg:items-end">
+            {/* below lg: the intro, centred. lg+: an empty spacer cell (the intro moves up under the
+                headline) that keeps the CTAs centred in the 1fr/auto/1fr grid */}
+            <motion.div variants={rise} initial="hidden" animate={ready ? 'show' : 'hidden'} custom={0} className="text-center">
+              <HeroIntro className="lg:hidden" centered />
             </motion.div>
 
             <motion.div

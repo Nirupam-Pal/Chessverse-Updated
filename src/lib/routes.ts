@@ -5,7 +5,7 @@ import { scrollToTarget } from '@/lib/scroll'
 // Secondary pages are split into their own chunks so the landing page ships less JS.
 // Loaders are shared with App's React.lazy so a hover-prefetch and the real render reuse one request.
 export const pageLoaders = {
-  '/about': () => import('@/pages/FounderPage'),
+  '/about': () => import('@/pages/AboutPage'),
   '/gallery': () => import('@/pages/GalleryPage'),
 } as const
 

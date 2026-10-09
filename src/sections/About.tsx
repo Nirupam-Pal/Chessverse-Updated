@@ -12,7 +12,7 @@ const highlights = [
   { value: '#1', label: 'Academy in Tripura' },
 ]
 
-// Landing-page overview only — the founder's full story lives on /about (FounderPage).
+// Landing-page overview; the full story (founder, journey, beliefs) lives on /about (AboutPage).
 export default function About() {
   const ref = useRef<HTMLDivElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
@@ -71,12 +71,12 @@ export default function About() {
               </button>
               <Link
                 to="/about"
-                data-testid="about-cta-founder"
+                data-testid="about-cta-story"
                 onMouseEnter={() => prefetchRoute('/about')}
                 onFocus={() => prefetchRoute('/about')}
                 className="btn-ghost group"
               >
-                Meet our founder
+                Read our story
                 <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5" />
               </Link>
             </div>

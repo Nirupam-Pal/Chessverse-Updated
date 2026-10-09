@@ -9,9 +9,8 @@ import { lockScroll } from '@/lib/scroll'
 
 // `#id` → a landing-page section (reachable from any page); `/path` → its own page.
 const navLinks = [
-  { label: 'About', to: '#about' },
+  { label: 'About', to: '/about' }, // the About page — includes the founder's story
   { label: 'Courses', to: '#services' },
-  { label: 'Founder', to: '/about' },
   { label: 'Gallery', to: '/gallery' },
   { label: 'Achievements', to: '#achievements' },
   { label: 'Star Performer', to: '#star-performer' },
@@ -24,7 +23,7 @@ const SECTION_IDS = navLinks.filter((l) => l.to.startsWith('#')).map((l) => l.to
 // (The mobile menu lists every link.)
 const MORE_LABELS = ['Achievements', 'Star Performer', 'Testimonials']
 const moreLinks = navLinks.filter((l) => MORE_LABELS.includes(l.label))
-const primaryBefore = navLinks.filter((l) => ['About', 'Courses', 'Founder', 'Gallery'].includes(l.label))
+const primaryBefore = navLinks.filter((l) => ['About', 'Courses', 'Gallery'].includes(l.label))
 const primaryAfter = navLinks.filter((l) => l.label === 'Contact')
 const MORE_BLURBS: Record<string, string> = {
   Achievements: 'Milestones & medals',

@@ -7,7 +7,7 @@ import SmoothScroll from './components/SmoothScroll'
 import SiteLayout from './components/SiteLayout'
 import { pageLoaders } from './lib/routes'
 
-const FounderPage = lazy(pageLoaders['/about'])
+const AboutPage = lazy(pageLoaders['/about'])
 const GalleryPage = lazy(pageLoaders['/gallery'])
 
 export default function App() {
@@ -18,7 +18,7 @@ export default function App() {
       <Routes>
         <Route element={<SiteLayout />}>
           <Route path="/" element={<Home />} />
-          <Route path="/about" element={<FounderPage />} />
+          <Route path="/about" element={<AboutPage />} />
           <Route path="/gallery" element={<GalleryPage />} />
           <Route path="*" element={<Home />} />
         </Route>

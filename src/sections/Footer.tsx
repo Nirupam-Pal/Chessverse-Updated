@@ -16,8 +16,7 @@ const links: Record<string, FooterLink[]> = {
     { label: '1:1 Coaching', href: '#booking' },
   ],
   Institute: [
-    { label: 'About Us', href: '#about' },
-    { label: 'Our Founder', href: '/about' },
+    { label: 'About Us', href: '/about' },
     { label: 'Achievements', href: '#achievements' },
     { label: 'Star Performer', href: '#star-performer' },
     { label: 'Gallery', href: '/gallery' },
