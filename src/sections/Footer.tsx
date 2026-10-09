@@ -1,8 +1,10 @@
 import { ChevronUp, MapPin, Phone, Mail, Facebook, Instagram } from 'lucide-react'
+import { prefetchRoute, useSiteNav } from '@/lib/routes'
+import { scrollToTarget } from '@/lib/scroll'
 
 interface FooterLink {
   label: string;
-  href: string;
+  href: string; // `#section` (landing page, reachable from any page), `/page`, or an external URL
   external?: boolean; // The '?' means this is optional
 }
 
@@ -15,10 +17,10 @@ const links: Record<string, FooterLink[]> = {
   ],
   Institute: [
     { label: 'About Us', href: '#about' },
-    { label: 'Our Coaches', href: '#coaches' },
+    { label: 'Our Founder', href: '/about' },
     { label: 'Achievements', href: '#achievements' },
     { label: 'Star Performer', href: '#star-performer' },
-    { label: 'Gallery', href: '#gallery' },
+    { label: 'Gallery', href: '/gallery' },
   ],
   Connect: [
     { label: 'Book Free Demo', href: '#booking' },
@@ -29,7 +31,8 @@ const links: Record<string, FooterLink[]> = {
 }
 
 export default function Footer() {
-  const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
+  const go = useSiteNav()
+  const scrollToTop = () => scrollToTarget(0)
 
   return (
     <footer className="relative w-full bg-void border-t border-sky/10 overflow-hidden">
@@ -49,7 +52,7 @@ export default function Footer() {
                 />
               </div>
               <div>
-                <p className="font-display font-bold text-xl text-ivory leading-none">ChessVerse</p>
+                <p className="font-display font-bold text-xl text-ivory leading-none">Chessverse</p>
                 <p className="text-[10px] uppercase tracking-[0.22em] text-ghost mt-1.5">
                   Chess Institute • Tripura
                 </p>
@@ -96,9 +99,20 @@ export default function Footer() {
                 {items.map((l) => (
                   <li key={l.label}>
                     <a
-                      href={l.href}
+                      // real hrefs keep open-in-new-tab working; plain clicks route in-app
+                      href={l.external || l.href.startsWith('/') ? l.href : `/${l.href}`}
                       target={l.external ? '_blank' : undefined}
                       rel={l.external ? 'noopener noreferrer' : undefined}
+                      onClick={
+                        l.external
+                          ? undefined
+                          : (e) => {
+                              if (e.metaKey || e.ctrlKey || e.shiftKey) return
+                              e.preventDefault()
+                              go(l.href)
+                            }
+                      }
+                      onMouseEnter={() => prefetchRoute(l.href)}
                       className="text-ghost text-sm hover:text-sky transition-colors"
                     >
                       {l.label}

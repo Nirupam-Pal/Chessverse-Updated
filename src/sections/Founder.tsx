@@ -76,6 +76,10 @@ export default function Founder() {
                   <img
                     src="/images/coach-pratik.jpg"
                     alt="Founder of ChessVerse"
+                    width={80}
+                    height={80}
+                    loading="lazy"
+                    decoding="async"
                     className="h-20 w-20 rounded-full object-cover"
                   />
                 </div>
@@ -103,10 +107,15 @@ export default function Founder() {
             className="relative"
           >
             <div className="relative rounded-[32px] overflow-hidden shadow-2xl border border-white/10 bg-white/5 backdrop-blur-xl">
+              {/* 1200px re-encode of founder.jpg (3 MB → 200 KB); width/height reserve the box */}
               <img
-                src="/images/founder.jpg"
-                alt="Founder portrait"
-                className="h-full w-full min-h-[420px] object-cover"
+                src="/images/founder-1200.jpg"
+                alt="Pratik Debnath, founder of ChessVerse"
+                width={1200}
+                height={1600}
+                decoding="async"
+                fetchPriority="high"
+                className="h-full w-full min-h-[420px] max-h-[720px] object-cover object-[center_70%]"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-void via-void/10 to-transparent light:hidden" />
               <div className="absolute left-5 bottom-5 rounded-3xl border border-white/10 bg-void/70 p-4 backdrop-blur-md light:bg-white/85 light:border-white/60 light:shadow-[0_12px_32px_-12px_rgba(11,23,51,0.35)]">

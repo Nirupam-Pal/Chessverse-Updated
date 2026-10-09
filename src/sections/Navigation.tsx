@@ -1,41 +1,51 @@
 import { useEffect, useRef, useState } from 'react'
+import { useLocation } from 'react-router'
 import { AnimatePresence, motion, useMotionValueEvent, useScroll, useSpring, type Variants } from 'framer-motion'
 import { ArrowRight, ChevronDown, Menu, X } from 'lucide-react'
 import ThemeToggle from '@/components/ThemeToggle'
 import { EASE_OUT } from '@/lib/motion'
+import { prefetchRoute, useSiteNav } from '@/lib/routes'
+import { lockScroll } from '@/lib/scroll'
 
+// `#id` → a landing-page section (reachable from any page); `/path` → its own page.
 const navLinks = [
-  { label: 'About', href: '#about' },
-  { label: 'Courses', href: '#services' },
-  { label: 'Achievements', href: '#achievements' },
-  { label: 'Star Performer', href: '#star-performer' },
-  { label: 'Coaches', href: '#coaches' },
-  { label: 'Gallery', href: '#gallery' },
-  { label: 'Testimonials', href: '#testimonials' },
-  { label: 'Contact', href: '#contact' },
+  { label: 'About', to: '#about' },
+  { label: 'Courses', to: '#services' },
+  { label: 'Founder', to: '/about' },
+  { label: 'Gallery', to: '/gallery' },
+  { label: 'Achievements', to: '#achievements' },
+  { label: 'Star Performer', to: '#star-performer' },
+  { label: 'Testimonials', to: '#testimonials' },
+  { label: 'Contact', to: '#contact' },
 ]
-const SECTION_IDS = navLinks.map((l) => l.href.slice(1))
+const SECTION_IDS = navLinks.filter((l) => l.to.startsWith('#')).map((l) => l.to.slice(1))
 
 // Desktop bar shows the essentials; the rest live under "More" so the capsule stays airy.
 // (The mobile menu lists every link.)
-const MORE_LABELS = ['Star Performer', 'Gallery', 'Testimonials']
+const MORE_LABELS = ['Achievements', 'Star Performer', 'Testimonials']
 const moreLinks = navLinks.filter((l) => MORE_LABELS.includes(l.label))
-const primaryBefore = navLinks.filter((l) => ['About', 'Courses', 'Achievements', 'Coaches'].includes(l.label))
+const primaryBefore = navLinks.filter((l) => ['About', 'Courses', 'Founder', 'Gallery'].includes(l.label))
 const primaryAfter = navLinks.filter((l) => l.label === 'Contact')
 const MORE_BLURBS: Record<string, string> = {
+  Achievements: 'Milestones & medals',
   'Star Performer': 'Our student in the spotlight',
-  Gallery: 'Life inside the academy',
   Testimonials: 'Stories from parents & students',
 }
+
+/** A link is active when its page is open, or (on home) when its section is in view. */
+const isLinkActive = (to: string, pathname: string, section: string | null) =>
+  to.startsWith('#') ? pathname === '/' && section === to.slice(1) : pathname === to
 
 // shared easing for the capsule morph (CSS side of EASE_OUT)
 const MORPH = 'duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]'
 const PILL_SPRING = { type: 'spring', stiffness: 380, damping: 32 } as const
 
 /** Scroll-spy: the section currently crossing the middle of the viewport. */
-function useActiveSection(ids: string[]) {
+function useActiveSection(ids: string[], pathname: string) {
   const [active, setActive] = useState<string | null>(null)
 
+  // re-observe whenever the page changes: the layout (and this navbar) outlive route changes
+  // (a stale section id off home is harmless: isLinkActive only consults it on '/')
   useEffect(() => {
     const inBand = new Map<string, boolean>()
     const observer = new IntersectionObserver(
@@ -51,7 +61,7 @@ function useActiveSection(ids: string[]) {
       if (el) observer.observe(el)
     })
     return () => observer.disconnect()
-  }, [ids])
+  }, [ids, pathname])
 
   return active
 }
@@ -60,25 +70,28 @@ type NavItem = (typeof navLinks)[number]
 
 function NavLink({
   link,
-  active,
+  isActive,
   hovered,
   onHover,
   onGo,
 }: {
   link: NavItem
-  active: string | null
+  isActive: boolean
   hovered: string | null
-  onHover: (id: string) => void
-  onGo: (href: string) => void
+  onHover: (to: string) => void
+  onGo: (to: string) => void
 }) {
-  const id = link.href.slice(1)
-  const isActive = active === id
+  const id = link.to
   return (
     <button
       data-testid={`nav-link-${link.label.toLowerCase()}`}
-      onClick={() => onGo(link.href)}
-      onMouseEnter={() => onHover(id)}
-      aria-current={isActive ? 'true' : undefined}
+      onClick={() => onGo(link.to)}
+      onMouseEnter={() => {
+        onHover(id)
+        prefetchRoute(link.to)
+      }}
+      onFocus={() => prefetchRoute(link.to)}
+      aria-current={isActive ? (link.to.startsWith('/') ? 'page' : 'true') : undefined}
       className={`relative px-3.5 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors duration-300 ${
         isActive ? 'text-ivory' : 'text-ghost hover:text-ivory'
       }`}
@@ -116,8 +129,11 @@ export default function Navigation() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [hovered, setHovered] = useState<string | null>(null)
   const [moreOpen, setMoreOpen] = useState(false)
-  const active = useActiveSection(SECTION_IDS)
-  const moreActive = moreLinks.some((l) => l.href.slice(1) === active)
+  const { pathname } = useLocation()
+  const go = useSiteNav()
+  const section = useActiveSection(SECTION_IDS, pathname)
+  const isActive = (to: string) => isLinkActive(to, pathname, section)
+  const moreActive = moreLinks.some((l) => isActive(l.to))
 
   // Morph into the capsule once scrolled; tuck away while reading down, return on scroll up.
   // Distances are measured from where the scroll direction last flipped, so smooth (Lenis)
@@ -148,10 +164,18 @@ export default function Navigation() {
     return () => window.removeEventListener('keydown', onKey)
   }, [mobileOpen, moreOpen])
 
-  const scrollTo = (href: string) => {
+  // keep the page still behind the open mobile menu
+  useEffect(() => {
+    if (!mobileOpen) return
+    lockScroll(true)
+    return () => lockScroll(false)
+  }, [mobileOpen])
+
+  const scrollTo = (to: string) => {
     setMobileOpen(false)
     setMoreOpen(false)
-    document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' })
+    lockScroll(false) // release now: a stopped Lenis ignores scrollTo, and the effect cleanup runs too late
+    go(to)
   }
 
   const isHidden = hidden && !mobileOpen
@@ -193,9 +217,9 @@ export default function Navigation() {
             {/* Logo */}
             <button
               data-testid="nav-logo"
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              onClick={() => scrollTo('/')}
               className="flex items-center gap-3 group shrink-0"
-              aria-label="ChessVerse — back to top"
+              aria-label={pathname === '/' ? 'ChessVerse — back to top' : 'ChessVerse — home'}
             >
               <div
                 className={`relative rounded-xl overflow-hidden bg-ivory light:bg-white ring-1 ring-sky/30 shadow-md shadow-royal/30 transition-all ${MORPH} group-hover:scale-105 group-hover:rotate-[-4deg] ${
@@ -222,7 +246,7 @@ export default function Navigation() {
             {/* Desktop links — hover pill + active underline both glide between links */}
             <div className="hidden xl:flex items-center gap-1" onMouseLeave={() => setHovered(null)}>
               {primaryBefore.map((link) => (
-                <NavLink key={link.href} link={link} active={active} hovered={hovered} onHover={setHovered} onGo={scrollTo} />
+                <NavLink key={link.to} link={link} isActive={isActive(link.to)} hovered={hovered} onHover={setHovered} onGo={scrollTo} />
               ))}
 
               {/* "More" — secondary sections in a compact dropdown */}
@@ -270,22 +294,22 @@ export default function Navigation() {
                         className="origin-top rounded-2xl bg-twilight light:bg-white border border-sky/15 light:border-slate-200 shadow-2xl shadow-void/40 light:shadow-[0_20px_50px_-20px_rgba(11,23,51,0.3)] p-1.5"
                       >
                         {moreLinks.map((link) => {
-                          const isActive = active === link.href.slice(1)
+                          const linkActive = isActive(link.to)
                           return (
                             <button
-                              key={link.href}
+                              key={link.to}
                               role="menuitem"
                               data-testid={`nav-link-${link.label.toLowerCase()}`}
-                              onClick={() => scrollTo(link.href)}
+                              onClick={() => scrollTo(link.to)}
                               className="group w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-left hover:bg-sky/10 transition-colors"
                             >
                               <span
                                 className={`h-1.5 w-1.5 rounded-full shrink-0 transition-colors ${
-                                  isActive ? 'bg-gold' : 'bg-sky/30 group-hover:bg-sky'
+                                  linkActive ? 'bg-gold' : 'bg-sky/30 group-hover:bg-sky'
                                 }`}
                               />
                               <span className="min-w-0">
-                                <span className={`block text-sm font-medium ${isActive ? 'text-ivory' : 'text-ivory/90'}`}>{link.label}</span>
+                                <span className={`block text-sm font-medium ${linkActive ? 'text-ivory' : 'text-ivory/90'}`}>{link.label}</span>
                                 <span className="block text-xs text-ghost">{MORE_BLURBS[link.label]}</span>
                               </span>
                             </button>
@@ -298,7 +322,7 @@ export default function Navigation() {
               </div>
 
               {primaryAfter.map((link) => (
-                <NavLink key={link.href} link={link} active={active} hovered={hovered} onHover={setHovered} onGo={scrollTo} />
+                <NavLink key={link.to} link={link} isActive={isActive(link.to)} hovered={hovered} onHover={setHovered} onGo={scrollTo} />
               ))}
             </div>
 
@@ -380,15 +404,17 @@ export default function Navigation() {
                     <ThemeToggle />
                   </motion.div>
                   {navLinks.map((link, i) => {
-                    const isActive = active === link.href.slice(1)
+                    const linkActive = isActive(link.to)
                     return (
                       <motion.button
-                        key={link.href}
+                        key={link.to}
                         variants={menuItem}
                         data-testid={`nav-mobile-link-${link.label.toLowerCase()}`}
-                        onClick={() => scrollTo(link.href)}
+                        onClick={() => scrollTo(link.to)}
+                        onTouchStart={() => prefetchRoute(link.to)}
+                        aria-current={linkActive ? (link.to.startsWith('/') ? 'page' : 'true') : undefined}
                         className={`group flex items-center justify-between py-3.5 border-b border-sky/10 last:border-0 text-left text-base font-medium transition-colors ${
-                          isActive ? 'text-ivory' : 'text-ghost hover:text-ivory'
+                          linkActive ? 'text-ivory' : 'text-ghost hover:text-ivory'
                         }`}
                       >
                         <span className="flex items-center gap-3">
@@ -397,7 +423,7 @@ export default function Navigation() {
                         </span>
                         <ArrowRight
                           className={`w-4 h-4 transition-all duration-300 ${
-                            isActive ? 'text-sky opacity-100' : 'opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0'
+                            linkActive ? 'text-sky opacity-100' : 'opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0'
                           }`}
                         />
                       </motion.button>

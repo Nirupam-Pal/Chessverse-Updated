@@ -575,6 +575,9 @@ function Scene({
 /* ------------------------------------------------------------------ */
 
 const EASE = [0.16, 1, 0.3, 1] as const
+// Shared size for both headline lines. At lg "CRAFTING" (~5.4em) spans ~43vw from its 6vw inset,
+// ending before the knight, which the 3D layer shifts right at that breakpoint.
+const WORD_SIZE = 'text-[15vw] sm:text-[9.5vw] lg:text-[8vw]'
 
 function CountUp({ to, prefix = '', suffix = '', start }: { to: number; prefix?: string; suffix?: string; start: boolean }) {
   const ref = useRef<HTMLSpanElement>(null)
@@ -763,9 +766,13 @@ export default function Hero2() {
   const scrollYProgress = useMotionValue(rawProgress.get())
   useMotionValueEvent(rawProgress, 'change', (v) => scrollYProgress.set(v))
   // chapter 01
+  // both lines exit left, the second a touch faster for a slight shear
   const thinkX = useTransform(scrollYProgress, [0, 0.3], ['0vw', '-45vw'])
-  const aheadX = useTransform(scrollYProgress, [0, 0.3], ['0vw', '45vw'])
+  const aheadX = useTransform(scrollYProgress, [0, 0.3], ['0vw', '-60vw'])
   const wordsOpacity = useTransform(scrollYProgress, [0, 0.24], [1, 0])
+  // 3D offset (lg only, via --scene-shift): right for chapters 01–02, centred by chapter 03
+  const sceneX = useTransform(scrollYProgress, [0.5, 0.64], [1, 0], { clamp: true })
+  const sceneShift = useTransform(sceneX, (k) => `calc(var(--scene-shift) * ${k.toFixed(4)})`)
   const barOpacity = useTransform(scrollYProgress, [0, 0.12], [1, 0])
   const barY = useTransform(scrollYProgress, [0, 0.12], [0, 50])
   const barEvents = useTransform(scrollYProgress, (v) => (v < 0.1 ? 'auto' : 'none'))
@@ -820,51 +827,57 @@ export default function Hero2() {
   return (
     <section ref={trackRef} data-testid="hero2" className="relative h-[340vh] bg-void">
       <div className="sticky top-0 h-[100svh] w-full overflow-hidden">
-        {/* ---------- giant typography behind the 3D ---------- */}
+        {/* ---------- headline: a two-line stack in its own column ----------
+            lg+: left column, with the 3D shifted right so the two never overlap.
+            Below lg: stacked above the knight. Front layer (z-15) so the mirror floor can't hide it. */}
         <motion.div
           aria-hidden
           style={{ opacity: wordsOpacity }}
-          className="absolute inset-0 z-0 pointer-events-none select-none font-display font-black leading-[0.85] tracking-tighter"
+          className="absolute inset-0 z-[15] pointer-events-none select-none font-display font-black leading-[0.88] tracking-tighter"
         >
-          <motion.div style={{ x: thinkX }} className="absolute left-3 sm:left-8 top-[17%] sm:top-[16%]">
+          <div className="absolute left-4 sm:left-8 lg:left-[6vw] top-[13%] sm:top-[12%] lg:top-1/2 lg:-translate-y-[62%]">
+            <motion.div style={{ x: thinkX }}>
+              <motion.span
+                initial={{ x: -120, opacity: 0 }}
+                animate={ready ? { x: 0, opacity: 1 } : undefined}
+                transition={{ duration: 1.4, ease: EASE, delay: 0.05 }}
+                className={`block ${WORD_SIZE} text-ivory/90`}
+              >
+                CRAFTING
+              </motion.span>
+            </motion.div>
+            <motion.div style={{ x: aheadX }}>
+              <motion.span
+                initial={{ x: -120, opacity: 0 }}
+                animate={ready ? { x: 0, opacity: 1 } : undefined}
+                transition={{ duration: 1.4, ease: EASE, delay: 0.2 }}
+                className={`block ${WORD_SIZE} italic pr-[0.08em]`}
+                style={outline}
+              >
+                MINDS.
+              </motion.span>
+            </motion.div>
+            {/* gold rule ties the stack to the brand accent */}
             <motion.span
-              initial={{ x: -120, opacity: 0 }}
-              animate={ready ? { x: 0, opacity: 1 } : undefined}
-              transition={{ duration: 1.4, ease: EASE, delay: 0.05 }}
-              className="block text-[23vw] sm:text-[16vw] lg:text-[12vw] text-ivory/90"
-            >
-              THINK
-            </motion.span>
-          </motion.div>
-        </motion.div>
-
-        {/* outlined word sits in front of the 3D — the mirror floor would hide it otherwise,
-            and its hollow fill lets the knight show through */}
-        <motion.div
-          aria-hidden
-          style={{ opacity: wordsOpacity }}
-          className="absolute inset-0 z-[15] pointer-events-none select-none font-display font-black leading-[0.85] tracking-tighter"
-        >
-          <motion.div style={{ x: aheadX }} className="absolute right-3 sm:right-8 top-[44%] sm:top-[40%]">
-            <motion.span
-              initial={{ x: 120, opacity: 0 }}
-              animate={ready ? { x: 0, opacity: 1 } : undefined}
-              transition={{ duration: 1.4, ease: EASE, delay: 0.15 }}
-              className="block text-[23vw] sm:text-[16vw] lg:text-[12vw] italic"
-              style={outline}
-            >
-              AHEAD.
-            </motion.span>
-          </motion.div>
+              initial={{ scaleX: 0 }}
+              animate={ready ? { scaleX: 1 } : undefined}
+              transition={{ duration: 1.2, ease: EASE, delay: 0.5 }}
+              className="mt-4 sm:mt-6 block h-[3px] w-24 sm:w-32 origin-left rounded-full bg-gradient-to-r from-gold to-gold/0"
+            />
+          </div>
         </motion.div>
 
         {/* ---------- 3D ---------- */}
         <motion.div
-          className="absolute inset-0 z-10 pointer-events-none"
+          // lg+: the scene sits 13vw right (clearing the left-hand headline and chapter-02 panel), then
+          // glides back to centre for chapter 03, whose panel is on the right. It overhangs both
+          // edges by 15vw so the shift never reveals a seam.
+          className="absolute inset-y-0 inset-x-0 lg:-inset-x-[15vw] z-10 pointer-events-none [--scene-shift:0vw] lg:[--scene-shift:13vw]"
           initial={{ opacity: 0 }}
           animate={{ opacity: ready ? 1 : 0 }}
           transition={{ duration: 1.2, ease: EASE }}
           style={{
+            x: sceneShift,
             maskImage: 'linear-gradient(to bottom, transparent 0%, #000 12%, #000 100%)',
             WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, #000 12%, #000 100%)',
           }}

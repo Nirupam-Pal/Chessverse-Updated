@@ -1,8 +1,14 @@
+import { lazy } from 'react'
 import { Routes, Route } from 'react-router'
 import { MotionConfig } from 'framer-motion'
 import Home from './pages/Home'
 import Chatbot from './components/Chatbot'
 import SmoothScroll from './components/SmoothScroll'
+import SiteLayout from './components/SiteLayout'
+import { pageLoaders } from './lib/routes'
+
+const FounderPage = lazy(pageLoaders['/about'])
+const GalleryPage = lazy(pageLoaders['/gallery'])
 
 export default function App() {
   return (
@@ -10,7 +16,12 @@ export default function App() {
     <MotionConfig reducedMotion="user">
       <SmoothScroll />
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route element={<SiteLayout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<FounderPage />} />
+          <Route path="/gallery" element={<GalleryPage />} />
+          <Route path="*" element={<Home />} />
+        </Route>
       </Routes>
       <Chatbot />
     </MotionConfig>

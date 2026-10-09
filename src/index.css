@@ -315,6 +315,63 @@
   }
 }
 
+/* Gallery tiles rise in on folder switch: a one-shot CSS animation on opacity + a GPU transform,
+   so filtering never triggers JS layout work. */
+@keyframes gallery-in {
+  from { opacity: 0; transform: translate3d(0, 16px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+.gallery-tile {
+  animation: gallery-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .gallery-tile { animation: none; }
+}
+
+/* About-section student cluster (StudentBubbles): transform-only loops, composited on the GPU */
+@keyframes blob-spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes bubble-float {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -12px, 0); }
+}
+@keyframes confetti-twinkle {
+  0%, 100% { opacity: 0.95; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.7); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cv-anim { animation: none !important; }
+}
+
+/* ---------- performance ---------- */
+
+/* Lenis owns smooth scrolling where it runs; elsewhere native smooth anchor scrolling stays on.
+   Reduced motion gets instant jumps. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+/* Low-power devices (`perf-lite`, set by SmoothScroll): backdrop-filter re-blurs everything
+   behind an element on every scrolled frame — the main cause of scroll jank on weak GPUs.
+   Swap live blur for solid, near-opaque surfaces and pause purely decorative loops. */
+.perf-lite .liquid-glass,
+.perf-lite .liquid-glass-light,
+.perf-lite [class*='backdrop-blur'] {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+.perf-lite .liquid-glass { background: rgba(11, 23, 51, 0.92); }
+.perf-lite.light .liquid-glass { background: rgba(255, 255, 255, 0.95); }
+.perf-lite .animate-float,
+.perf-lite .animate-float-slow,
+.perf-lite .animate-pulse-blue,
+.perf-lite .animate-shimmer,
+.perf-lite .animate-spin-slow,
+.perf-lite .cv-anim {
+  animation: none !important;
+}
+
 /* light sweep across the navbar CTA: rests most of the cycle, then glides across */
 @keyframes nav-sheen {
   0%, 62% { transform: translateX(0) skewX(-20deg); }
