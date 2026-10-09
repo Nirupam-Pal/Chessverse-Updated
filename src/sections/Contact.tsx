@@ -8,7 +8,7 @@ const contactInfo = [
     icon: MapPin,
     label: 'Visit Us',
     value: 'Ramnagar 4, opposite Suruchi Restaurant, Agartala, Tripura',
-    href: 'https://www.google.com/maps/search/?api=1&query=Ramnagar+4+Agartala',
+    href: 'https://maps.app.goo.gl/ao6spnVsgXfndV137', // the academy's Google Maps listing
   },
   {
     icon: Phone,
@@ -173,13 +173,14 @@ export default function Contact() {
             <div className="relative rounded-2xl overflow-hidden h-[260px] liquid-glass">
               <iframe
                 title="Chessverse Location"
-                src="https://www.google.com/maps?q=Ramnagar+4+Agartala+Tripura&output=embed"
+                // the academy's own Google Maps listing ("Chess Verse"), pinned exactly
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d456.17914129415453!2d91.2692854033861!3d23.838748711998008!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3753f581ba1f9053%3A0x209193ee5d8a069c!2sChess%20Verse!5e0!3m2!1sen!2sus!4v1791547253384!5m2!1sen!2sus"
                 width="100%"
                 height="100%"
                 style={{ border: 0, filter: 'grayscale(40%) contrast(95%)' }}
                 allowFullScreen
                 loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
+                referrerPolicy="strict-origin-when-cross-origin"
               />
             </div>
 
