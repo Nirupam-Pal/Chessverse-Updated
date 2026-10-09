@@ -20,10 +20,11 @@ type Bubble = {
   delay: number
 }
 
-// Placeholder portraits — swap for cut-out photos of real Chessverse students (square, ~600px).
+// Placeholder portraits as transparent cut-outs (square WebP, ~440px, person touching the bottom edge).
+// Swap for cut-outs of real Chessverse students: the hover pop-out needs the background removed.
 const bubbles: Bubble[] = [
   {
-    src: '/images/student2.jpg',
+    src: '/images/students/student2-cutout.webp',
     alt: 'Chessverse student',
     left: '36%',
     top: '3%',
@@ -38,7 +39,7 @@ const bubbles: Bubble[] = [
     delay: 0,
   },
   {
-    src: '/images/student1.jpg',
+    src: '/images/students/student1-cutout.webp',
     alt: 'Chessverse student',
     left: '8%',
     top: '35%',
@@ -53,7 +54,7 @@ const bubbles: Bubble[] = [
     delay: -2,
   },
   {
-    src: '/images/student4.jpg',
+    src: '/images/students/student4-cutout.webp',
     alt: 'Chessverse student',
     left: '63%',
     top: '42%',
@@ -68,7 +69,7 @@ const bubbles: Bubble[] = [
     delay: -4,
   },
   {
-    src: '/images/student3.jpg',
+    src: '/images/students/student3-cutout.webp',
     alt: 'Chessverse student',
     left: '32%',
     top: '66%',
@@ -137,37 +138,45 @@ export default function StudentBubbles() {
       ))}
 
       {bubbles.map((b) => (
-        <div key={b.src} className="absolute" style={{ left: b.left, top: b.top, width: b.size }}>
+        // the hovered bubble rises above its neighbours so the popped-out head can overlap them
+        <div key={b.src} className="group absolute hover:z-20" style={{ left: b.left, top: b.top, width: b.size }}>
           {/* float */}
           <div
             className="cv-anim animate-[bubble-float_7s_ease-in-out_infinite]"
             style={{ animationDuration: `${b.float}s`, animationDelay: `${b.delay}s` }}
           >
-            {/* hover lift */}
-            <div className="group relative aspect-square transition-transform duration-500 ease-out hover:scale-[1.04]">
+            {/* hover: the whole bubble swells with a slight springy overshoot */}
+            <div className="relative aspect-square transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:scale-[1.12] motion-reduce:transition-none">
               {/* outline ring, drifting the other way */}
               <div
                 aria-hidden
                 className="cv-anim absolute -inset-[7%] border-[2.5px] animate-[blob-spin_30s_linear_infinite_reverse]"
                 style={{ borderColor: b.color, borderRadius: b.ringShape, animationDuration: `${b.spin + 6}s` }}
               />
-              {/* coloured blob — rotates; the photo inside counter-rotates so it stays upright */}
+              {/* coloured blob with a lighter splash and a dashed ring behind the student; it rotates
+                  slowly so the irregular outline reads as an organic morph */}
               <div
+                aria-hidden
                 className="cv-anim absolute inset-0 overflow-hidden shadow-[0_24px_50px_-20px_rgba(0,0,0,0.55)] animate-[blob-spin_26s_linear_infinite]"
                 style={{ background: b.color, borderRadius: b.shape, animationDuration: `${b.spin}s` }}
               >
-                <div className="absolute inset-[8%] overflow-hidden" style={{ borderRadius: b.shape }}>
-                  <img
-                    src={b.src}
-                    alt={b.alt}
-                    width={600}
-                    height={600}
-                    loading="lazy"
-                    decoding="async"
-                    className="cv-anim h-full w-full object-cover animate-[blob-spin_26s_linear_infinite_reverse]"
-                    style={{ animationDuration: `${b.spin}s` }}
-                  />
-                </div>
+                <div className="absolute left-[14%] right-[14%] top-[22%] bottom-[8%] bg-white/25" style={{ borderRadius: b.ringShape }} />
+                <div className="absolute inset-[12%] rounded-full border-2 border-dashed border-white/40" />
+              </div>
+              {/* the student (a transparent cut-out) never rotates. At rest it is clipped to a circle
+                  inside the blob; on hover the clip opens upwards and the student grows from the
+                  bottom edge (so the base stays anchored), and the head breaks out of the frame
+                  while the sides and bottom stay framed */}
+              <div className="pop-clip absolute inset-0">
+                <img
+                  src={b.src}
+                  alt={b.alt}
+                  width={440}
+                  height={440}
+                  loading="lazy"
+                  decoding="async"
+                  className="absolute inset-[6%] h-[88%] w-[88%] object-contain object-bottom origin-bottom transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:scale-[1.32] motion-reduce:transition-none"
+                />
               </div>
               {/* chess-piece badge */}
               <span

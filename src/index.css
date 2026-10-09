@@ -354,6 +354,21 @@
 @media (prefers-reduced-motion: reduce) {
   .cv-anim { animation: none !important; }
 }
+/* Student cut-out frame. Rest: a circle inside the blob (inset 6%). Hover: the top edge lifts 45%
+   above the bubble and the top corners square off, leaving a "U" whose bottom half still matches
+   the circle (vertical radius = 0.44 / 1.39 of the taller box) — so the head breaks out above
+   the blob while the shoulders stay framed. Both shapes are inset() with full radii, so they
+   interpolate smoothly. */
+.pop-clip {
+  clip-path: inset(6% 6% 6% 6% round 50% 50% 50% 50% / 50% 50% 50% 50%);
+  transition: clip-path 0.5s cubic-bezier(0.34, 1.2, 0.64, 1);
+}
+.group:hover .pop-clip {
+  clip-path: inset(-45% 6% 6% 6% round 0 0 50% 50% / 0 0 31.6% 31.6%);
+}
+@media (prefers-reduced-motion: reduce) {
+  .pop-clip { transition: none; }
+}
 
 /* ---------- performance ---------- */
 
