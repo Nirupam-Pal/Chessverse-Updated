@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router'
-import { AnimatePresence, motion, useMotionValueEvent, useScroll, useSpring, type Variants } from 'framer-motion'
+import { AnimatePresence, motion, useMotionValueEvent, useScroll, type Variants } from 'framer-motion'
 import { ArrowRight, ChevronDown, Menu, X } from 'lucide-react'
 import ThemeToggle from '@/components/ThemeToggle'
 import { EASE_OUT } from '@/lib/motion'
@@ -120,8 +120,7 @@ const menuItem: Variants = {
 }
 
 export default function Navigation() {
-  const { scrollY, scrollYProgress } = useScroll()
-  const progress = useSpring(scrollYProgress, { stiffness: 220, damping: 32, restDelta: 0.001 })
+  const { scrollY } = useScroll()
 
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -353,18 +352,6 @@ export default function Navigation() {
               </button>
             </div>
 
-            {/* reading-progress line along the bottom of the capsule */}
-            <div
-              aria-hidden
-              className={`absolute left-8 right-8 -bottom-px h-[2px] overflow-hidden rounded-full transition-opacity duration-500 ${
-                scrolled ? 'opacity-100' : 'opacity-0'
-              }`}
-            >
-              <motion.div
-                style={{ scaleX: progress }}
-                className="h-full origin-left bg-gradient-to-r from-sky via-azure to-gold"
-              />
-            </div>
           </div>
 
           {/* Mobile menu — a floating card, kept outside the blurred capsule (nested backdrop-filters misrender) */}

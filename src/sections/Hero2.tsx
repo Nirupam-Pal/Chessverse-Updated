@@ -474,18 +474,18 @@ export default function Hero2() {
               custom={2}
               className="hidden lg:flex justify-end items-center gap-3"
             >
-              <span className="text-right text-[11px] uppercase tracking-[0.25em] text-ghost leading-relaxed">
+              {/* <span className="text-right text-[11px] uppercase tracking-[0.25em] text-ghost leading-relaxed">
                 Scroll to explore
                 <br />
                 <span className="text-ivory">3 chapters</span>
-              </span>
-              <span className="w-6 h-10 rounded-full border-2 border-sky/50 flex justify-center pt-1.5">
+              </span> */}
+              {/* <span className="w-6 h-10 rounded-full border-2 border-sky/50 flex justify-center pt-1.5">
                 <motion.span
                   className="w-1 h-2 rounded-full bg-gold"
                   animate={reduced ? undefined : { y: [0, 12, 0], opacity: [1, 0.3, 1] }}
                   transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
                 />
-              </span>
+              </span> */}
             </motion.div>
           </div>
         </motion.div>
@@ -585,7 +585,15 @@ export default function Hero2() {
               className="absolute inset-0 origin-top bg-gradient-to-b from-azure to-gold"
             />
           </div>
-          <span className="text-[10px] uppercase tracking-[0.3em] text-ghost [writing-mode:vertical-rl]">Scroll</span>
+          {/* scroll mouse — a direct child of the rail (not inside the old vertical-text label, whose
+              writing-mode swapped the flex axes and pushed the dot off-centre) */}
+          <span aria-hidden className="flex h-10 w-6 shrink-0 justify-center rounded-full border-2 border-sky/50 pt-1.5">
+            <motion.span
+              className="block h-2 w-1 rounded-full bg-gold"
+              animate={reduced ? undefined : { y: [0, 12, 0], opacity: [1, 0.3, 1] }}
+              transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+            />
+          </span>
         </div>
       </div>
     </section>
