@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router'
 import { AnimatePresence, motion, useMotionValueEvent, useScroll, type Variants } from 'framer-motion'
 import { ArrowRight, ChevronDown, Menu, X } from 'lucide-react'
@@ -132,8 +132,26 @@ export default function Navigation() {
   const isActive = (to: string) => isLinkActive(to, pathname, section)
   const moreActive = moreLinks.some((l) => isActive(l.to))
 
-  // The navbar stays fixed and always visible; it only morphs into the capsule once scrolled.
-  useMotionValueEvent(scrollY, 'change', (y) => setScrolled(y > 40))
+  // Morph into the capsule once scrolled; tuck away while reading down, return on scroll up.
+  // Distances are measured from where the scroll direction last flipped, so smooth (Lenis)
+  // scrolling — a few px per frame — still triggers reliably without flicker.
+  const [hidden, setHidden] = useState(false)
+  const direction = useRef<1 | -1>(1)
+  const turnY = useRef(0)
+  useMotionValueEvent(scrollY, 'change', (y) => {
+    const prev = scrollY.getPrevious() ?? 0
+    const dir = y > prev ? 1 : y < prev ? -1 : direction.current
+    if (dir !== direction.current) {
+      direction.current = dir
+      turnY.current = prev
+    }
+    setScrolled(y > 40)
+    if (y < 240) setHidden(false)
+    else if (dir === 1 && y - turnY.current > 80) setHidden(true)
+    else if (dir === -1 && turnY.current - y > 24) setHidden(false)
+  })
+  // never tuck the bar away while its mobile menu is open
+  const isHidden = hidden && !mobileOpen
 
   useEffect(() => {
     if (!mobileOpen && !moreOpen) return
@@ -181,7 +199,7 @@ export default function Navigation() {
         data-testid="main-nav"
         className="fixed inset-x-0 top-0 z-50 pointer-events-none"
         initial={{ y: -100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
+        animate={{ y: isHidden ? '-130%' : 0, opacity: 1 }}
         transition={{ duration: 0.55, ease: EASE_OUT }}
       >
         {/* outer: width + margin morph (full-width bar → centred capsule) */}
