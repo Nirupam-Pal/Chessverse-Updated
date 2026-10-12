@@ -6,6 +6,24 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
       "port": 3000
+    },
+    {
+      "name": "chessverse-prod-preview",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["vite", "preview", "--port", "4173", "--strictPort"],
+      "port": 4173
+    },
+    {
+      "name": "chessverse-baseline-preview",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["vite", "preview", "--port", "4174", "--strictPort", "--outDir", "C:/Users/nirup/AppData/Local/Temp/claude/C--Users-nirup-OneDrive-Desktop-Codes-Chessverse-Updated/b5c000a3-3266-44b1-a4ed-7e3f3714a752/scratchpad/dist-baseline"],
+      "port": 4174
+    },
+    {
+      "name": "chessverse-nomin-preview",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["vite", "preview", "--port", "4175", "--strictPort", "--outDir", "C:/Users/nirup/AppData/Local/Temp/claude/C--Users-nirup-OneDrive-Desktop-Codes-Chessverse-Updated/b5c000a3-3266-44b1-a4ed-7e3f3714a752/scratchpad/dist-nomin"],
+      "port": 4175
     }
   ]
 }

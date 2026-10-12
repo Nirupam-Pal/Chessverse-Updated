@@ -35,20 +35,27 @@ function useIsDark(): boolean {
 // RESPONSIVE HOOK
 // ─────────────────────────────────────────────
 
+// Six components read this, so subscribe to the two breakpoint media queries (which fire only when
+// a breakpoint is crossed) instead of re-rendering all of them on every resize event.
+const MOBILE_QUERY = "(max-width: 639.98px)";
+const DESKTOP_QUERY = "(min-width: 1024px)";
+
+function subscribeToBreakpoints(onChange: () => void) {
+  const queries = [window.matchMedia(MOBILE_QUERY), window.matchMedia(DESKTOP_QUERY)];
+  queries.forEach((q) => q.addEventListener("change", onChange));
+  return () => queries.forEach((q) => q.removeEventListener("change", onChange));
+}
+
+type Breakpoint = "mobile" | "tablet" | "desktop";
+const readBreakpoint = (): Breakpoint =>
+  window.matchMedia(MOBILE_QUERY).matches ? "mobile" : window.matchMedia(DESKTOP_QUERY).matches ? "desktop" : "tablet";
+
 function useBreakpoint() {
-  const [width, setWidth] = React.useState(
-    typeof window !== "undefined" ? window.innerWidth : 1200
-  );
-  React.useEffect(() => {
-    const handler = () => setWidth(window.innerWidth);
-    window.addEventListener("resize", handler, { passive: true });
-    return () => window.removeEventListener("resize", handler);
-  }, []);
+  const bp = React.useSyncExternalStore(subscribeToBreakpoints, readBreakpoint, () => "desktop" as const);
   return {
-    isMobile:  width < 640,
-    isTablet:  width >= 640 && width < 1024,
-    isDesktop: width >= 1024,
-    width,
+    isMobile:  bp === "mobile",
+    isTablet:  bp === "tablet",
+    isDesktop: bp === "desktop",
   };
 }
 
@@ -545,7 +552,8 @@ interface LeftPanelProps {
 const LeftPanel: React.FC<LeftPanelProps> = ({
   scrollYProgress, total, isMobile, isTablet, theme: T, isDark,
 }) => {
-  const progressWidth = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+  // scaleX (compositor) rather than width (layout on every scroll frame)
+  const progressScale = useTransform(scrollYProgress, [0, 1], [0, 1]);
   const [activeIndex, setActiveIndex] = React.useState(0);
 
   React.useEffect(() => {
@@ -619,7 +627,7 @@ const LeftPanel: React.FC<LeftPanelProps> = ({
           borderRadius: 2, overflow: "hidden", marginBottom: isMobile ? 6 : 9,
         }}>
           <motion.div style={{
-            height: "100%", width: progressWidth,
+            height: "100%", width: "100%", scaleX: progressScale, originX: 0,
             background: `linear-gradient(90deg,${T.gold},${T.goldLight})`,
             borderRadius: 2,
           }} />
@@ -696,9 +704,8 @@ const ExpertTestimonials: React.FC<ExpertTestimonialsProps> = ({
 
   return (
     <>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap');
-      `}</style>
+      {/* Playfair Display / Inter / JetBrains Mono are requested with the site fonts in index.html
+          (one stylesheet, discovered at parse time) rather than via a late @import from here. */}
 
       {/* ── OUTER tall scroll container ── */}
       <div

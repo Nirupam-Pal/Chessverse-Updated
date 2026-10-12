@@ -38,8 +38,8 @@ export default function WhatsAppButton() {
 
       {/* Button */}
       <span className="relative inline-flex">
-        <span className="absolute inset-0 rounded-full bg-[#25D366] animate-ping opacity-40" />
-        <span className="absolute inset-0 rounded-full animate-pulse-glow" />
+        <span className="absolute inset-0 rounded-full bg-[#25D366] animate-ping opacity-40 motion-reduce:hidden" />
+        <span className="absolute inset-0 rounded-full bg-[#25D366] animate-pulse-glow motion-reduce:hidden" />
         <span
           className="relative inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-full text-ivory shadow-2xl transition-transform duration-300 hover:scale-110 active:scale-95"
           style={{

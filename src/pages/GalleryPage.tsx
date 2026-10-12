@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router'
 import { ChevronLeft, ChevronRight, Images, X, ZoomIn } from 'lucide-react'
 import PageHeader from '@/components/PageHeader'
@@ -224,9 +224,12 @@ export default function GalleryPage() {
     setParams(f === 'all' ? {} : { folder: f }, { replace: true, preventScrollReset: true })
   }
 
-  // stable across renders via the React Compiler, so the lightbox's key listener isn't re-bound each step
-  const close = () => setOpen(null)
-  const step = (d: number) => setOpen((i) => (i === null ? i : (i + d + visible.length) % visible.length))
+  // stable callbacks, so the lightbox's key listener isn't re-bound on every render
+  const close = useCallback(() => setOpen(null), [setOpen])
+  const step = useCallback(
+    (d: number) => setOpen((i) => (i === null ? i : (i + d + visible.length) % visible.length)),
+    [visible.length, setOpen],
+  )
 
   return (
     <>

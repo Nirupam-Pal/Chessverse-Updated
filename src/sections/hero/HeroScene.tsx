@@ -2,9 +2,9 @@
  * The hero's 3D stage (three.js + react-three-fiber + drei). Lives in its own chunk, loaded by
  * Hero2 only after the headline has painted, so the main bundle and first paint never wait on it.
  */
-import { useEffect, useMemo, useRef, useState, Suspense, type RefObject } from 'react'
+import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, Suspense, type RefObject } from 'react'
 import { Canvas, useFrame, useThree, type ThreeElements } from '@react-three/fiber'
-import { ContactShadows, Environment, Lightformer, MeshReflectorMaterial, PerformanceMonitor, Preload, Sparkles, useGLTF } from '@react-three/drei'
+import { ContactShadows, Environment, Lightformer, MeshReflectorMaterial, PerformanceMonitor, Sparkles, useGLTF } from '@react-three/drei'
 import type { MotionValue } from 'framer-motion'
 import * as THREE from 'three'
 // a separate, cacheable asset (not inlined into the JS bundle as base64)
@@ -353,7 +353,10 @@ function PedestalGlow() {
   )
 }
 
-function Scene({
+// Memoised, with selector-based useThree: a bare useThree() re-renders on every store change (a dpr
+// step from the PerformanceMonitor included), and each Scene render made <Environment> re-bake its
+// cube map + PMREM — profiled mid-scroll on a throttled phone.
+const Scene = memo(function Scene({
   scroll,
   pointer,
   isLight,
@@ -369,7 +372,8 @@ function Scene({
   lite: boolean
   onReady: () => void
 }) {
-  const { viewport, size } = useThree()
+  const viewport = useThree((s) => s.viewport)
+  const size = useThree((s) => s.size)
   const wide = viewport.aspect > 1
   const fit = Math.min(1, viewport.width / (wide ? 11 : 6.4))
   const rig = useRef<THREE.Group>(null)
@@ -382,6 +386,27 @@ function Scene({
   const readyAt = useRef<number | null>(null)
   const smoothFrames = useRef(0)
   const bg = isLight ? '#FAF8F3' : '#060B1A'
+
+  // Keyed on theme: the env map renders once (frames=1), so rebuild it when the theme flips — and
+  // only then. Memoised because <Environment> re-renders its cube camera and PMREM whenever its
+  // children change identity, i.e. on every Scene render otherwise (e.g. the lite-mode switch).
+  const environment = useMemo(
+    () => (
+      <Environment key={isLight ? 'light' : 'dark'} resolution={256} frames={1}>
+        {/* light: a bright studio wrap so metals reflect porcelain, not black */}
+        {isLight && (
+          <>
+            <Lightformer form="rect" intensity={1.4} position={[0, 0, 10]} scale={[40, 20, 1]} color="#FFFFFF" />
+            <Lightformer form="rect" intensity={1} position={[0, 0, -10]} rotation-y={Math.PI} scale={[40, 20, 1]} color="#F6F1E6" />
+          </>
+        )}
+        <Lightformer form="rect" intensity={3} position={[0, 6, -6]} scale={[14, 3, 1]} color="#8ECAE6" />
+        <Lightformer form="rect" intensity={3} position={[-6, 2, 2]} rotation-y={Math.PI / 2} scale={[10, 2, 1]} color="#F2F5FA" />
+        <Lightformer form="ring" intensity={3} position={[6, 3, 2]} rotation-y={-Math.PI / 2} scale={3} color="#D4AF37" />
+      </Environment>
+    ),
+    [isLight],
+  )
 
   // Light mode: a white knight and ivory pieces disappear against porcelain, so re-tone the shared
   // materials — navy-lacquer knight, pearl (not white) ivory pieces.
@@ -471,10 +496,10 @@ function Scene({
         </mesh>
         <PedestalGlow />
 
+        {/* no Suspense of its own: the whole scene waits for the model, so the shader warm-up
+            (ShaderWarmup) compiles the knight's material together with everything else */}
         <group ref={knight}>
-          <Suspense fallback={null}>
-            <HeroKnight scale={KNIGHT_SCALE} />
-          </Suspense>
+          <HeroKnight scale={KNIGHT_SCALE} />
         </group>
 
         <OrbitRing progress={progress} reduced={reduced} />
@@ -522,21 +547,49 @@ function Scene({
         color={isLight ? '#8C6A12' : '#8ECAE6'}
       />
 
-      {/* keyed on theme: the env map renders once (frames=1), so rebuild it when the theme flips */}
-      <Environment key={isLight ? 'light' : 'dark'} resolution={256} frames={1}>
-        {/* light: a bright studio wrap so metals reflect porcelain, not black */}
-        {isLight && (
-          <>
-            <Lightformer form="rect" intensity={1.4} position={[0, 0, 10]} scale={[40, 20, 1]} color="#FFFFFF" />
-            <Lightformer form="rect" intensity={1} position={[0, 0, -10]} rotation-y={Math.PI} scale={[40, 20, 1]} color="#F6F1E6" />
-          </>
-        )}
-        <Lightformer form="rect" intensity={3} position={[0, 6, -6]} scale={[14, 3, 1]} color="#8ECAE6" />
-        <Lightformer form="rect" intensity={3} position={[-6, 2, 2]} rotation-y={Math.PI / 2} scale={[10, 2, 1]} color="#F2F5FA" />
-        <Lightformer form="ring" intensity={3} position={[6, 3, 2]} rotation-y={-Math.PI / 2} scale={3} color="#D4AF37" />
-      </Environment>
+      {environment}
     </>
   )
+})
+
+/**
+ * Compiles every shader in the scene before the first frame, without blocking the page.
+ *
+ * drei's <Preload> did this synchronously (gl.compile + six cube-camera renders, which wait on every
+ * program): on a first visit (cold GPU shader cache) that froze the whole page — scrolling included —
+ * for ~3 s while the physical materials compiled. compileAsync hands compilation to the driver's
+ * worker threads (KHR_parallel_shader_compile) and polls for completion, so the main thread stays
+ * free; the canvas's render loop is held until it resolves, so no frame can force a blocking compile.
+ */
+function ShaderWarmup({ onDone }: { onDone: () => void }) {
+  const gl = useThree((s) => s.gl)
+  const scene = useThree((s) => s.scene)
+  const camera = useThree((s) => s.camera)
+  useLayoutEffect(() => {
+    let cancelled = false
+    // Rendering into a render target (the mirror floor's reflection pass) uses a second variant of
+    // every material — no tone mapping, linear output — chosen from the bound target at compile time.
+    // Compile both sets: without the second, frame 1 compiled them synchronously (~2.4 s, measured).
+    const onScreen = gl.compileAsync(scene, camera)
+    const previous = gl.getRenderTarget()
+    const offscreen = new THREE.WebGLRenderTarget(1, 1)
+    gl.setRenderTarget(offscreen)
+    const inTarget = gl.compileAsync(scene, camera) // its synchronous part runs right here
+    gl.setRenderTarget(previous)
+    // never hold the scene back indefinitely: if a driver is slow to report programs ready,
+    // start rendering anyway (and compile whatever is left on first use)
+    const timeout = new Promise((resolve) => setTimeout(resolve, 4000))
+    Promise.race([Promise.all([onScreen, inTarget]), timeout])
+      .catch(() => {}) // fall back to compiling on first render
+      .then(() => {
+        offscreen.dispose()
+        if (!cancelled) onDone()
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [gl, scene, camera, onDone])
+  return null
 }
 
 /* ------------------------------------------------------------------ */
@@ -564,24 +617,54 @@ export default function HeroScene({
   const maxDpr = lite ? 1 : Math.min(window.devicePixelRatio || 1, 1.5)
   // render resolution adapts to the device: drops when frames struggle, recovers when they don't
   const [dpr, setDpr] = useState(maxDpr)
+  // If frames still struggle at dpr 1, the GPU is the bottleneck: switch (for good, so it never
+  // flip-flops) to the lite scene, whose floor skips the mirror's extra full-scene render pass.
+  // The scene shares the main thread with scrolling, so this is what keeps scroll smooth there.
+  const [degraded, setDegraded] = useState(false)
+  const declines = useRef(0)
+  // Theme and lite mode swap in materials with new shaders: hold frames while those warm up too.
+  const variant = `${isLight ? 'light' : 'dark'}-${lite || degraded ? 'lite' : 'full'}`
+  const [warmVariant, setWarmVariant] = useState<string | null>(null)
+  const warm = warmVariant === variant
+  const onWarm = useCallback(() => setWarmVariant(variant), [variant])
+  // Hero2 passes a fresh inline callback each render; hand Scene a stable one so its memo holds
+  const onReadyRef = useRef(onReady)
+  useLayoutEffect(() => {
+    onReadyRef.current = onReady
+  })
+  const stableOnReady = useCallback(() => onReadyRef.current(), [])
 
   return (
     <Canvas
       dpr={dpr}
-      frameloop={active ? 'always' : 'never'}
+      frameloop={active && warm ? 'always' : 'never'}
       camera={{ position: [0, 1.1, 8.2], fov: 35, near: 0.1, far: 60 }}
-      gl={{ antialias: !lite, powerPreference: 'high-performance' }}
+      // Shader error checking reads each program's info logs synchronously from the GPU process
+      // (~110 ms per load, profiled); three recommends disabling it in production. Set where the
+      // renderer is built: onCreated runs only after the shader warm-up has already compiled.
+      gl={(defaults) => {
+        const renderer = new THREE.WebGLRenderer({ ...defaults, antialias: !lite, powerPreference: 'high-performance' })
+        renderer.debug.checkShaderErrors = import.meta.env.DEV
+        return renderer
+      }}
     >
       <PerformanceMonitor
         flipflops={3}
-        onDecline={() => setDpr(1)}
+        onDecline={() => {
+          declines.current += 1
+          setDpr(1)
+          if (declines.current >= 2) setDegraded(true)
+        }}
         onIncline={() => setDpr(maxDpr)}
-        onFallback={() => setDpr(1)}
+        onFallback={() => {
+          setDpr(1)
+          setDegraded(true)
+        }}
       />
       <Suspense fallback={null}>
-        <Scene scroll={scroll} pointer={pointer} isLight={isLight} reduced={reduced} lite={lite} onReady={onReady} />
-        {/* compile every material up front instead of hitching on first sight */}
-        <Preload all />
+        <Scene scroll={scroll} pointer={pointer} isLight={isLight} reduced={reduced} lite={lite || degraded} onReady={stableOnReady} />
+        {/* compile every material up front, off the main thread, instead of hitching on first sight */}
+        <ShaderWarmup key={variant} onDone={onWarm} />
       </Suspense>
     </Canvas>
   )

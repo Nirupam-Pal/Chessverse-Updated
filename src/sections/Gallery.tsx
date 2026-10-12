@@ -5,11 +5,12 @@ import { EASE_OUT } from '@/lib/motion'
 import { prefetchRoute } from '@/lib/routes'
 import { ArrowRight, ArrowUpRight } from 'lucide-react'
 import LazyImage from '@/components/LazyImage'
-import { folders, photosIn } from '@/data/gallery'
+import { galleryCovers } from '@/data/gallery-covers'
 
 // Landing-page teaser: the cover (first photo) of up to six folders in a bento grid
 // (2×2 feature + four tiles = two full rows); each tile opens its folder on the full /gallery page.
-const items = folders.slice(0, 6).map((folder) => ({ folder, cover: photosIn(folder.id)[0], count: photosIn(folder.id).length }))
+// Uses the covers-only data so the full photo manifest stays in the /gallery page chunk.
+const items = galleryCovers.slice(0, 6)
 
 export default function Gallery() {
   const ref = useRef<HTMLDivElement>(null)

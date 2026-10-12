@@ -107,9 +107,11 @@ export default {
           "0%, 100%": { transform: "translateY(0px) rotate(0deg)" },
           "50%": { transform: "translateY(-12px) rotate(2deg)" },
         },
+        // A 20px spread ring around the 64px button, as a disc that scales (64+40)/64 and fades:
+        // the same look as animating box-shadow, but composited instead of repainted every frame.
         "pulse-glow": {
-          "0%, 100%": { boxShadow: "0 0 0 0 rgba(37, 211, 102, 0.55)" },
-          "70%": { boxShadow: "0 0 0 20px rgba(37, 211, 102, 0)" },
+          "0%, 100%": { transform: "scale(1)", opacity: "0.55" },
+          "70%": { transform: "scale(1.625)", opacity: "0" },
         },
         "pulse-blue": {
           "0%, 100%": { boxShadow: "0 0 24px rgba(58, 141, 222, 0.25)" },

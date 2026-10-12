@@ -157,7 +157,9 @@ export default function Achievements() {
   })
 
   const lineScale = scrollYProgress
-  const dotTop = useTransform(scrollYProgress, (v) => `${v * 100}%`)
+  // translate a full-height track by a % of its own height (= the line's height): the dot follows
+  // the line on the compositor, instead of animating `top` and forcing layout every scroll frame
+  const dotY = useTransform(scrollYProgress, (v) => `${v * 100}%`)
 
   return (
     <section id="achievements" className="relative w-full bg-void section-padding overflow-hidden">
@@ -216,14 +218,15 @@ export default function Achievements() {
                 boxShadow: '0 0 14px rgba(58, 141, 222, 0.55)',
               }}
             />
-            <motion.div
-              className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-5 h-5 rounded-full bg-sky"
-              style={{
-                top: dotTop,
-                boxShadow:
-                  '0 0 18px rgba(58, 141, 222, 0.95), 0 0 36px rgba(58, 141, 222, 0.45), 0 0 60px rgba(58, 141, 222, 0.2)',
-              }}
-            />
+            <motion.div className="absolute inset-0 z-10" style={{ y: dotY }}>
+              <div
+                className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-sky"
+                style={{
+                  boxShadow:
+                    '0 0 18px rgba(58, 141, 222, 0.95), 0 0 36px rgba(58, 141, 222, 0.45), 0 0 60px rgba(58, 141, 222, 0.2)',
+                }}
+              />
+            </motion.div>
           </div>
 
           <div className="space-y-10 lg:space-y-24">

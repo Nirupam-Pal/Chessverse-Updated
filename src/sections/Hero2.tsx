@@ -1,5 +1,6 @@
 import { lazy, useEffect, useRef, useState, Suspense, type ReactNode } from 'react'
 import { useSiteNav } from '@/lib/routes'
+import { scrollToTarget } from '@/lib/scroll'
 import {
   animate,
   motion,
@@ -340,10 +341,8 @@ export default function Hero2() {
   }, [glowX, glowY])
 
   const go = useSiteNav() // page links (contact now lives on /contact)
-  const scrollTo = (id: string) => {
-    const el = document.querySelector(id)
-    if (el) el.scrollIntoView({ behavior: 'smooth' })
-  }
+  // via the shared helper: a native smooth scrollIntoView would fight Lenis's interpolation
+  const scrollTo = (id: string) => scrollToTarget(id)
 
   const outline = {
     WebkitTextStroke: isLight ? '2.5px rgba(30,64,175,0.85)' : '2.5px rgba(142,202,230,0.85)',
