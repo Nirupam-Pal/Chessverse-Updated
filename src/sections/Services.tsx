@@ -1,46 +1,12 @@
 import { useRef, useState } from 'react'
+import { Link } from 'react-router'
 import { motion, useInView } from 'framer-motion'
 import { EASE_OUT } from '@/lib/motion'
-import { GraduationCap, ChevronRight, Video, MapPin, Crown, Trophy } from 'lucide-react'
+import { ArrowRight, ChevronRight, Video, MapPin } from 'lucide-react'
+import { courses as services, type Course } from '@/data/courses'
+import { prefetchRoute } from '@/lib/routes'
 
-const services = [
-  {
-    level: 'Beginner',
-    title: 'Pawn Starter',
-    age: 'Ages 5+',
-    description:
-      'Perfect for those new to chess. Learn how each piece moves, master basic checkmates and start playing complete games with confidence.',
-    features: ['Piece movement & rules', 'Basic checkmates', 'Simple openings', 'Fun puzzles'],
-    duration: '12 weeks',
-    icon: GraduationCap,
-    accent: 'sky',
-  },
-  {
-    level: 'Intermediate',
-    title: 'Knight Tactician',
-    age: 'For developing players',
-    description:
-      'For players with basic knowledge. Build a solid opening repertoire, sharpen tactics and learn how to convert winning positions.',
-    features: ['Opening repertoire', 'Tactical patterns', 'Endgame essentials', 'Weekly game analysis'],
-    duration: '24 weeks',
-    icon: Trophy,
-    accent: 'gold',
-    featured: true,
-  },
-  {
-    level: 'Advanced',
-    title: 'Grandmaster Path',
-    age: 'For rated / tournament players',
-    description:
-      'Elite training for serious competitors. Deep prep across openings, middlegame strategy, endgame technique and tournament psychology.',
-    features: ['1:1 coach mentorship', 'Tournament prep', 'Advanced endgames', 'Position critiques'],
-    duration: 'Ongoing',
-    icon: Crown,
-    accent: 'sky',
-  },
-]
-
-function ServiceCard({ service, index }: { service: typeof services[0]; index: number }) {
+function ServiceCard({ service, index }: { service: Course; index: number }) {
   const ref = useRef<HTMLDivElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-80px' })
   const [hover, setHover] = useState(false)
@@ -130,6 +96,17 @@ function ServiceCard({ service, index }: { service: typeof services[0]; index: n
           <span className="font-semibold text-ivory">{service.duration}</span>
         </div>
 
+        <Link
+          to={`/courses#${service.slug}`}
+          onMouseEnter={() => prefetchRoute('/courses')}
+          onFocus={() => prefetchRoute('/courses')}
+          data-testid={`service-details-${service.level.toLowerCase()}`}
+          className="mb-3 inline-flex items-center justify-center gap-1.5 text-sm font-medium text-ghost hover:text-ivory transition-colors"
+        >
+          Full course details
+          <ArrowRight className="w-3.5 h-3.5" />
+        </Link>
+
         {/* CTA */}
         <a
           href="#booking"
@@ -181,6 +158,19 @@ export default function Services() {
           {services.map((service, i) => (
             <ServiceCard key={service.level} service={service} index={i} />
           ))}
+        </div>
+
+        <div className="mt-12 flex justify-center">
+          <Link
+            to="/courses"
+            onMouseEnter={() => prefetchRoute('/courses')}
+            onFocus={() => prefetchRoute('/courses')}
+            data-testid="services-all-courses"
+            className="btn-ghost group"
+          >
+            Explore every course in detail
+            <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+          </Link>
         </div>
       </div>
     </section>

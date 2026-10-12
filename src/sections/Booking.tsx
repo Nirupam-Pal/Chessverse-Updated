@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { useSearchParams } from 'react-router'
 import { motion, useInView } from 'framer-motion'
 import { EASE_OUT } from '@/lib/motion'
 import { Calendar, GraduationCap, MessageCircle } from 'lucide-react'
@@ -9,15 +10,25 @@ const modes = ['Online', 'Offline (Agartala)']
 export default function Booking() {
   const ref = useRef<HTMLDivElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-80px' })
+  // "/?level=Intermediate#booking" (from a course on /courses) arrives with that level selected
+  const [params] = useSearchParams()
+  const requestedLevel = params.get('level')
   const [form, setForm] = useState({
     name: '',
     phone: '',
     email: '',
-    level: 'Beginner',
+    level: requestedLevel && levels.includes(requestedLevel) ? requestedLevel : 'Beginner',
     mode: 'Online',
     preferred_time: '',
   })
   const update = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }))
+  // a new ?level while the form is already mounted (e.g. arriving again from /courses):
+  // adjust during render rather than in an effect, so there's no extra render pass
+  const [seenLevel, setSeenLevel] = useState(requestedLevel)
+  if (requestedLevel !== seenLevel) {
+    setSeenLevel(requestedLevel)
+    if (requestedLevel && levels.includes(requestedLevel)) setForm((f) => ({ ...f, level: requestedLevel }))
+  }
 
   const whatsappFallback = () => {
     const msg = `Hello Chessverse, I want to book a free demo.%0A%0AName: ${form.name || '___'}%0APhone: ${form.phone || '___'}%0ALevel: ${form.level}%0AMode: ${form.mode}%0APreferred Time: ${form.preferred_time || '___'}`

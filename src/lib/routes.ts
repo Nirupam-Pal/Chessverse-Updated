@@ -6,13 +6,15 @@ import { scrollToTarget } from '@/lib/scroll'
 // Loaders are shared with App's React.lazy so a hover-prefetch and the real render reuse one request.
 export const pageLoaders = {
   '/about': () => import('@/pages/AboutPage'),
+  '/courses': () => import('@/pages/CoursesPage'),
   '/gallery': () => import('@/pages/GalleryPage'),
   '/contact': () => import('@/pages/ContactPage'),
 } as const
 
 /** Warm a page's chunk ahead of the click (call on hover/focus). No-op for home sections. */
 export function prefetchRoute(to: string) {
-  if (to in pageLoaders) void pageLoaders[to as keyof typeof pageLoaders]()
+  const path = to.split(/[?#]/)[0] // '/courses#pawn-starter' warms '/courses'
+  if (path in pageLoaders) void pageLoaders[path as keyof typeof pageLoaders]()
 }
 
 /**

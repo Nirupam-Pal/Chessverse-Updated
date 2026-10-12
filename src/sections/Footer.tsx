@@ -10,10 +10,10 @@ interface FooterLink {
 
 const links: Record<string, FooterLink[]> = {
   Courses: [
-    { label: 'Beginner — Pawn Starter', href: '#services' },
-    { label: 'Intermediate — Knight Tactician', href: '#services' },
-    { label: 'Advanced — Grandmaster Path', href: '#services' },
-    { label: '1:1 Coaching', href: '#booking' },
+    { label: 'Beginner — Pawn Starter', href: '/courses#pawn-starter' },
+    { label: 'Intermediate — Knight Tactician', href: '/courses#knight-tactician' },
+    { label: 'Advanced — Grandmaster Path', href: '/courses#grandmaster-path' },
+    { label: '1:1 Coaching', href: '/courses#one-on-one' },
   ],
   Institute: [
     { label: 'About Us', href: '/about' },

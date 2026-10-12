@@ -10,7 +10,7 @@ import { lockScroll } from '@/lib/scroll'
 // `#id` → a landing-page section (reachable from any page); `/path` → its own page.
 const navLinks = [
   { label: 'About', to: '/about' }, // the About page — includes the founder's story
-  { label: 'Courses', to: '#services' },
+  { label: 'Courses', to: '/courses' },
   { label: 'Gallery', to: '/gallery' },
   { label: 'Achievements', to: '#achievements' },
   { label: 'Star Performer', to: '#star-performer' },

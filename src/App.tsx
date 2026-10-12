@@ -8,6 +8,7 @@ import SiteLayout from './components/SiteLayout'
 import { pageLoaders } from './lib/routes'
 
 const AboutPage = lazy(pageLoaders['/about'])
+const CoursesPage = lazy(pageLoaders['/courses'])
 const GalleryPage = lazy(pageLoaders['/gallery'])
 const ContactPage = lazy(pageLoaders['/contact'])
 
@@ -20,6 +21,7 @@ export default function App() {
         <Route element={<SiteLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route path="/courses" element={<CoursesPage />} />
           <Route path="/gallery" element={<GalleryPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="*" element={<Home />} />
