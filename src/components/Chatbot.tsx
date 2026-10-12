@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { MessageCircle, X, ChevronRight } from 'lucide-react'
+import { CircleQuestionMark, MessageCircle, X, ChevronRight } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { EASE_OUT } from '@/lib/motion'
 
@@ -68,17 +68,36 @@ export default function Chatbot() {
 
   return (
     <>
-      {/* Floating Button */}
-      <motion.button
+      {/* Floating FAQ button, with a hover / keyboard-focus label (same style as the WhatsApp
+          button's "Chat with us" bubble) so it's clear what it opens */}
+      <motion.div
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ delay: 0.5 }}
-        onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-28 right-8 z-40 w-14 h-14 rounded-full bg-gradient-to-r from-[#128C7E] to-[#25D366] shadow-lg hover:shadow-xl flex items-center justify-center text-white transition-all duration-300 hover:scale-110"
-        data-testid="chatbot-toggle"
+        className="group fixed bottom-28 right-8 z-40"
       >
-        <MessageCircle className="w-6 h-6" />
-      </motion.button>
+        <span
+          aria-hidden
+          className={`pointer-events-none absolute right-full top-1/2 mr-3 hidden -translate-y-1/2 items-center whitespace-nowrap rounded-2xl rounded-br-sm bg-ivory px-4 py-2.5 text-sm font-medium text-twilight shadow-xl transition-all duration-300 light:bg-white light:text-ivory light:ring-1 light:ring-black/5 sm:flex ${
+            isOpen
+              ? 'translate-x-3 opacity-0'
+              : 'translate-x-3 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 group-focus-within:translate-x-0 group-focus-within:opacity-100'
+          }`}
+        >
+          FAQs
+          <span className="absolute -right-1.5 top-1/2 h-3 w-3 -translate-y-1/2 rotate-45 bg-ivory light:bg-white" />
+        </span>
+        <button
+          type="button"
+          onClick={() => setIsOpen(!isOpen)}
+          className="w-14 h-14 rounded-full bg-gradient-to-r from-[#128C7E] to-[#25D366] shadow-lg hover:shadow-xl flex items-center justify-center text-white transition-all duration-300 hover:scale-110"
+          data-testid="chatbot-toggle"
+          aria-label={isOpen ? 'Close FAQs' : 'Open FAQs'}
+          aria-expanded={isOpen}
+        >
+          <CircleQuestionMark className="w-7 h-7" strokeWidth={2.25} />
+        </button>
+      </motion.div>
 
       {/* Chat Box */}
       <AnimatePresence>

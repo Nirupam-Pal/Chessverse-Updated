@@ -21,7 +21,9 @@ function excludeGalleryOriginals(): Plugin {
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: './',
+  // Absolute asset URLs: the host rewrites every route (/gallery, /about, …) to index.html, and
+  // relative ones would break on nested or trailing-slash URLs (/gallery/ → /gallery/assets/…).
+  base: '/',
   plugins: [inspectAttr(), react(), excludeGalleryOriginals()],
   // 3D models imported from src (e.g. the hero knight, inlined via `?inline`)
   assetsInclude: ['**/*.glb'],
