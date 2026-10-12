@@ -1,124 +1,92 @@
-import { GraduationCap, Star, Trophy, Users, type LucideIcon } from 'lucide-react'
+import { Camera, Crown, GraduationCap, MapPin, Sparkles, TreePine, Trophy, type LucideIcon } from 'lucide-react'
+import { manifest } from './gallery.generated'
 
-export type FolderId = 'tournaments' | 'masterclasses' | 'community' | 'spotlights'
+/*
+ * Gallery data comes from the folders in /public/gallery — each folder is a category.
+ * To add photos: drop them into a folder (or create a new one), then run `npm run gallery`
+ * (it also runs before every `npm run build`). That writes web-sized WebP copies to
+ * /public/gallery-web and regenerates ./gallery.generated.ts. Originals are never modified.
+ */
+
+/** Shape written by scripts/build-gallery.mjs. */
+export type GalleryManifestCategory = {
+  /** URL-safe slug of the folder name, used in ?folder= */
+  id: string
+  /** Readable label derived from the folder name */
+  label: string
+  /** Folder name inside /public/gallery */
+  folder: string
+  photos: {
+    /** Original filename inside the folder */
+    file: string
+    /** Largest web rendition */
+    src: string
+    srcSet: string
+    width: number
+    height: number
+    /** Tiny blurred data-URI preview */
+    placeholder: string
+  }[]
+}
 
 export type GalleryFolder = {
-  id: FolderId
+  id: string
   label: string
   blurb: string
   icon: LucideIcon
 }
 
 export type GalleryPhoto = {
+  /** Unique across the gallery: `${folder}/${file}` */
+  id: string
   src: string
-  title: string
-  caption: string
-  folder: FolderId
-  /** width / height of the displayed crop — reserves space before load (no layout shift) */
+  srcSet: string
+  placeholder: string
+  alt: string
+  folder: string
+  /** width / height of the photo — reserves space before load (no layout shift), no cropping */
   ratio: number
 }
 
-export const folders: GalleryFolder[] = [
-  { id: 'tournaments', label: 'Tournaments', blurb: 'Match days, medals and the nerves in between', icon: Trophy },
-  { id: 'masterclasses', label: 'Masterclasses', blurb: 'Deep-dive sessions with our coaches', icon: GraduationCap },
-  { id: 'community', label: 'Community Events', blurb: 'Club nights, simuls and family days', icon: Users },
-  { id: 'spotlights', label: 'Student Spotlights', blurb: 'Breakthroughs worth celebrating', icon: Star },
-]
-
 /*
- * Placeholder photography. To add real Chessverse photos: drop files into /public/images/gallery/
- * and add an entry here, e.g. { src: '/images/gallery/state-2024.webp', folder: 'tournaments', ratio: 4 / 3, … }.
- * Prefer WebP exported at ~1600px on the long edge. Unsplash URLs are resized + format-negotiated automatically.
+ * Optional presentation per folder slug: display order, icon and a one-line blurb.
+ * Folders not listed here still appear (after these, alphabetically) with a generic icon.
  */
-export const photos: GalleryPhoto[] = [
-  // Tournaments
-  {
-    src: 'https://images.unsplash.com/photo-1529699211952-734e80c4d42b',
-    title: 'Tournament Day',
-    caption: 'Pieces set, clocks ready — the hall falls silent before round one.',
-    folder: 'tournaments',
-    ratio: 4 / 3,
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1611195974226-a6a9be9dd763',
-    title: 'Inter-School Meet',
-    caption: 'Schools from across Agartala go board-to-board.',
-    folder: 'tournaments',
-    ratio: 3 / 2,
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1580541832626-2a7131ee809f',
-    title: 'Final Round Focus',
-    caption: 'Everything comes down to one last game.',
-    folder: 'tournaments',
-    ratio: 4 / 5,
-  },
-  // Masterclasses
-  {
-    src: '/images/coaching.jpg',
-    title: 'One-on-One Analysis',
-    caption: 'Reviewing a tournament game move by move with a coach.',
-    folder: 'masterclasses',
-    ratio: 1344 / 768,
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1604948501466-4e9c339b9c24',
-    title: 'Opening Theory',
-    caption: 'Building a repertoire that fits each player’s style.',
-    folder: 'masterclasses',
-    ratio: 4 / 5,
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1528819622765-d6bcf132f793',
-    title: 'Middlegame Strategy',
-    caption: 'Plans, pawn structures and piece activity.',
-    folder: 'masterclasses',
-    ratio: 4 / 3,
-  },
-  // Community events
-  {
-    src: 'https://images.unsplash.com/photo-1523875194681-bedd468c58bf',
-    title: 'Weekend Club Night',
-    caption: 'Friendly games, loud post-mortems, lots of laughter.',
-    folder: 'community',
-    ratio: 3 / 2,
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1610633389918-7d5b62977dc3',
-    title: 'Simultaneous Exhibition',
-    caption: 'One coach, many boards — and a few brave upsets.',
-    folder: 'community',
-    ratio: 4 / 5,
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1588412079929-790b9f593d8e',
-    title: 'Blitz Hour',
-    caption: 'Three minutes on the clock, no time to doubt.',
-    folder: 'community',
-    ratio: 4 / 3,
-  },
-  // Student spotlights
-  {
-    src: 'https://images.unsplash.com/photo-1543092587-d8b8feaf362b',
-    title: 'Rising Star',
-    caption: 'From first lesson to first rated tournament.',
-    folder: 'spotlights',
-    ratio: 4 / 5,
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1586165368502-1bad197a6461',
-    title: 'Player of the Month',
-    caption: 'Recognising consistency, effort and sportsmanship.',
-    folder: 'spotlights',
-    ratio: 3 / 2,
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1560174038-da43ac74f01b',
-    title: 'Breakthrough Season',
-    caption: 'A rating jump earned one tough game at a time.',
-    folder: 'spotlights',
-    ratio: 4 / 3,
-  },
-]
+const META: Record<string, { icon: LucideIcon; blurb: string }> = {
+  'chessverse-open-rapid-chess-tournament': { icon: Trophy, blurb: 'Our open rapid tournament' },
+  'chessverse-open-school-rapid-chess-tournament': { icon: Trophy, blurb: 'Rapid tournament for school players' },
+  'im-guest-workshop': { icon: Crown, blurb: 'Workshop with a visiting International Master' },
+  'school-workshops': { icon: GraduationCap, blurb: 'Chess sessions in schools' },
+  'udaipur-workshop': { icon: MapPin, blurb: 'Workshop in Udaipur' },
+  diwali: { icon: Sparkles, blurb: 'Diwali celebrations' },
+  christmas: { icon: TreePine, blurb: 'Christmas celebrations' },
+}
+const ORDER = Object.keys(META)
+const rank = (id: string) => (ORDER.includes(id) ? ORDER.indexOf(id) : ORDER.length)
 
-export const folderById = Object.fromEntries(folders.map((f) => [f.id, f])) as Record<FolderId, GalleryFolder>
+const sorted = manifest
+  .filter((c) => c.photos.length > 0)
+  .sort((a, b) => rank(a.id) - rank(b.id) || a.label.localeCompare(b.label))
+
+export const folders: GalleryFolder[] = sorted.map((c) => ({
+  id: c.id,
+  label: c.label,
+  blurb: META[c.id]?.blurb ?? `${c.photos.length} ${c.photos.length === 1 ? 'photo' : 'photos'}`,
+  icon: META[c.id]?.icon ?? Camera,
+}))
+
+export const photos: GalleryPhoto[] = sorted.flatMap((c) =>
+  c.photos.map((p, i) => ({
+    id: `${c.folder}/${p.file}`,
+    src: p.src,
+    srcSet: p.srcSet,
+    placeholder: p.placeholder,
+    alt: `${c.label} — photo ${i + 1} of ${c.photos.length}`,
+    folder: c.id,
+    ratio: p.width / p.height,
+  })),
+)
+
+export const folderById: Record<string, GalleryFolder> = Object.fromEntries(folders.map((f) => [f.id, f]))
+
+export const photosIn = (folder: string) => photos.filter((p) => p.folder === folder)

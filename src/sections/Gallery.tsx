@@ -5,12 +5,11 @@ import { EASE_OUT } from '@/lib/motion'
 import { prefetchRoute } from '@/lib/routes'
 import { ArrowRight, ArrowUpRight } from 'lucide-react'
 import LazyImage from '@/components/LazyImage'
-import { folderById, photos } from '@/data/gallery'
+import { folders, photosIn } from '@/data/gallery'
 
-// Landing-page teaser: six highlights in a bento grid (2×2 feature + four tiles = two full rows);
-// each tile opens its folder on the full /gallery page.
-const TEASER = ['Tournament Day', 'Opening Theory', 'Weekend Club Night', 'Rising Star', 'Inter-School Meet', 'One-on-One Analysis']
-const items = TEASER.map((title) => photos.find((p) => p.title === title)!).filter(Boolean)
+// Landing-page teaser: the cover (first photo) of up to six folders in a bento grid
+// (2×2 feature + four tiles = two full rows); each tile opens its folder on the full /gallery page.
+const items = folders.slice(0, 6).map((folder) => ({ folder, cover: photosIn(folder.id)[0], count: photosIn(folder.id).length }))
 
 export default function Gallery() {
   const ref = useRef<HTMLDivElement>(null)
@@ -36,7 +35,7 @@ export default function Gallery() {
               Moments From Our <span className="text-gradient italic">Boards</span>
             </h2>
             <p className="text-ghost text-lg">
-              Tournaments, masterclasses, community nights and the students who light them up.
+              Tournaments, school workshops and festival celebrations with our students.
             </p>
           </div>
           <Link
@@ -52,36 +51,41 @@ export default function Gallery() {
         </motion.div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 auto-rows-[140px] sm:auto-rows-[200px]">
-          {items.map((item, i) => (
+          {items.map(({ folder, cover, count }, i) => (
             <motion.div
-              key={item.title}
+              key={folder.id}
               initial={{ opacity: 0, y: 24 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: i * 0.06, ease: EASE_OUT }}
               className={i === 0 ? 'sm:col-span-2 sm:row-span-2' : ''}
             >
               <Link
-                to={`/gallery?folder=${item.folder}`}
+                to={`/gallery?folder=${folder.id}`}
                 data-testid={`gallery-item-${i}`}
                 onMouseEnter={() => prefetchRoute('/gallery')}
                 className="group relative block h-full overflow-hidden rounded-2xl glow-border bg-midnight/60"
               >
                 <LazyImage
                   fill
-                  src={item.src}
-                  alt={item.title}
-                  ratio={i === 0 ? 1.2 : item.ratio}
+                  src={cover.src}
+                  srcSet={cover.srcSet}
+                  placeholder={cover.placeholder}
+                  alt={cover.alt}
+                  ratio={cover.ratio}
                   sizes={i === 0 ? '(min-width: 640px) 50vw, 50vw' : '(min-width: 640px) 25vw, 50vw'}
                   imgClassName="group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-void/90 via-void/30 to-transparent light:from-[#0B1733]/85 light:via-[#0B1733]/25" />
 
                 <div className="absolute inset-0 flex flex-col justify-end p-3 sm:p-5 text-left">
-                  <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.18em] text-azure light:text-[#C7D7FE] mb-1">
-                    {folderById[item.folder].label}
+                  <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.18em] text-azure light:text-[#C7D7FE] mb-1 tabular-nums">
+                    {count} {count === 1 ? 'photo' : 'photos'}
                   </span>
-                  <span className="font-display font-semibold text-base sm:text-xl text-ivory light:text-white gallery-title">
-                    {item.title}
+                  <span
+                    title={folder.label}
+                    className="font-display font-semibold text-sm sm:text-xl leading-snug text-ivory light:text-white gallery-title line-clamp-2"
+                  >
+                    {folder.label}
                   </span>
                 </div>
 

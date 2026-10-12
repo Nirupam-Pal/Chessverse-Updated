@@ -10,6 +10,10 @@ type Props = {
   fill?: boolean
   /** Rendered width hint for responsive `srcset` selection, e.g. "(min-width: 1024px) 33vw, 100vw". */
   sizes?: string
+  /** Pre-built responsive candidates for local files (e.g. the gallery's WebP renditions). */
+  srcSet?: string
+  /** Tiny blurred preview (data URI) for local files; remote images generate their own. */
+  placeholder?: string
   /** Above-the-fold images: fetch eagerly with high priority. */
   priority?: boolean
   className?: string
@@ -26,6 +30,8 @@ export default function LazyImage({
   ratio,
   fill = false,
   sizes = '100vw',
+  srcSet,
+  placeholder,
   priority = false,
   className = '',
   imgClassName = '',
@@ -33,16 +39,18 @@ export default function LazyImage({
   // React attaches onLoad before the element gets its src, so even cached images report in
   const [loaded, setLoaded] = useState(false)
   const remote = isResizable(src)
+  const preview = remote ? imageUrl(src, 32, ratio, true) : placeholder
+  const candidates = srcSet ?? imageSrcSet(src, ratio)
 
   return (
     <div
       className={`${fill ? 'absolute inset-0' : 'relative'} overflow-hidden bg-midnight/60 ${className}`}
       style={fill ? undefined : { aspectRatio: ratio }}
     >
-      {remote && !loaded && (
+      {preview && !loaded && (
         // ~1 KB blurred preview, upscaled; hidden from assistive tech
         <img
-          src={imageUrl(src, 32, ratio, true)}
+          src={preview}
           alt=""
           aria-hidden
           decoding="async"
@@ -51,8 +59,8 @@ export default function LazyImage({
       )}
       <img
         src={imageUrl(src, 960, ratio)}
-        srcSet={imageSrcSet(src, ratio)}
-        sizes={remote ? sizes : undefined}
+        srcSet={candidates}
+        sizes={candidates ? sizes : undefined}
         alt={alt}
         loading={priority ? 'eager' : 'lazy'}
         fetchPriority={priority ? 'high' : 'auto'}
