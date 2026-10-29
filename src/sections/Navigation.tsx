@@ -314,10 +314,10 @@ export default function Navigation() {
               <button
                 data-testid="nav-cta-demo"
                 onClick={() => scrollTo('#booking')}
-                className={`group relative hidden sm:inline-flex shrink-0 whitespace-nowrap btn-primary overflow-hidden text-sm transition-all ${MORPH} ${
-                  scrolled
-                    ? '!py-2 !px-4 !shadow-[0_8px_20px_-10px_rgba(31,79,174,0.75)] hover:!scale-100'
-                    : '!py-2.5 !px-5'
+                // compact primary button (min-h-0 lifts the system's 3rem minimum); padding morphs with
+                // the capsule, hover/press/focus come from the button system
+                className={`group relative hidden sm:inline-flex shrink-0 whitespace-nowrap btn-primary min-h-0 overflow-hidden text-sm transition-all ${MORPH} ${
+                  scrolled ? '!py-2 !px-4' : '!py-2.5 !px-5'
                 }`}
               >
                 {/* periodic sheen */}
@@ -335,7 +335,7 @@ export default function Navigation() {
                 onClick={() => setMobileOpen((o) => !o)}
                 aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
                 aria-expanded={mobileOpen}
-                className="xl:hidden relative grid place-items-center w-10 h-10 rounded-full text-ivory border border-sky/20 bg-sky/5 hover:bg-sky/10 transition-colors"
+                className="xl:hidden relative grid place-items-center w-10 h-10 rounded-full text-ivory border border-sky/20 bg-sky/5 hover:bg-sky/10 hover:border-sky/40 active:scale-95 transition-[background-color,border-color,scale] duration-200"
               >
                 <AnimatePresence mode="wait" initial={false}>
                   <motion.span

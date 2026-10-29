@@ -118,7 +118,7 @@ export default function StarPerformer() {
               type="button"
               onClick={handlePrev}
               disabled={active === 0}
-              className="absolute left-4 top-1/2 z-20 -translate-y-1/2 inline-flex h-11 w-11 items-center justify-center rounded-full bg-void/80 text-ghost shadow-lg shadow-void/20 transition hover:bg-void focus:outline-none focus:ring-2 focus:ring-gold disabled:cursor-not-allowed disabled:opacity-40"
+              className="absolute left-4 top-1/2 z-20 -translate-y-1/2 inline-flex h-11 w-11 items-center justify-center rounded-full bg-void/80 text-ghost shadow-lg shadow-void/20 transition hover:bg-void focus:outline-none focus:ring-2 focus:ring-gold disabled:cursor-not-allowed disabled:opacity-40 enabled:active:scale-95"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
@@ -126,7 +126,7 @@ export default function StarPerformer() {
               type="button"
               onClick={handleNext}
               disabled={active === maxIndex}
-              className="absolute right-4 top-1/2 z-20 -translate-y-1/2 inline-flex h-11 w-11 items-center justify-center rounded-full bg-void/80 text-ghost shadow-lg shadow-void/20 transition hover:bg-void focus:outline-none focus:ring-2 focus:ring-gold disabled:cursor-not-allowed disabled:opacity-40"
+              className="absolute right-4 top-1/2 z-20 -translate-y-1/2 inline-flex h-11 w-11 items-center justify-center rounded-full bg-void/80 text-ghost shadow-lg shadow-void/20 transition hover:bg-void focus:outline-none focus:ring-2 focus:ring-gold disabled:cursor-not-allowed disabled:opacity-40 enabled:active:scale-95"
             >
               <ChevronRight className="w-5 h-5" />
             </button>

@@ -135,7 +135,7 @@ export default function Booking() {
                     type="button"
                     data-testid={`booking-level-${lvl.toLowerCase()}`}
                     onClick={() => update('level', lvl)}
-                    className={`px-4 py-3 rounded-xl border text-sm font-medium transition-all duration-300 ${
+                    className={`px-4 py-3 rounded-xl border text-sm font-medium transition-all duration-200 active:scale-[0.98] ${
                       form.level === lvl
                         ? 'border-blue-300 bg-sky/10 text-ivory shadow-md'
                         : 'border-sky/15 bg-white/5 text-ghost hover:border-sky/30'
@@ -158,7 +158,7 @@ export default function Booking() {
                     type="button"
                     data-testid={`booking-mode-${m.split(' ')[0].toLowerCase()}`}
                     onClick={() => update('mode', m)}
-                    className={`px-4 py-3 rounded-xl border text-sm font-medium transition-all duration-300 ${
+                    className={`px-4 py-3 rounded-xl border text-sm font-medium transition-all duration-200 active:scale-[0.98] ${
                       form.mode === m
                         ? 'border-blue-300 bg-sky/10 text-ivory shadow-md'
                         : 'border-sky/15 bg-white/5 text-ghost hover:border-sky/30'

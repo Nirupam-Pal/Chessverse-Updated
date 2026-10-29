@@ -100,10 +100,9 @@ function MagneticButton({
     <motion.button
       data-testid={testId}
       onClick={onClick}
+      // framer drives only the magnetic lean (x/y); hover lift and press come from the shared
+      // button system in index.css (standalone translate/scale), so every button feels the same
       style={{ x: sx, y: sy }}
-      whileHover={{ scale: 1.03 }}
-      whileTap={{ scale: 0.97 }}
-      transition={{ type: 'spring', stiffness: 400, damping: 25 }}
       onPointerMove={(e) => {
         const r = e.currentTarget.getBoundingClientRect()
         x.set((e.clientX - r.left - r.width / 2) * 0.3)
@@ -113,8 +112,8 @@ function MagneticButton({
         x.set(0)
         y.set(0)
       }}
-      // .btn-* use transition-all; restrict it so CSS doesn't tween framer's per-frame transforms
-      className={`${className} transition-[box-shadow,background-color,border-color,color]`}
+      // the btn-* transition list leaves out `transform`, so CSS never tweens framer's per-frame transforms
+      className={className}
     >
       {children}
     </motion.button>

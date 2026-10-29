@@ -12,6 +12,7 @@ const links: Record<string, FooterLink[]> = {
   Courses: [
     { label: 'Beginner — Pawn Starter', href: '/courses#pawn-starter' },
     { label: 'Intermediate — Knight Tactician', href: '/courses#knight-tactician' },
+    { label: 'Upper Intermediate — Bishop Strategist', href: '/courses#bishop-strategist' },
     { label: 'Advanced — Grandmaster Path', href: '/courses#grandmaster-path' },
     { label: '1:1 Coaching', href: '/courses#one-on-one' },
   ],

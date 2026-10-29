@@ -1,4 +1,4 @@
-import { Crown, GraduationCap, Trophy, type LucideIcon } from 'lucide-react'
+import { ChessBishop, Crown, GraduationCap, Trophy, type LucideIcon } from 'lucide-react'
 
 /*
  * One source for every course: the home-page cards (sections/Services.tsx) and the full
@@ -11,7 +11,10 @@ export type BookingLevel = 'Beginner' | 'Intermediate' | 'Advanced'
 export type Course = {
   /** section id on /courses, e.g. /courses#pawn-starter */
   slug: string
-  level: BookingLevel
+  /** level shown on cards, e.g. "Upper Intermediate" */
+  level: string
+  /** which option the free-demo form preselects for this course */
+  bookingLevel: BookingLevel
   title: string
   age: string
   duration: string
@@ -21,6 +24,8 @@ export type Course = {
   features: string[]
   icon: LucideIcon
   accent: 'sky' | 'gold'
+  /** the gold card treatment on the home page (halo, gold border and CTA, raised). Cards
+   *  alternate blue / gold / blue / gold, so this goes with accent: 'gold'. */
   featured?: boolean
   // ---- detail page ----
   tagline: string
@@ -34,6 +39,7 @@ export const courses: Course[] = [
   {
     slug: 'pawn-starter',
     level: 'Beginner',
+    bookingLevel: 'Beginner',
     title: 'Pawn Starter',
     age: 'Ages 5+',
     duration: '12 weeks',
@@ -66,6 +72,7 @@ export const courses: Course[] = [
   {
     slug: 'knight-tactician',
     level: 'Intermediate',
+    bookingLevel: 'Intermediate',
     title: 'Knight Tactician',
     age: 'For developing players',
     duration: '24 weeks',
@@ -97,8 +104,42 @@ export const courses: Course[] = [
     ],
   },
   {
+    slug: 'bishop-strategist',
+    level: 'Upper Intermediate',
+    bookingLevel: 'Intermediate',
+    title: 'Bishop Strategist',
+    age: 'For club & tournament juniors',
+    duration: '16 weeks',
+    description:
+      'Bridge the gap between tactics and true understanding. Learn to read a position, build a long-term plan and outplay opponents strategically.',
+    features: ['Positional understanding', 'Pawn structures', 'Middlegame planning', 'Practical endgames'],
+    icon: ChessBishop,
+    accent: 'sky',
+    tagline: 'From good moves to good plans.',
+    overview:
+      'For players who already spot tactics and want to understand why strong players keep winning. Students learn to evaluate a position, choose the right plan and steer the game toward endings they know how to win: the bridge from club player to tournament competitor.',
+    idealFor: [
+      'Knight Tactician graduates ready for the next step',
+      'Juniors who calculate well but drift without a plan',
+      'Players preparing for their first rated tournaments',
+    ],
+    curriculum: [
+      { title: 'Reading the position', points: ['Weighing material, activity and king safety', 'Finding the weaknesses on both sides'] },
+      { title: 'Pawn structures', points: ['Isolated, doubled and passed pawns', 'Which plans each structure calls for'] },
+      { title: 'Middlegame planning', points: ['Good and bad pieces, outposts and open files', 'Building a plan and following it through'] },
+      { title: 'Practical endgames', points: ['Rook and minor-piece endings', 'Trading into endings you know you can win'] },
+    ],
+    outcomes: [
+      'Explain the plan behind their moves',
+      'Recognise common pawn structures and their plans',
+      'Improve their worst piece instead of waiting',
+      'Steer games into favourable endgames',
+    ],
+  },
+  {
     slug: 'grandmaster-path',
     level: 'Advanced',
+    bookingLevel: 'Advanced',
     title: 'Grandmaster Path',
     age: 'For rated / tournament players',
     duration: 'Ongoing',
@@ -106,7 +147,8 @@ export const courses: Course[] = [
       'Elite training for serious competitors. Deep prep across openings, middlegame strategy, endgame technique and tournament psychology.',
     features: ['1:1 coach mentorship', 'Tournament prep', 'Advanced endgames', 'Position critiques'],
     icon: Crown,
-    accent: 'sky',
+    accent: 'gold',
+    featured: true,
     tagline: 'Elite preparation for serious competitors.',
     overview:
       'Ongoing training for rated and tournament players, with a coach as mentor. Deep work across every phase of the game, plus the preparation and composure that separate good players from winners.',
@@ -130,7 +172,7 @@ export const courses: Course[] = [
   },
 ]
 
-/** Private coaching — offered alongside the three programs. */
+/** Private coaching — offered alongside the programs. */
 export const oneOnOne = {
   slug: 'one-on-one',
   title: '1:1 Coaching',

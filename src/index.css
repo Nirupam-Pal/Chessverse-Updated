@@ -152,6 +152,15 @@
     background: rgba(30, 64, 175, 0.18);
     color: #0B1733;
   }
+  /* One visible keyboard-focus ring for every interactive element (icon buttons, toggles, tabs,
+     links…). :where() keeps it at zero specificity, so components with their own ring win. */
+  :where(a, button, [role='button'], [role='tab'], [role='menuitem'], summary):focus-visible {
+    outline: 2px solid rgb(var(--c-sky));
+    outline-offset: 2px;
+  }
+  :where(button):disabled {
+    cursor: not-allowed;
+  }
 }
 
 @layer components {
@@ -193,30 +202,148 @@
     -webkit-box-decoration-break: clone;
     box-decoration-break: clone;
   }
-  .btn-primary {
-    @apply inline-flex items-center gap-2 px-7 py-3.5 rounded-full font-semibold text-sm tracking-wide transition-all duration-300 hover:scale-[1.03];
-    background: linear-gradient(120deg, #3A8DDE 0%, #1F4FAE 100%);
-    color: #F2F5FA;
-    box-shadow: 0 10px 30px -8px rgba(58, 141, 222, 0.55), inset 0 1px 0 rgba(255,255,255,0.18);
-  }
-  .btn-primary:hover {
-    box-shadow: 0 18px 40px -8px rgba(58, 141, 222, 0.75), inset 0 1px 0 rgba(255,255,255,0.25);
-  }
+  /* ---------------------------------------------------------------------------------------
+     Button system — one place for every button style on the site.
+       btn-gold     the key call to action (free demo, featured course)
+       btn-primary  main action (blue)
+       btn-soft     blue action inside cards: tinted, quieter than primary
+       btn-ghost    secondary action: quiet outline
+       btn-chip     small pill navigation (jump links)
+       btn-link     text link with a trailing arrow that nudges forward
+     Shared behaviour: 250ms ease-out; hover = 2px lift, slightly brighter fill, deeper soft
+     shadow; press = settles back + 98% scale; a clear focus ring in the button's own colour;
+     disabled / aria-busy (loading) = dimmed with no hover motion; reduced motion = colour only.
+     Lift and press use the standalone `translate` / `scale` properties, so they never clash
+     with transforms set elsewhere (e.g. the hero's magnetic buttons).
+     --------------------------------------------------------------------------------------- */
+  .btn-primary,
+  .btn-gold,
+  .btn-soft,
   .btn-ghost {
-    @apply inline-flex items-center gap-2 px-7 py-3.5 rounded-full font-semibold text-sm tracking-wide transition-all duration-300;
-    background: rgba(242, 245, 250, 0.04);
-    border: 1px solid rgba(142, 202, 230, 0.25);
-    color: #F2F5FA;
+    @apply inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full font-semibold text-sm tracking-wide;
+    min-height: 3rem;
+    border: 1px solid transparent;
+    -webkit-tap-highlight-color: transparent;
   }
-  .btn-ghost:hover {
-    border-color: rgba(58, 141, 222, 0.6);
-    background: rgba(58, 141, 222, 0.08);
+  .btn-primary,
+  .btn-gold,
+  .btn-soft,
+  .btn-ghost,
+  .btn-chip,
+  .btn-link {
+    transition-property: translate, scale, background-color, border-color, color, box-shadow, filter, opacity;
+    transition-duration: 250ms;
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
   }
+  :is(.btn-primary, .btn-gold, .btn-soft, .btn-ghost, .btn-chip):hover:not(:disabled, [aria-disabled='true'], [aria-busy='true']) {
+    translate: 0 -2px;
+  }
+  :is(.btn-primary, .btn-gold, .btn-soft, .btn-ghost, .btn-chip):active:not(:disabled, [aria-disabled='true'], [aria-busy='true']) {
+    translate: 0 0;
+    scale: 0.98;
+    transition-duration: 100ms;
+  }
+  :is(.btn-primary, .btn-gold, .btn-soft, .btn-ghost, .btn-chip, .btn-link):focus-visible {
+    outline: 2px solid rgb(var(--c-sky));
+    outline-offset: 3px;
+  }
+  :is(.btn-primary, .btn-gold, .btn-soft, .btn-ghost, .btn-chip, .btn-link):is(:disabled, [aria-disabled='true']) {
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: none;
+    filter: none;
+  }
+  :is(.btn-primary, .btn-gold, .btn-soft, .btn-ghost, .btn-chip, .btn-link)[aria-busy='true'] {
+    opacity: 0.75;
+    cursor: progress;
+  }
+
+  /* primary — brand blue, restrained gradient and shadow */
+  .btn-primary {
+    background: linear-gradient(135deg, #3A8DDE 0%, #2A68C8 100%);
+    color: #F7F9FC;
+    box-shadow: 0 6px 16px -8px rgba(31, 79, 174, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  }
+  .btn-primary:hover:not(:disabled, [aria-disabled='true'], [aria-busy='true']) {
+    filter: brightness(1.08);
+    box-shadow: 0 12px 24px -12px rgba(31, 79, 174, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  }
+
+  /* gold — the most important action on a screen */
   .btn-gold {
-    @apply inline-flex items-center gap-2 px-7 py-3.5 rounded-full font-semibold text-sm tracking-wide transition-all duration-300 hover:scale-[1.03];
-    background: linear-gradient(120deg, #F3D87A 0%, #D4AF37 100%);
+    background: linear-gradient(135deg, #EDCD68 0%, #D2AA3A 100%);
     color: #0B1733;
-    box-shadow: 0 10px 30px -8px rgba(212, 175, 55, 0.5);
+    box-shadow: 0 6px 16px -8px rgba(166, 128, 26, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  }
+  .btn-gold:hover:not(:disabled, [aria-disabled='true'], [aria-busy='true']) {
+    filter: brightness(1.05);
+    box-shadow: 0 12px 24px -12px rgba(166, 128, 26, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  }
+  .btn-gold:focus-visible {
+    outline-color: rgb(var(--c-gold));
+  }
+
+  /* soft — tinted blue, for actions inside cards */
+  .btn-soft {
+    background: rgba(58, 141, 222, 0.14);
+    border-color: rgba(58, 141, 222, 0.22);
+    color: rgb(var(--c-azure));
+  }
+  .btn-soft:hover:not(:disabled, [aria-disabled='true'], [aria-busy='true']) {
+    background: rgba(58, 141, 222, 0.22);
+    border-color: rgba(58, 141, 222, 0.38);
+    color: rgb(var(--c-ivory));
+    box-shadow: 0 10px 22px -14px rgba(31, 79, 174, 0.9);
+  }
+
+  /* ghost — secondary, a quiet outline */
+  .btn-ghost {
+    background: rgba(242, 245, 250, 0.03);
+    border-color: rgba(142, 202, 230, 0.22);
+    color: rgb(var(--c-ivory));
+  }
+  .btn-ghost:hover:not(:disabled, [aria-disabled='true'], [aria-busy='true']) {
+    background: rgba(58, 141, 222, 0.1);
+    border-color: rgba(142, 202, 230, 0.42);
+    box-shadow: 0 10px 22px -14px rgba(0, 0, 0, 0.6);
+  }
+
+  /* chip — small pill links (e.g. "jump to a course") */
+  .btn-chip {
+    @apply inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm;
+    background: rgb(var(--c-twilight) / 0.6);
+    border: 1px solid rgba(142, 202, 230, 0.16);
+    color: rgb(var(--c-ivory));
+  }
+  .btn-chip:hover:not(:disabled, [aria-disabled='true']) {
+    background: rgb(var(--c-midnight) / 0.7);
+    border-color: rgba(142, 202, 230, 0.38);
+  }
+
+  /* link — text action with a trailing arrow; set --btn-nudge to change the arrow's direction */
+  .btn-link {
+    @apply inline-flex items-center gap-1.5 rounded-md text-sm font-semibold;
+    --btn-nudge: 3px 0;
+    color: rgb(var(--c-azure));
+  }
+  .btn-link:hover:not(:disabled, [aria-disabled='true']) {
+    color: rgb(var(--c-ivory));
+  }
+  .btn-link > svg:last-child {
+    transition: translate 250ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .btn-link:hover:not(:disabled, [aria-disabled='true']) > svg:last-child {
+    translate: var(--btn-nudge);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :is(.btn-primary, .btn-gold, .btn-soft, .btn-ghost, .btn-chip):is(:hover, :active) {
+      translate: none !important;
+      scale: none !important;
+    }
+    .btn-link:hover > svg:last-child {
+      translate: none;
+    }
   }
   .glow-border {
     border: 1px solid rgba(142, 202, 230, 0.14);
@@ -277,26 +404,49 @@
     background-clip: text;
   }
   .light .btn-primary {
-    background: linear-gradient(120deg, #1E3A8A 0%, #0B1733 100%);
+    background: linear-gradient(135deg, #1E3A8A 0%, #12245A 100%);
     color: #FFFFFF;
-    box-shadow: 0 10px 28px -10px rgba(11, 23, 51, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+    box-shadow: 0 6px 16px -8px rgba(11, 23, 51, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.12);
   }
-  .light .btn-primary:hover {
-    box-shadow: 0 18px 38px -10px rgba(11, 23, 51, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  .light .btn-primary:hover:not(:disabled, [aria-disabled='true'], [aria-busy='true']) {
+    filter: brightness(1.12);
+    box-shadow: 0 12px 24px -12px rgba(11, 23, 51, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  }
+  .light .btn-gold {
+    background: linear-gradient(135deg, #E6C766 0%, #C59C33 100%);
+    box-shadow: 0 6px 16px -8px rgba(140, 106, 18, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  }
+  .light .btn-gold:hover:not(:disabled, [aria-disabled='true'], [aria-busy='true']) {
+    box-shadow: 0 12px 24px -12px rgba(140, 106, 18, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  }
+  .light .btn-soft {
+    background: rgba(30, 64, 175, 0.07);
+    border-color: rgba(30, 64, 175, 0.16);
+    color: #1E40AF;
+  }
+  .light .btn-soft:hover:not(:disabled, [aria-disabled='true'], [aria-busy='true']) {
+    background: rgba(30, 64, 175, 0.12);
+    border-color: rgba(30, 64, 175, 0.3);
+    color: #172A6E;
+    box-shadow: 0 10px 20px -14px rgba(11, 23, 51, 0.45);
   }
   .light .btn-ghost {
     background: rgba(255, 255, 255, 0.7);
     border-color: rgba(11, 23, 51, 0.14);
     color: #0B1733;
   }
-  .light .btn-ghost:hover {
+  .light .btn-ghost:hover:not(:disabled, [aria-disabled='true'], [aria-busy='true']) {
     background: rgba(30, 64, 175, 0.05);
-    border-color: rgba(30, 64, 175, 0.4);
+    border-color: rgba(30, 64, 175, 0.35);
+    box-shadow: 0 10px 20px -14px rgba(11, 23, 51, 0.35);
   }
-  .light .btn-gold {
-    background: linear-gradient(120deg, #E6C766 0%, #C0962E 100%);
-    color: #0B1733;
-    box-shadow: 0 10px 28px -10px rgba(140, 106, 18, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  .light .btn-chip {
+    background: rgba(255, 255, 255, 0.8);
+    border-color: rgba(11, 23, 51, 0.1);
+  }
+  .light .btn-chip:hover:not(:disabled, [aria-disabled='true']) {
+    background: #FFFFFF;
+    border-color: rgba(30, 64, 175, 0.3);
   }
   .light .glow-border {
     border-color: rgba(11, 23, 51, 0.08);

@@ -141,7 +141,7 @@ const faqs = [
   },
   {
     q: 'Which programs do you offer?',
-    a: 'Three levels: Pawn Starter for beginners (ages 5+), Knight Tactician for developing players, and Grandmaster Path for rated and tournament players, plus 1:1 coaching.',
+    a: 'Four programs: Pawn Starter for beginners (ages 5+), Knight Tactician for developing players, Bishop Strategist for club and tournament juniors, and Grandmaster Path for rated and tournament players, plus 1:1 coaching.',
   },
   {
     q: 'Does my child need any chess experience?',

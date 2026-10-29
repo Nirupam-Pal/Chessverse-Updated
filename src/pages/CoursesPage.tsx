@@ -123,7 +123,7 @@ function AtAGlance() {
           <caption className="sr-only">Chessverse courses compared</caption>
           <thead>
             <tr className="border-b border-sky/10">
-              <th scope="col" className="w-[18%] p-6" />
+              <th scope="col" className="w-[14%] p-6" />
               {courses.map((c) => (
                 <th key={c.slug} scope="col" className="p-6 align-top">
                   <span className={`grid w-11 h-11 place-items-center rounded-2xl mb-4 ${accentIcon(c)}`}>
@@ -152,7 +152,12 @@ function AtAGlance() {
               <td />
               {courses.map((c) => (
                 <td key={c.slug} className="px-6 pb-6">
-                  <button type="button" onClick={() => scrollToTarget(c.slug)} className="inline-flex items-center gap-1.5 text-sm font-semibold text-sky hover:text-ivory transition-colors">
+                  <button
+                    type="button"
+                    onClick={() => scrollToTarget(c.slug)}
+                    // arrow points down, so it nudges down
+                    className="btn-link [--btn-nudge:0_3px]"
+                  >
                     See the curriculum
                     <ArrowDown className="w-4 h-4" />
                   </button>
@@ -279,9 +284,9 @@ function CourseDetail({ course: c, index }: { course: Course; index: number }) {
             <div className="flex flex-wrap gap-3">
               <button
                 type="button"
-                onClick={() => bookDemo(c.level)}
+                onClick={() => bookDemo(c.bookingLevel)}
                 data-testid={`course-book-${c.slug}`}
-                className={c.featured ? 'btn-gold' : 'btn-primary'}
+                className={`${c.featured ? 'btn-gold' : 'btn-primary'}`}
               >
                 <CalendarCheck className="w-4 h-4" />
                 Book a free demo
@@ -361,7 +366,7 @@ export default function CoursesPage() {
             A clear path from <span className="text-gradient italic">first move to tournament</span>
           </>
         }
-        subtitle="Three structured programs and private 1:1 coaching, taught live by our coaches online and at our Agartala academy. Here is exactly what each one covers."
+        subtitle="Four structured programs and private 1:1 coaching, taught live by our coaches online and at our Agartala academy. Here is exactly what each one covers."
       >
         <div className="mt-8 flex flex-wrap gap-3">
           <button type="button" onClick={() => bookDemo()} className="btn-gold">
@@ -379,7 +384,7 @@ export default function CoursesPage() {
               key={l.slug}
               type="button"
               onClick={() => scrollToTarget(l.slug)}
-              className="inline-flex items-center gap-2 rounded-full border border-sky/15 bg-twilight/60 px-4 py-2 text-sm text-ivory hover:border-sky/40 transition-colors"
+              className="btn-chip"
             >
               <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-ghost">{l.level}</span>
               {l.label}
@@ -395,7 +400,7 @@ export default function CoursesPage() {
             tag="At a glance"
             title={
               <>
-                Three programs, <span className="text-gradient italic">one clear progression</span>.
+                Four programs, <span className="text-gradient italic">one clear progression</span>.
               </>
             }
             text="Each program builds on the last. Not sure where your child fits? The free demo class includes an assessment, so the coach can place them at the right level."
@@ -410,7 +415,8 @@ export default function CoursesPage() {
       ))}
 
       {/* ---------------- 1:1 coaching ---------------- */}
-      <section id={oneOnOne.slug} aria-labelledby="one-on-one-title" className="relative w-full section-padding overflow-hidden scroll-mt-20">
+      {/* backgrounds alternate down the page: the 4 programs end on a plain section, so this one is tinted */}
+      <section id={oneOnOne.slug} aria-labelledby="one-on-one-title" className="relative w-full bg-twilight section-padding overflow-hidden scroll-mt-20">
         <div className="absolute top-1/4 -right-40 w-[480px] h-[480px] rounded-full bg-gold/10 blur-[140px] pointer-events-none" />
         <div className="relative max-w-7xl mx-auto grid gap-10 lg:grid-cols-[1fr_1.1fr] items-center">
           <Reveal>
@@ -458,7 +464,7 @@ export default function CoursesPage() {
       </section>
 
       {/* ---------------- How classes work ---------------- */}
-      <section className="relative w-full bg-twilight section-padding overflow-hidden">
+      <section className="relative w-full section-padding overflow-hidden">
         <div className="absolute inset-0 chess-board-bg opacity-20 pointer-events-none" />
         <div className="relative max-w-7xl mx-auto">
           <SectionIntro
@@ -514,7 +520,7 @@ export default function CoursesPage() {
       </section>
 
       {/* ---------------- Your path ---------------- */}
-      <section className="relative w-full section-padding overflow-hidden">
+      <section className="relative w-full bg-twilight section-padding overflow-hidden">
         <div className="relative max-w-7xl mx-auto">
           <SectionIntro
             center
@@ -559,7 +565,8 @@ export default function CoursesPage() {
                   <Link
                     to="/gallery?folder=chessverse-open-school-rapid-chess-tournament"
                     onMouseEnter={() => prefetchRoute('/gallery')}
-                    className="mt-4 inline-flex w-fit items-center gap-1.5 text-sm font-semibold text-[#8ECAE6] hover:text-white transition-colors"
+                    // fixed light-blue/white: it sits on a dark photo overlay in both themes
+                    className="btn-link mt-4 w-fit text-[#8ECAE6] hover:text-white"
                   >
                     See the tournament photos
                     <ArrowRight className="w-4 h-4" />
@@ -572,7 +579,7 @@ export default function CoursesPage() {
       </section>
 
       {/* ---------------- FAQ ---------------- */}
-      <section className="relative w-full bg-twilight section-padding overflow-hidden">
+      <section className="relative w-full section-padding overflow-hidden">
         <div className="relative max-w-7xl mx-auto grid gap-12 lg:grid-cols-[0.85fr_1.15fr]">
           <Reveal>
             <span className="pill-tag mb-5">Questions</span>
@@ -590,7 +597,7 @@ export default function CoursesPage() {
             </div>
           </Reveal>
           <Reveal delay={0.08}>
-            <Accordion type="single" collapsible defaultValue="faq-0" className="rounded-[28px] border border-sky/10 bg-void/60 px-6 sm:px-8">
+            <Accordion type="single" collapsible defaultValue="faq-0" className="rounded-[28px] border border-sky/10 bg-twilight/60 px-6 sm:px-8">
               {faqs.map((f, i) => (
                 <AccordionItem key={f.q} value={`faq-${i}`} className="border-sky/10">
                   <AccordionTrigger className="py-6 font-display text-lg sm:text-xl font-semibold text-ivory hover:no-underline hover:text-sky [&>svg]:text-gold">
