@@ -19,14 +19,14 @@ const links: Record<string, FooterLink[]> = {
   Institute: [
     { label: 'About Us', href: '/about' },
     { label: 'Achievements', href: '#achievements' },
-    { label: 'Star Performer', href: '#star-performer' },
+    { label: 'Star Performers', href: '/star-performers' },
     { label: 'Gallery', href: '/gallery' },
   ],
   Connect: [
     { label: 'Book Free Demo', href: '#booking' },
     { label: 'Contact Us', href: '/contact' },
     { label: 'WhatsApp', href: 'https://wa.me/917629037237', external: true },
-    { label: 'Testimonials', href: '#testimonials' },
+    { label: 'Testimonials', href: '/testimonials' },
   ],
 }
 

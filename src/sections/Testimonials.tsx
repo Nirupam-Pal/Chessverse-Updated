@@ -1,50 +1,10 @@
 import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { EASE_OUT } from '@/lib/motion'
-import { Star, Quote, TrendingUp } from 'lucide-react'
-
-const testimonials = [
-  {
-    name: 'Priyanka Dey',
-    role: 'Parent of Student',
-    image:
-      'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&q=80',
-    quote:
-      'My daughter joined Chessverse two years ago. Today she is a district champion. The coaches don\'t just teach moves — they teach patience and focus.',
-    rating: 5,
-    improvement: 'District Champ',
-  },
-  {
-    name: 'Rohan Chakraborty',
-    role: 'Class 9 Student',
-    image:
-      'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80',
-    quote:
-      'I started as a beginner and now I am a FIDE rated player. The weekly analysis sessions taught me how to actually think, not just memorise openings.',
-    rating: 5,
-    improvement: 'FIDE Rated',
-  },
-  {
-    name: 'Sneha Bhowmik',
-    role: 'College Student',
-    image:
-      'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=300&q=80',
-    quote:
-      'Online classes from Dharmanagar — same quality as the Agartala batch. The discipline I learned here helps me beyond chess.',
-    rating: 5,
-    improvement: '+450 ELO',
-  },
-  {
-    name: 'Anirban Datta',
-    role: 'Parent of Student',
-    image:
-      'https://images.unsplash.com/photo-1521119989659-a83eee488004?auto=format&fit=crop&w=300&q=80',
-    quote:
-      'The team is genuine. They send monthly progress reports and you can actually see your child growing — both in rating and in confidence.',
-    rating: 5,
-    improvement: 'State Finalist',
-  },
-]
+import { Link } from 'react-router'
+import { ArrowRight, Star, Quote, TrendingUp } from 'lucide-react'
+import { familyTestimonials as testimonials } from '@/data/testimonials'
+import { prefetchRoute } from '@/lib/routes'
 
 export default function Testimonials() {
   const ref = useRef<HTMLDivElement>(null)
@@ -69,11 +29,14 @@ export default function Testimonials() {
             What Our <span className="text-gradient italic">Families Say</span>
           </h2>
           <p className="text-ghost text-lg max-w-2xl mx-auto">
-            Real stories from students and parents across Tripura who chose Chessverse as their guide.
+            Parents across Tripura on what changed once their child chose Chessverse as their guide.
           </p>
         </motion.div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-6">
+        {/* the grid narrows when there are only a few stories, so cards never stretch across empty columns */}
+        <div
+          className={`grid gap-5 lg:gap-6 sm:grid-cols-2 ${testimonials.length <= 2 ? 'max-w-4xl mx-auto' : testimonials.length === 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-4'}`}
+        >
           {testimonials.map((t, index) => (
             <motion.div
               key={t.name}
@@ -114,6 +77,19 @@ export default function Testimonials() {
               </div>
             </motion.div>
           ))}
+        </div>
+
+        <div className="mt-12 flex justify-center">
+          <Link
+            to="/testimonials"
+            onMouseEnter={() => prefetchRoute('/testimonials')}
+            onFocus={() => prefetchRoute('/testimonials')}
+            data-testid="testimonials-all"
+            className="btn-ghost group"
+          >
+            Read every story
+            <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+          </Link>
         </div>
       </div>
     </section>

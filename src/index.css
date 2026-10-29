@@ -548,6 +548,36 @@
   animation: none !important;
 }
 
+/* Medal3D (/star-performers): a slow spin, a glint across the face, and a contact shadow that
+   narrows as the coin turns edge-on. Transform/opacity only. */
+@keyframes medal-spin {
+  from { transform: rotateY(0deg); }
+  to { transform: rotateY(360deg); }
+}
+@keyframes medal-shine {
+  0%, 55% { opacity: 0; transform: translateX(-120%) skewX(-14deg); }
+  70% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(260%) skewX(-14deg); }
+}
+@keyframes medal-shadow {
+  0%, 50%, 100% { transform: translateX(-50%) scaleX(1); opacity: 0.45; }
+  25%, 75% { transform: translateX(-50%) scaleX(0.35); opacity: 0.25; }
+}
+.medal-spin { animation: medal-spin 14s linear infinite; }
+.medal-shine { overflow: hidden; }
+.medal-shine::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: 45%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+  animation: medal-shine 7s ease-in-out infinite;
+}
+.medal-shadow { animation: medal-shadow 14s linear infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .medal-spin, .medal-shine::after, .medal-shadow { animation: none; }
+}
+
 /* light sweep across the navbar CTA: rests most of the cycle, then glides across */
 @keyframes nav-sheen {
   0%, 62% { transform: translateX(0) skewX(-20deg); }

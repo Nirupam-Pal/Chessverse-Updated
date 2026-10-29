@@ -7,6 +7,8 @@ import { scrollToTarget } from '@/lib/scroll'
 export const pageLoaders = {
   '/about': () => import('@/pages/AboutPage'),
   '/courses': () => import('@/pages/CoursesPage'),
+  '/star-performers': () => import('@/pages/StarPerformersPage'),
+  '/testimonials': () => import('@/pages/TestimonialsPage'),
   '/gallery': () => import('@/pages/GalleryPage'),
   '/contact': () => import('@/pages/ContactPage'),
 } as const

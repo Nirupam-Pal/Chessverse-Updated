@@ -1,73 +1,11 @@
 import { useRef, useState } from 'react'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
 import { EASE_OUT } from '@/lib/motion'
-import { ChevronLeft, ChevronRight, Crown, Star, Trophy, TrendingUp, Medal, Sparkles } from 'lucide-react'
-
-const starPerformers = [
-  {
-    name: 'Rohan Chakraborty',
-    age: 'Class 9 · Agartala',
-    image:
-      'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?auto=format&fit=crop&w=800&q=80',
-    period: 'Star Performer · 2024',
-    title: 'Tripura State U-14 Gold Medallist',
-    rating: 'FIDE 1847',
-    quote:
-      'Chessverse taught me to stay calm under pressure. Winning state gold felt like the natural next step on a journey I started here as a complete beginner.',
-    achievements: [
-      'National Schools Championship Qualifier',
-      'District Champion — 3 consecutive years',
-      '+420 ELO growth in 18 months',
-    ],
-    stats: [
-      { label: 'FIDE Rating', value: '1847' },
-      { label: 'Medals Won', value: '12' },
-      { label: 'Years at Chessverse', value: '3' },
-    ],
-  },
-  {
-    name: 'Ananya Das',
-    age: 'Class 6 · Udaipur',
-    image:
-      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80',
-    period: 'Rising Star · 2024',
-    title: 'North East Open U-10 Silver',
-    rating: 'FIDE 1520',
-    quote:
-      'My coaches break every game into puzzles I can understand. I love coming to class — every week I feel stronger on the board.',
-    achievements: [
-      'Youngest FIDE-rated girl from Tripura',
-      'Inter-district U-10 Champion',
-      'Perfect score in district rapid',
-    ],
-    stats: [
-      { label: 'FIDE Rating', value: '1520' },
-      { label: 'Medals Won', value: '8' },
-      { label: 'Years at Chessverse', value: '2' },
-    ],
-  },
-  {
-    name: 'Debojyoti Nath',
-    age: 'Class 11 · Dharmanagar',
-    image:
-      'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=800&q=80',
-    period: 'Star Performer · 2023',
-    title: 'National Sub-Junior Finalist',
-    rating: 'FIDE 1962',
-    quote:
-      'Online classes from Dharmanagar never felt distant. The analysis sessions here are as sharp as any academy in the mainland.',
-    achievements: [
-      'Tripura State Open Champion',
-      'Represented NE at Nationals',
-      'Top board for school team',
-    ],
-    stats: [
-      { label: 'FIDE Rating', value: '1962' },
-      { label: 'Medals Won', value: '18' },
-      { label: 'Years at Chessverse', value: '4' },
-    ],
-  },
-]
+import { Link } from 'react-router'
+import { ArrowRight, ChevronLeft, ChevronRight, Crown, Star, Trophy, TrendingUp, Medal, Sparkles } from 'lucide-react'
+import StudentPhoto from '@/components/StudentPhoto'
+import { starPerformers } from '@/data/starPerformers'
+import { prefetchRoute } from '@/lib/routes'
 
 export default function StarPerformer() {
   const ref = useRef<HTMLDivElement>(null)
@@ -134,33 +72,37 @@ export default function StarPerformer() {
               {/* Photo panel */}
               <div className="lg:col-span-2 relative min-h-[340px] sm:min-h-[420px] lg:min-h-full">
                 <AnimatePresence mode="wait">
-                  <motion.img
-                    key={performer.image}
-                    src={performer.image}
-                    alt={performer.name}
+                  <motion.div
+                    key={performer.slug}
                     initial={{ opacity: 0, scale: 1.05 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.98 }}
                     transition={{ duration: 0.45, ease: EASE_OUT }}
-                    className="absolute inset-0 w-full h-full object-cover"
-                    loading="lazy"
-                  />
+                    className="absolute inset-0"
+                  >
+                    {/* no photo → initials badge, never a broken image */}
+                    <StudentPhoto name={performer.name} src={performer.image} sizes="(min-width: 1024px) 40vw, 100vw" initialsClassName="text-7xl" />
+                  </motion.div>
                 </AnimatePresence>
                 <div className="absolute inset-0 bg-gradient-to-t from-void via-void/50 to-transparent lg:bg-gradient-to-r lg:from-transparent lg:via-void/20 lg:to-void/90 light:hidden" />
 
                 {/* Floating crown badge */}
-                <div className="absolute top-5 left-5 pill-tag-gold !py-2 !px-4 shadow-glow-gold light:!bg-white/90 light:backdrop-blur-md">
-                  <Crown className="w-4 h-4" />
-                  {performer.period}
-                </div>
+                {performer.period && (
+                  <div className="absolute top-5 left-5 pill-tag-gold !py-2 !px-4 shadow-glow-gold light:!bg-white/90 light:backdrop-blur-md">
+                    <Crown className="w-4 h-4" />
+                    {performer.period}
+                  </div>
+                )}
 
                 {/* Rating chip */}
-                <div className="absolute bottom-5 left-5 right-5 lg:right-auto flex flex-wrap gap-2">
-                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-void/70 light:bg-white/90 backdrop-blur-md ring-1 ring-gold/40">
-                    <TrendingUp className="w-4 h-4 text-gold" />
-                    <span className="font-display font-bold text-ivory text-sm">{performer.rating}</span>
+                {performer.rating && (
+                  <div className="absolute bottom-5 left-5 right-5 lg:right-auto flex flex-wrap gap-2">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-void/70 light:bg-white/90 backdrop-blur-md ring-1 ring-gold/40">
+                      <TrendingUp className="w-4 h-4 text-gold" />
+                      <span className="font-display font-bold text-ivory text-sm">{performer.rating}</span>
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Decorative ring */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[280px] h-[280px] rounded-full border border-gold/15 animate-spin-slow pointer-events-none hidden sm:block" />
@@ -190,28 +132,34 @@ export default function StarPerformer() {
                     </h3>
                     <p className="text-ghost text-sm mb-4">{performer.age}</p>
 
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gold/10 ring-1 ring-gold/30 mb-6">
-                      <Trophy className="w-4 h-4 text-gold shrink-0" />
-                      <span className="font-display font-semibold text-gold text-sm sm:text-base">
-                        {performer.title}
-                      </span>
-                    </div>
+                    {performer.title && (
+                      <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gold/10 ring-1 ring-gold/30 mb-6">
+                        <Trophy className="w-4 h-4 text-gold shrink-0" />
+                        <span className="font-display font-semibold text-gold text-sm sm:text-base">
+                          {performer.title}
+                        </span>
+                      </div>
+                    )}
 
-                    <blockquote className="text-ghost text-base sm:text-lg leading-relaxed mb-8 border-l-2 border-gold/40 pl-5 italic">
-                      &ldquo;{performer.quote}&rdquo;
-                    </blockquote>
+                    {performer.quote && (
+                      <blockquote className="text-ghost text-base sm:text-lg leading-relaxed mb-8 border-l-2 border-gold/40 pl-5 italic">
+                        &ldquo;{performer.quote}&rdquo;
+                      </blockquote>
+                    )}
 
-                    <ul className="space-y-2.5 mb-8">
-                      {performer.achievements.map((item) => (
-                        <li key={item} className="flex items-start gap-3 text-sm text-ghost">
-                          <Medal className="w-4 h-4 text-gold mt-0.5 shrink-0" />
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
+                    {!!performer.achievements?.length && (
+                      <ul className="space-y-2.5 mb-8">
+                        {performer.achievements.map((item) => (
+                          <li key={item} className="flex items-start gap-3 text-sm text-ghost">
+                            <Medal className="w-4 h-4 text-gold mt-0.5 shrink-0" />
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
 
                     <div className="grid grid-cols-3 gap-3 sm:gap-4">
-                      {performer.stats.map((stat) => (
+                      {(performer.stats ?? []).map((stat) => (
                         <div
                           key={stat.label}
                           className="rounded-2xl bg-void/40 ring-1 ring-sky/15 p-4 text-center hover:ring-gold/30 transition-colors duration-300"
@@ -250,14 +198,13 @@ export default function StarPerformer() {
                 }`}
               >
                 <div className="relative shrink-0">
-                  <img
-                    src={p.image}
-                    alt={p.name}
-                    loading="lazy"
-                    className={`w-14 h-14 rounded-full object-cover ring-2 transition-all duration-300 ${
+                  <div
+                    className={`relative w-14 h-14 overflow-hidden rounded-full ring-2 transition-all duration-300 ${
                       active === i ? 'ring-gold/60' : 'ring-sky/25 group-hover:ring-sky/45'
                     }`}
-                  />
+                  >
+                    <StudentPhoto name={p.name} src={p.image} sizes="56px" initialsClassName="text-base" />
+                  </div>
                   {active === i && (
                     <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-gold flex items-center justify-center">
                       <Star className="w-3 h-3 fill-void text-void" />
@@ -286,6 +233,16 @@ export default function StarPerformer() {
               />
             ))}
           </div>
+          <Link
+            to="/star-performers"
+            onMouseEnter={() => prefetchRoute('/star-performers')}
+            onFocus={() => prefetchRoute('/star-performers')}
+            data-testid="star-performer-all"
+            className="btn-ghost group mt-2"
+          >
+            Meet all our star performers
+            <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+          </Link>
         </motion.div>
       </div>
     </section>

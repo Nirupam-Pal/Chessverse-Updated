@@ -9,7 +9,7 @@ import StarPerformer from '../sections/StarPerformer'
 import Gallery from '../sections/Gallery'
 import Testimonials from '../sections/Testimonials'
 import Booking from '../sections/Booking'
-import ExpertTestimonials from '@/sections/Expertstestimonial'
+import StudentTestimonials from '../sections/StudentTestimonials'
 
 // Navigation, Footer and the WhatsApp button live in SiteLayout (shared by every page).
 // About (with the founder) and Contact have their own pages (/about, /contact); Coaches is retired.
@@ -25,7 +25,7 @@ export default function Home() {
       <Achievements />
       <StarPerformer />
       <Gallery />
-      <ExpertTestimonials />
+      <StudentTestimonials variant="scroll" showMoreLink />
       <Testimonials />
       <Booking />
     </>
