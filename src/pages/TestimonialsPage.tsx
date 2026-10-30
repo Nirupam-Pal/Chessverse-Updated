@@ -86,7 +86,7 @@ export default function TestimonialsPage() {
 
   useEffect(() => {
     const prev = document.title
-    document.title = 'Testimonials — Chessverse Chess Institute'
+    document.title = 'Testimonials — Chessverse Academy'
     return () => {
       document.title = prev
     }

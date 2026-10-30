@@ -208,17 +208,22 @@ export default function Navigation() {
               >
                 <img src="/images/chessverse-logo.jpg" alt="Chessverse" className="absolute inset-0 w-full h-full object-cover" />
               </div>
-              <div className="flex flex-col leading-none text-left">
+              <div className="flex w-max flex-col leading-none text-left">
                 <span className="font-display font-bold text-lg sm:text-xl text-ivory tracking-tight group-hover:text-sky transition-colors">
                   Chessverse
                 </span>
-                {/* subtitle folds away in the capsule */}
+                {/* subtitle folds away in the capsule; its letters are spread to span the full width of the name */}
                 <span
-                  className={`hidden sm:block overflow-hidden text-[10px] tracking-[0.22em] uppercase text-ghost transition-all ${MORPH} ${
+                  className={`hidden sm:flex justify-between overflow-hidden text-[10px] uppercase text-ghost transition-all ${MORPH} ${
                     scrolled ? 'max-h-0 opacity-0 mt-0' : 'max-h-4 opacity-100 mt-1'
                   }`}
                 >
-                  Chess Institute
+                  <span className="sr-only">Academy</span>
+                  {'Academy'.split('').map((ch, i) => (
+                    <span key={i} aria-hidden>
+                      {ch}
+                    </span>
+                  ))}
                 </span>
               </div>
             </button>

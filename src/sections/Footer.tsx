@@ -54,7 +54,7 @@ export default function Footer() {
               <div>
                 <p className="font-display font-bold text-xl text-ivory leading-none">Chessverse</p>
                 <p className="text-[10px] uppercase tracking-[0.22em] text-ghost mt-1.5">
-                  Chess Institute • Tripura
+                  Academy • Tripura
                 </p>
               </div>
             </div>
@@ -127,7 +127,7 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="mt-14 pt-6 border-t border-sky/10 flex flex-col sm:flex-row items-center justify-between gap-5">
           <p className="text-ghost text-xs text-center sm:text-left">
-            &copy; {new Date().getFullYear()} Chessverse Chess Institute. All rights reserved.
+            &copy; {new Date().getFullYear()} Chessverse Academy. All rights reserved.
           </p>
 
           <div className="flex items-center gap-3">

@@ -113,8 +113,8 @@ export default function Chatbot() {
             {/* Header */}
             <div className="bg-gradient-to-r from-royal to-sky p-5 flex items-center justify-between">
               <div>
-                <h3 className="font-display font-bold text-white text-lg">Chessverse Bot</h3>
-                <p className="text-xs text-white/80">Ask us anything about chess classes</p>
+                <h3 className="font-display font-bold text-white text-lg">Frequently Asked Questions</h3>
+                <p className="text-xs text-white/80">Quick answers about our chess classes</p>
               </div>
               <button
                 onClick={() => setIsOpen(false)}

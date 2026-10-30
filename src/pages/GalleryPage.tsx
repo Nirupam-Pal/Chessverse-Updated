@@ -234,7 +234,7 @@ export default function GalleryPage() {
   return (
     <>
       <PageHeader
-        docTitle="Gallery — Chessverse Chess Institute"
+        docTitle="Gallery — Chessverse Academy"
         crumb="Gallery"
         tag="Inside Chessverse"
         title={

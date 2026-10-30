@@ -358,7 +358,7 @@ export default function CoursesPage() {
   return (
     <>
       <PageHeader
-        docTitle="Chess Courses — Chessverse Chess Institute"
+        docTitle="Chess Courses — Chessverse Academy"
         crumb="Courses"
         tag="Our Courses"
         title={

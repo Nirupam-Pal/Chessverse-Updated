@@ -6,7 +6,7 @@ export default function ContactPage() {
   return (
     <>
       <PageHeader
-        docTitle="Contact Us — Chessverse Chess Institute"
+        docTitle="Contact Us — Chessverse Academy"
         crumb="Contact"
         tag="Get in Touch"
         title={

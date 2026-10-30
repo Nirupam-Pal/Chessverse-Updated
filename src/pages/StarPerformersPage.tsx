@@ -314,7 +314,7 @@ export default function StarPerformersPage() {
 
   useEffect(() => {
     const prev = document.title
-    document.title = 'Star Performers — Chessverse Chess Institute'
+    document.title = 'Star Performers — Chessverse Academy'
     return () => {
       document.title = prev
     }
